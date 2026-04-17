@@ -1,5 +1,16 @@
 {
   "framework": null,
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options",  "value": "nosniff" },
+        { "key": "X-Frame-Options",         "value": "DENY" },
+        { "key": "Referrer-Policy",         "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy",      "value": "camera=(self), microphone=(), geolocation=()" }
+      ]
+    }
+  ],
   "rewrites": [
     { "source": "/api/(.*)",              "destination": "/api/index.py" },
     { "source": "/app",                   "destination": "/app/index.html" },
@@ -7,6 +18,10 @@
     { "source": "/dashboard",             "destination": "/dashboard/index.html" },
     { "source": "/dashboard/",            "destination": "/dashboard/index.html" },
     { "source": "/dashboard/login",       "destination": "/dashboard/login.html" },
-    { "source": "/dashboard/case",        "destination": "/dashboard/case.html" }
+    { "source": "/dashboard/register",   "destination": "/dashboard/register.html" },
+    { "source": "/dashboard/case",       "destination": "/dashboard/case.html" },
+    { "source": "/admin",                "destination": "/admin/index.html" },
+    { "source": "/admin/",               "destination": "/admin/index.html" },
+    { "source": "/admin/login",          "destination": "/admin/login.html" }
   ]
 }

@@ -629,6 +629,106 @@
       .result-section { padding: 24px 28px; }
       .result-header { padding: 26px 28px; }
     }
+
+    /* NAV LOGIN LINK */
+    .nav-login-link {
+      font-size: 13px; font-weight: 600; color: var(--pink);
+      text-decoration: none; padding: 8px 14px;
+      border: 1.5px solid rgba(255,45,120,0.3);
+      border-radius: var(--r-pill);
+      transition: background 0.2s;
+      display: none;
+    }
+    .nav-login-link.visible { display: inline-flex; align-items: center; }
+    .nav-login-link:hover { background: var(--pink-tag); }
+
+    /* UPSELL BANNER */
+    .upsell-banner {
+      display: none;
+      background: linear-gradient(135deg, #1A1A2E, #0F0F1A);
+      border-radius: var(--r-card);
+      padding: 24px 20px;
+      margin-top: 12px;
+      text-align: center;
+    }
+    .upsell-banner.show { display: block; }
+    .upsell-banner h3 { font-size: 17px; font-weight: 800; color: #fff; margin-bottom: 8px; letter-spacing: -0.3px; }
+    .upsell-banner p { font-size: 13px; color: #9999BB; margin-bottom: 20px; line-height: 1.55; }
+    .upsell-btns { display: flex; flex-direction: column; gap: 10px; }
+    .upsell-btn-primary {
+      display: block; padding: 13px; border-radius: var(--r-pill);
+      background: var(--pink-grad); color: var(--white);
+      font-size: 14px; font-weight: 700; text-decoration: none;
+      box-shadow: var(--pink-glow);
+    }
+    .upsell-btn-outline {
+      display: block; padding: 12px; border-radius: var(--r-pill);
+      background: transparent; color: #AAAACC;
+      font-size: 14px; font-weight: 600; text-decoration: none;
+      border: 1.5px solid rgba(255,255,255,0.15);
+    }
+    @media (min-width: 480px) {
+      .upsell-btns { flex-direction: row; justify-content: center; }
+      .upsell-btn-primary, .upsell-btn-outline { width: auto; padding: 13px 22px; }
+    }
+
+    /* PAYWALL MODAL */
+    .paywall-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(15,15,26,0.7);
+      backdrop-filter: blur(4px);
+      display: none; align-items: center; justify-content: center;
+      padding: 24px 16px;
+    }
+    .paywall-overlay.show { display: flex; }
+    .paywall-modal {
+      background: var(--white);
+      border-radius: var(--r-card);
+      padding: 36px 28px;
+      width: 100%; max-width: 400px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.3);
+      text-align: center;
+    }
+    .paywall-icon {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: var(--pink-tag);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px;
+    }
+    .paywall-icon svg { width: 24px; height: 24px; stroke: var(--pink); fill: none; stroke-width: 2; }
+    .paywall-modal h2 { font-size: 20px; font-weight: 800; color: var(--navy); letter-spacing: -0.4px; margin-bottom: 8px; }
+    .paywall-modal > p { font-size: 14px; color: var(--muted); margin-bottom: 24px; line-height: 1.55; }
+    .paywall-stack { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+    .paywall-btn-main {
+      display: block; padding: 14px; border-radius: var(--r-pill);
+      background: var(--pink-grad); color: var(--white);
+      font-size: 15px; font-weight: 700; text-decoration: none;
+      box-shadow: var(--pink-glow);
+    }
+    .paywall-btn-secondary {
+      display: block; padding: 13px; border-radius: var(--r-pill);
+      background: transparent; color: var(--navy);
+      font-size: 14px; font-weight: 600; text-decoration: none;
+      border: 1.5px solid var(--border);
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .paywall-btn-secondary:hover { border-color: var(--pink); color: var(--pink); }
+    .paywall-divider {
+      display: flex; align-items: center; gap: 12px;
+      font-size: 12px; color: var(--muted); margin: 4px 0;
+    }
+    .paywall-divider::before, .paywall-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .paywall-btn-stripe {
+      display: block; padding: 13px; border-radius: var(--r-pill);
+      background: #635BFF; color: var(--white);
+      font-size: 14px; font-weight: 700; text-decoration: none;
+    }
+    .paywall-close {
+      margin-top: 16px; font-size: 12px; color: var(--muted);
+      background: none; border: none; cursor: pointer;
+      font-family: inherit; text-decoration: underline;
+    }
+    .paywall-note { font-size: 11px; color: var(--muted); margin-top: 12px; }
   </style>
 </head>
 <body>
@@ -638,7 +738,11 @@
 <nav>
   <div class="nav-inner">
     <a href="/" class="nav-logo">JustiXia</a>
-    <a href="/" class="nav-back">← Retour</a>
+    <div style="display:flex;align-items:center;gap:10px">
+      <a href="/dashboard/" class="nav-login-link" id="navDashboard">Mon espace</a>
+      <a href="/dashboard/login.html" class="nav-login-link visible" id="navLogin">Connexion</a>
+      <a href="/" class="nav-back" id="navBack">← Retour</a>
+    </div>
   </div>
 </nav>
 
@@ -648,7 +752,7 @@
   <div id="formSection">
     <div class="page-header">
       <h1>Analyser mon document</h1>
-      <p>Résultat en 30 secondes, sans compte.</p>
+      <p>Résultat en 30 secondes. Compte gratuit ou paiement one-shot.</p>
     </div>
 
     <div class="card">
@@ -751,6 +855,7 @@
 
     <button class="new-btn" id="newAnalysisBtn">Analyser un autre document</button>
 
+
     <p class="disclaimer" style="margin-top:20px">
       JustiXia n'est pas un avocat. Pour des situations complexes, consultez un professionnel.<br />
       Sources : LEGIFRANCE · EUR-Lex
@@ -759,19 +864,117 @@
 
 </div>
 
-<script>
+<!-- Paywall modal -->
+<div class="paywall-overlay" id="paywallOverlay">
+  <div class="paywall-modal">
+    <div class="paywall-icon">
+      <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    </div>
+    <h2>Acces a JustiXia</h2>
+    <p>Cree un compte gratuit pour analyser tes documents, ou paie une fois sans inscription.</p>
+    <div class="paywall-stack">
+      <a href="/dashboard/register.html" class="paywall-btn-main">Creer un compte gratuit</a>
+      <a href="/dashboard/login.html?redirect=/app" class="paywall-btn-secondary">J'ai deja un compte</a>
+      <div class="paywall-divider">ou sans compte</div>
+      <a href="#" id="paywallStripeLink" class="paywall-btn-stripe">Payer 5€ — acces illimite</a>
+    </div>
+    <p class="paywall-note">Compte gratuit pour les associations et organisations partenaires</p>
+    <button class="paywall-close" id="paywallClose">Fermer</button>
+  </div>
+</div>
+
+<script type="module">
   const API = '/api';
   let selectedFile = null;
   let selectedLang = 'français';
   let startTime = null;
+  let isLoggedIn = false;
+  let stripeLink = '';
+
+  // ── Helpers ──────────────────────────────────────────────────────────────────
 
   function showToast(msg) {
     const t = document.getElementById('toast');
     t.textContent = msg;
     t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2500);
+    setTimeout(() => t.classList.remove('show'), 2800);
   }
 
+  function escapeHTML(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+  }
+
+  function formatSize(b) {
+    if (b < 1024) return b + ' o';
+    if (b < 1048576) return (b / 1024).toFixed(1) + ' Ko';
+    return (b / 1048576).toFixed(1) + ' Mo';
+  }
+
+  // ── Auth init ─────────────────────────────────────────────────────────────────
+  // Check for Stripe redirect (?paid=true) before anything else
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('paid') === 'true') {
+    localStorage.setItem('jx_paid', 'true');
+    window.history.replaceState({}, '', '/app');
+    showToast('Paiement confirme. Acces active.');
+  }
+
+  async function initAuth() {
+    try {
+      const resp = await fetch('/api/config');
+      if (!resp.ok) return;
+      const config = await resp.json();
+
+      stripeLink = config.stripe_link || '';
+      if (stripeLink) {
+        const redirectUrl = encodeURIComponent(window.location.origin + '/app?paid=true');
+        document.getElementById('paywallStripeLink').href = stripeLink + '?redirect_url=' + redirectUrl;
+      } else {
+        document.getElementById('paywallStripeLink').style.display = 'none';
+      }
+
+      const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
+      const sb = createClient(config.supabase_url, config.supabase_anon_key, {
+        auth: { storageKey: 'jx_session' },
+      });
+      const { data: { session } } = await sb.auth.getSession();
+      isLoggedIn = !!session;
+
+      if (isLoggedIn) {
+        document.getElementById('navLogin').style.display = 'none';
+        document.getElementById('navDashboard').classList.add('visible');
+        document.getElementById('submitBtn').textContent = 'Analyser mes droits';
+      }
+    } catch { /* offline or config missing, stay locked */ }
+  }
+
+  function isPaid() {
+    return localStorage.getItem('jx_paid') === 'true';
+  }
+
+  function canAnalyze() {
+    return isLoggedIn || isPaid();
+  }
+
+  // ── Paywall ───────────────────────────────────────────────────────────────────
+  function showPaywall() {
+    document.getElementById('paywallOverlay').classList.add('show');
+  }
+
+  document.getElementById('paywallClose').addEventListener('click', () => {
+    document.getElementById('paywallOverlay').classList.remove('show');
+  });
+
+  document.getElementById('paywallOverlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('paywallOverlay')) {
+      document.getElementById('paywallOverlay').classList.remove('show');
+    }
+  });
+
+  // ── File handling ─────────────────────────────────────────────────────────────
   document.querySelectorAll('.lang-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
@@ -787,16 +990,9 @@
     document.getElementById('filePreview').classList.add('show');
   }
 
-  function formatSize(b) {
-    if (b < 1024) return b + ' o';
-    if (b < 1048576) return (b / 1024).toFixed(1) + ' Ko';
-    return (b / 1048576).toFixed(1) + ' Mo';
-  }
-
   document.getElementById('fileInput').addEventListener('change', e => {
     if (e.target.files[0]) handleFile(e.target.files[0]);
   });
-
   document.getElementById('cameraInput').addEventListener('change', e => {
     if (e.target.files[0]) handleFile(e.target.files[0]);
   });
@@ -817,12 +1013,19 @@
     document.getElementById('filePreview').classList.remove('show');
   });
 
+  // ── Analyze ───────────────────────────────────────────────────────────────────
   document.getElementById('submitBtn').addEventListener('click', analyze);
 
   async function analyze() {
     const text = document.getElementById('textInput').value.trim();
     if (!selectedFile && !text) {
-      showToast('Ajoute un document ou décris ta situation');
+      showToast('Ajoute un document ou decris ta situation');
+      return;
+    }
+
+    // Gate: must be logged in or have paid
+    if (!canAnalyze()) {
+      showPaywall();
       return;
     }
 
@@ -845,7 +1048,7 @@
         const err = await resp.json().catch(() => ({}));
         throw new Error(
           resp.status === 429
-            ? 'Trop de requêtes. Attends quelques secondes et réessaie.'
+            ? 'Trop de requetes. Attends quelques secondes.'
             : (err.detail || 'Erreur serveur ' + resp.status)
         );
       }
@@ -857,32 +1060,34 @@
     }
   }
 
+  // ── Results ───────────────────────────────────────────────────────────────────
   function showResults(result) {
     const elapsed = ((Date.now() - startTime) / 1000).toFixed(1) + 's';
     document.getElementById('loadingSection').classList.remove('show');
 
-    document.getElementById('resultType').textContent = result.type_document || 'Document analysé';
+    document.getElementById('resultType').textContent = result.type_document || 'Document analyse';
     document.getElementById('resultSummary').textContent = result.resume || '';
     document.getElementById('resultTiming').textContent = elapsed;
 
-    const irregList = document.getElementById('irregList');
-    irregList.innerHTML = (result.irregularites || []).map(irr =>
-      `<div class="finding-row"><span class="finding-tag">${irr.article || ''}</span><span class="finding-desc">${irr.description || ''}</span></div>`
-    ).join('') || '<div class="right-item"><span class="right-check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Aucune irrégularité majeure détectée</div>';
+    document.getElementById('irregList').innerHTML =
+      (result.irregularites || []).map(irr =>
+        `<div class="finding-row"><span class="finding-tag">${escapeHTML(irr.article)}</span><span class="finding-desc">${escapeHTML(irr.description)}</span></div>`
+      ).join('') ||
+      '<div class="right-item"><span class="right-check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Aucune irregularite majeure detectee</div>';
 
-    document.getElementById('droitsList').innerHTML = (result.droits || []).map(d =>
-      `<div class="right-item"><span class="right-check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>${d}</div>`
-    ).join('');
+    document.getElementById('droitsList').innerHTML =
+      (result.droits || []).map(d =>
+        `<div class="right-item"><span class="right-check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>${escapeHTML(d)}</div>`
+      ).join('');
 
-    document.getElementById('delaisText').textContent = result.delais || 'À vérifier avec un professionnel.';
+    document.getElementById('delaisText').textContent = result.delais || 'A verifier avec un professionnel.';
 
     const lettre = result.lettre || '';
     document.getElementById('lettreText').textContent = lettre;
 
     document.getElementById('copyBtn').onclick = () => {
-      navigator.clipboard.writeText(lettre).then(() => showToast('Lettre copiée'));
+      navigator.clipboard.writeText(lettre).then(() => showToast('Lettre copiee'));
     };
-
     document.getElementById('downloadBtn').onclick = () => {
       const a = document.createElement('a');
       a.href = URL.createObjectURL(new Blob([lettre], { type: 'text/plain;charset=utf-8' }));
@@ -894,6 +1099,7 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
+  // ── New analysis ───────────────────────────────────────────────────────────────
   document.getElementById('newAnalysisBtn').addEventListener('click', () => {
     selectedFile = null;
     document.getElementById('fileInput').value = '';
@@ -905,6 +1111,8 @@
     ['step1','step2','step3','step4'].forEach(id => document.getElementById(id).classList.remove('show'));
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
+
+  initAuth();
 </script>
 </body>
 </html>

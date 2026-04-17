@@ -522,22 +522,26 @@
   </div>
 </nav>
 
-<script>
-  const token = localStorage.getItem('jx_token');
-  if (!token) window.location.href = '/dashboard/login.html';
+<script type="module">
+  import { requireAuth, logout as sbLogout, authHeaders } from '/dashboard/_auth.js';
 
-  const email = localStorage.getItem('jx_email') || '';
-  document.getElementById('userEmail').textContent = email;
-  document.getElementById('userAvatar').textContent = email.charAt(0).toUpperCase() || 'U';
+  let SESSION = null;
 
-  function logout() {
-    localStorage.removeItem('jx_token');
-    localStorage.removeItem('jx_email');
-    window.location.href = '/dashboard/login.html';
+  const params = new URLSearchParams(window.location.search);
+  const caseId = params.get('id');
+  if (!caseId) window.location.href = '/dashboard/';
+
+  let currentCase = null;
+
+  function escapeHTML(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
   }
-
-  document.getElementById('logoutBtn').addEventListener('click', logout);
-  document.getElementById('mobileLogout').addEventListener('click', logout);
 
   function showToast(msg) {
     const t = document.getElementById('toast');
@@ -545,12 +549,6 @@
     t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 2500);
   }
-
-  const params = new URLSearchParams(window.location.search);
-  const caseId = params.get('id');
-  if (!caseId) window.location.href = '/dashboard/';
-
-  let currentCase = null;
 
   function formatDate(iso) {
     if (!iso) return '';
@@ -571,12 +569,12 @@
 
     const irregs = c.irregularites || [];
     document.getElementById('irregList').innerHTML = irregs.length
-      ? irregs.map(i => `<div class="finding-row"><span class="finding-tag">${i.article || ''}</span><span class="finding-desc">${i.description || ''}</span></div>`).join('')
+      ? irregs.map(i => `<div class="finding-row"><span class="finding-tag">${escapeHTML(i.article)}</span><span class="finding-desc">${escapeHTML(i.description)}</span></div>`).join('')
       : '<p style="font-size:14px;color:var(--muted)">Aucune irrégularité majeure détectée.</p>';
 
     const droits = c.droits || [];
     document.getElementById('droitsList').innerHTML = droits.length
-      ? droits.map(d => `<div class="right-item"><span class="right-check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>${d}</div>`).join('')
+      ? droits.map(d => `<div class="right-item"><span class="right-check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>${escapeHTML(d)}</div>`).join('')
       : '<p style="font-size:14px;color:var(--muted)">Aucun droit spécifique identifié.</p>';
 
     document.getElementById('delaisText').textContent = c.delais || 'À vérifier avec un professionnel.';
@@ -586,9 +584,9 @@
   async function loadCase() {
     try {
       const resp = await fetch(`/api/cases/${caseId}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: authHeaders(SESSION),
       });
-      if (resp.status === 401) { logout(); return; }
+      if (resp.status === 401) { sbLogout(); return; }
       if (resp.status === 404) { window.location.href = '/dashboard/'; return; }
       renderCase(await resp.json());
     } catch {
@@ -600,7 +598,7 @@
     try {
       const resp = await fetch(`/api/cases/${caseId}`, {
         method: 'PATCH',
-        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        headers: { ...authHeaders(SESSION), 'Content-Type': 'application/json' },
         body: JSON.stringify({ status }),
       });
       if (!resp.ok) throw new Error();
@@ -617,7 +615,7 @@
     try {
       const resp = await fetch(`/api/cases/${caseId}`, {
         method: 'PATCH',
-        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        headers: { ...authHeaders(SESSION), 'Content-Type': 'application/json' },
         body: JSON.stringify({ notes }),
       });
       if (!resp.ok) throw new Error();
@@ -628,6 +626,17 @@
       showToast('Erreur lors de la sauvegarde.');
     }
   }
+
+  async function init() {
+    SESSION = await requireAuth();
+    const email = SESSION.user?.email || '';
+    document.getElementById('userEmail').textContent = email;
+    document.getElementById('userAvatar').textContent = email.charAt(0).toUpperCase() || 'U';
+    loadCase();
+  }
+
+  document.getElementById('logoutBtn').addEventListener('click', sbLogout);
+  document.getElementById('mobileLogout').addEventListener('click', sbLogout);
 
   document.getElementById('saveStatusBtn').addEventListener('click', () => {
     saveStatus(document.getElementById('statusSelectMobile').value);
@@ -656,7 +665,7 @@
     a.click();
   });
 
-  loadCase();
+  init();
 </script>
 </body>
 </html>

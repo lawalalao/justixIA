@@ -602,22 +602,25 @@
   </div>
 </nav>
 
-<script>
-  const token = localStorage.getItem('jx_token');
-  if (!token) window.location.href = '/dashboard/login.html';
+<script type="module">
+  import { requireAuth, logout as sbLogout, authHeaders } from '/dashboard/_auth.js';
 
-  const email = localStorage.getItem('jx_email') || '';
-  document.getElementById('userEmail').textContent = email;
-  document.getElementById('userAvatar').textContent = email.charAt(0).toUpperCase() || 'U';
+  let SESSION = null;
 
-  function logout() {
-    localStorage.removeItem('jx_token');
-    localStorage.removeItem('jx_email');
-    window.location.href = '/dashboard/login.html';
+  async function init() {
+    SESSION = await requireAuth();
+    const email = SESSION.user?.email || '';
+    document.getElementById('userEmail').textContent = email;
+    document.getElementById('userAvatar').textContent = email.charAt(0).toUpperCase() || 'U';
+    loadCases();
   }
+
+  async function logout() { await sbLogout(); }
 
   document.getElementById('logoutBtn').addEventListener('click', logout);
   document.getElementById('mobileLogout').addEventListener('click', logout);
+
+  init();
 
   const STATUT_LABELS = { open: 'Ouvert', progress: 'En cours', resolved: 'Résolu' };
   const STATUT_CLASS  = { open: 'status-open', progress: 'status-progress', resolved: 'status-resolved' };
@@ -626,6 +629,16 @@
   let filtered = [];
   let page = 1;
   const perPage = 10;
+
+  function escapeHTML(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
 
   function formatDate(iso) {
     if (!iso) return '-';
@@ -646,12 +659,12 @@
     }
 
     tbody.innerHTML = slice.map(c => `
-      <tr onclick="window.location='/dashboard/case.html?id=${c.id}'">
-        <td class="td-type">${c.type_document || 'Document'}<small>${c.resume || ''}</small></td>
+      <tr onclick="window.location='/dashboard/case.html?id=${escapeHTML(c.id)}'">
+        <td class="td-type">${escapeHTML(c.type_document) || 'Document'}<small>${escapeHTML(c.resume) || ''}</small></td>
         <td>${formatDate(c.created_at)}</td>
-        <td><span class="lang-pill">${c.langue || 'fr'}</span></td>
+        <td><span class="lang-pill">${escapeHTML(c.langue) || 'fr'}</span></td>
         <td><span class="status-pill ${STATUT_CLASS[c.status] || 'status-open'}">${STATUT_LABELS[c.status] || 'Ouvert'}</span></td>
-        <td><a class="action-link" href="/dashboard/case.html?id=${c.id}" onclick="event.stopPropagation()">Voir</a></td>
+        <td><a class="action-link" href="/dashboard/case.html?id=${escapeHTML(c.id)}" onclick="event.stopPropagation()">Voir</a></td>
       </tr>
     `).join('');
 
@@ -684,7 +697,7 @@
   async function loadCases() {
     try {
       const resp = await fetch('/api/cases', {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: authHeaders(SESSION)
       });
       if (resp.status === 401) { logout(); return; }
       const data = await resp.json();

@@ -104,6 +104,25 @@
 
     .nav-links a:hover { color: var(--pink); }
 
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-login {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--body);
+      text-decoration: none;
+      padding: 9px 18px;
+      border-radius: var(--radius-pill);
+      border: 1.5px solid var(--border);
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .nav-login:hover { border-color: var(--pink); color: var(--pink); }
+
     .nav-cta {
       background: var(--pink-grad);
       color: var(--white) !important;
@@ -111,6 +130,7 @@
       border-radius: var(--radius-pill);
       font-weight: 700 !important;
       font-size: 14px !important;
+      text-decoration: none;
       box-shadow: var(--pink-glow);
       transition: transform 0.2s, box-shadow 0.2s !important;
     }
@@ -119,6 +139,198 @@
       transform: translateY(-1px);
       box-shadow: var(--pink-glow-lg) !important;
     }
+
+    /* ── SECTION ASSOCIATIONS ── */
+    .asso-section {
+      background: linear-gradient(135deg, #1A1A2E 0%, #0F0F1A 100%);
+      padding: 80px 32px;
+    }
+
+    .asso-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+    }
+
+    .asso-tag {
+      display: inline-block;
+      background: rgba(255,45,120,0.15);
+      color: #FF7AAB;
+      border: 1px solid rgba(255,45,120,0.3);
+      padding: 5px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .asso-inner h2 {
+      color: var(--white);
+      font-size: clamp(28px, 3vw, 38px);
+      margin-bottom: 16px;
+    }
+
+    .asso-inner p {
+      color: #AAAACC;
+      font-size: 16px;
+      line-height: 1.7;
+      margin-bottom: 32px;
+    }
+
+    .asso-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 36px;
+    }
+
+    .asso-features li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      color: #CCCCDD;
+    }
+
+    .asso-check {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(255,45,120,0.2);
+      border: 1px solid rgba(255,45,120,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .asso-check svg { width: 10px; height: 10px; stroke: #FF7AAB; stroke-width: 2.5; fill: none; }
+
+    .asso-cta-row { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    .btn-asso-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--pink-grad);
+      color: var(--white);
+      padding: 14px 28px;
+      border-radius: var(--radius-pill);
+      font-weight: 700;
+      font-size: 15px;
+      text-decoration: none;
+      box-shadow: var(--pink-glow);
+      transition: transform 0.2s;
+    }
+
+    .btn-asso-primary:hover { transform: translateY(-1px); }
+
+    .btn-asso-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      color: #AAAACC;
+      padding: 13px 24px;
+      border-radius: var(--radius-pill);
+      font-weight: 600;
+      font-size: 15px;
+      text-decoration: none;
+      border: 1.5px solid rgba(255,255,255,0.15);
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .btn-asso-outline:hover { border-color: rgba(255,255,255,0.4); color: var(--white); }
+
+    .asso-mockup {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius-card);
+      padding: 24px;
+    }
+
+    .asso-mockup-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .asso-mockup-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .asso-stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .asso-stat-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px;
+      padding: 16px;
+    }
+
+    .asso-stat-num {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--white);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .asso-stat-label {
+      font-size: 11px;
+      color: #6B6B9B;
+      font-weight: 500;
+    }
+
+    .asso-case-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+
+    .asso-case-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--pink);
+      flex-shrink: 0;
+    }
+
+    .asso-case-label {
+      font-size: 13px;
+      color: #AAAACC;
+      flex: 1;
+    }
+
+    .asso-case-badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+    }
+
+    .badge-open { background: rgba(255,45,120,0.15); color: #FF7AAB; }
+    .badge-ok { background: rgba(22,163,74,0.15); color: #4ADE80; }
 
     /* ── HERO ── */
     .hero {
@@ -989,9 +1201,15 @@
       .footer-inner { grid-template-columns: 1fr 1fr; }
     }
 
+    @media (max-width: 900px) {
+      .asso-inner { grid-template-columns: 1fr; gap: 40px; }
+      .asso-mockup { display: none; }
+    }
+
     @media (max-width: 600px) {
       section { padding: 64px 20px; }
       .hero { padding: 90px 20px 72px; }
+      .asso-section { padding: 64px 20px; }
       .container, .nav-inner, footer { padding-left: 20px; padding-right: 20px; }
       .nav-links { display: none; }
       .footer-inner { grid-template-columns: 1fr; gap: 32px; }
@@ -1009,9 +1227,13 @@
       <li><a href="#comment">Comment ça marche</a></li>
       <li><a href="#documents">Documents</a></li>
       <li><a href="#demo">Démo</a></li>
+      <li><a href="#associations">Associations</a></li>
       <li><a href="#tarifs">Tarifs</a></li>
-      <li><a href="/app" class="nav-cta">Analyser mon document</a></li>
     </ul>
+    <div class="nav-actions">
+      <a href="/dashboard/login.html" class="nav-login">Connexion</a>
+      <a href="/app" class="nav-cta">Analyser un document</a>
+    </div>
   </div>
 </nav>
 
@@ -1025,10 +1247,10 @@
       Envoie le document — on t'explique tes droits et on écrit la réponse à ta place.
     </p>
     <div class="hero-actions">
-      <a href="/app" class="btn-primary">Analyser mon document gratuitement</a>
+      <a href="/app" class="btn-primary">Analyser mon document</a>
       <a href="https://t.me/JustiXiaBot" class="btn-ghost">Essayer sur Telegram</a>
     </div>
-    <p class="hero-trust">Sans compte · Sans carte bancaire · Résultat en 30 secondes</p>
+    <p class="hero-trust">Compte gratuit pour les associations · Ou 5€ one-shot · Résultat en 30 secondes</p>
   </div>
 </section>
 
@@ -1183,9 +1405,9 @@
         <div class="plan-price">0<sup>€</sup></div>
         <div class="plan-period">pour commencer</div>
         <ul class="plan-features">
-          <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>1 analyse de document</li>
+          <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Analyses illimitées</li>
           <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Explication des droits</li>
-          <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Sans compte requis</li>
+          <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Lettres de réponse générées</li>
         </ul>
         <a href="/app" class="plan-btn plan-btn-outline">Commencer gratuitement</a>
       </div>
@@ -1213,7 +1435,7 @@
           <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Intégration API</li>
           <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Accompagnement dédié</li>
         </ul>
-        <a href="mailto:contact@justixia.com" class="plan-btn plan-btn-ghost">Contactez-nous</a>
+        <a href="/dashboard/register.html" class="plan-btn plan-btn-ghost">Créer un compte</a>
       </div>
     </div>
   </div>
@@ -1253,6 +1475,61 @@
       <span class="partner-pill">La Cimade</span>
       <span class="partner-pill">ADIL</span>
       <span class="partner-pill">Emmaüs Connect</span>
+    </div>
+  </div>
+</section>
+
+<!-- ASSOCIATIONS -->
+<section class="asso-section" id="associations">
+  <div class="asso-inner">
+    <div class="reveal">
+      <span class="asso-tag">Espace associations</span>
+      <h2>Votre organisation accompagne des personnes vulnérables ?</h2>
+      <p>JustiXia met à disposition un espace de gestion dédié pour les associations et partenaires. Classez les dossiers par thème, suivez leur avancement, sans jamais avoir accès au contenu des documents.</p>
+      <ul class="asso-features">
+        <li><span class="asso-check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Tableau de bord de gestion des dossiers</li>
+        <li><span class="asso-check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Suivi des statuts (ouvert, en cours, résolu)</li>
+        <li><span class="asso-check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Notes internes par dossier</li>
+        <li><span class="asso-check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Confidentialité RGPD — aucun contenu stocké côté admin</li>
+        <li><span class="asso-check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Accès gratuit pour les partenaires associatifs</li>
+      </ul>
+      <div class="asso-cta-row">
+        <a href="/dashboard/register.html" class="btn-asso-primary">Créer un espace gratuit</a>
+        <a href="/dashboard/login.html" class="btn-asso-outline">Se connecter</a>
+      </div>
+    </div>
+    <div class="asso-mockup reveal">
+      <div class="asso-mockup-header">
+        <div class="asso-mockup-dot" style="background:#FF2D78"></div>
+        <div class="asso-mockup-dot" style="background:#FFB800;margin-left:4px"></div>
+        <div class="asso-mockup-dot" style="background:#16A34A;margin-left:4px"></div>
+        <span style="font-size:12px;color:#6B6B9B;margin-left:8px">dashboard.justixia.fr</span>
+      </div>
+      <div class="asso-stat-grid">
+        <div class="asso-stat-card">
+          <div class="asso-stat-num">24</div>
+          <div class="asso-stat-label">Dossiers actifs</div>
+        </div>
+        <div class="asso-stat-card">
+          <div class="asso-stat-num">8</div>
+          <div class="asso-stat-label">Résolus ce mois</div>
+        </div>
+      </div>
+      <div class="asso-case-row">
+        <div class="asso-case-dot"></div>
+        <div class="asso-case-label">Expulsion locative — Bail</div>
+        <span class="asso-case-badge badge-open">Ouvert</span>
+      </div>
+      <div class="asso-case-row">
+        <div class="asso-case-dot"></div>
+        <div class="asso-case-label">OQTF — Préfecture</div>
+        <span class="asso-case-badge badge-open">En cours</span>
+      </div>
+      <div class="asso-case-row">
+        <div class="asso-case-dot" style="background:#16A34A"></div>
+        <div class="asso-case-label">Licenciement abusif</div>
+        <span class="asso-case-badge badge-ok">Résolu</span>
+      </div>
     </div>
   </div>
 </section>
