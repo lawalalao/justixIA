@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JustiXia — Analyser mon document</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --pink: #FF2D78;
+      --pink-2: #FF5CA8;
+      --pink-grad: linear-gradient(135deg, #FF2D78, #FF5CA8);
+      --pink-glow: 0 4px 20px rgba(255,45,120,0.32);
+      --pink-glow-lg: 0 8px 32px rgba(255,45,120,0.4);
+      --pink-bg: #FFF5F8;
+      --pink-tag-bg: #FFE8EF;
+      --navy: #0F0F1A;
+      --navy-2: #1A1A2E;
+      --body: #333344;
+      --muted: #6B6B7B;
+      --white: #FFFFFF;
+      --grey-bg: #F8F8FB;
+      --border: #EBEBEB;
+      --border-light: #F0F0F8;
+      --radius-pill: 9999px;
+      --radius-card: 16px;
+      --radius-sm: 12px;
+      --shadow-card: 0 2px 20px rgba(0,0,0,0.06);
+      --shadow-hover: 0 8px 32px rgba(0,0,0,0.12);
+      --green: #16A34A;
+      --green-bg: #F0FDF4;
+      --green-border: #BBF7D0;
+      --blue: #1E40AF;
+      --blue-bg: #EFF6FF;
+      --blue-border: #BFDBFE;
+      --red-bg: #FFF5F8;
+      --red-border: rgba(255,45,120,0.15);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--grey-bg);
+      color: var(--body);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    nav {
+      background: var(--white);
+      box-shadow: 0 1px 0 rgba(0,0,0,0.08);
+      height: 68px;
+      display: flex;
+      align-items: center;
+      padding: 0 32px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .nav-inner {
+      max-width: 840px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-size: 20px;
+      font-weight: 800;
+      background: var(--pink-grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-decoration: none;
+    }
+
+    .nav-back {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .nav-back:hover { color: var(--body); }
+
+    /* MAIN */
+    .page {
+      max-width: 840px;
+      margin: 0 auto;
+      padding: 52px 24px 80px;
+    }
+
+    .page-header { margin-bottom: 36px; }
+
+    .page-header h1 {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--navy-2);
+      letter-spacing: -1px;
+      margin-bottom: 6px;
+    }
+
+    .page-header p {
+      font-size: 16px;
+      color: var(--muted);
+    }
+
+    /* CARD */
+    .card {
+      background: var(--white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-card);
+      padding: 32px;
+      box-shadow: var(--shadow-card);
+      margin-bottom: 20px;
+    }
+
+    .card-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    /* LANG */
+    .lang-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .lang-btn {
+      padding: 7px 16px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border);
+      background: var(--white);
+      color: var(--body);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+      font-family: inherit;
+    }
+
+    .lang-btn:hover { border-color: var(--pink); color: var(--pink); }
+    .lang-btn.active {
+      border-color: var(--pink);
+      color: var(--pink);
+      background: var(--pink-tag-bg);
+      font-weight: 600;
+    }
+
+    /* UPLOAD */
+    .upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-sm);
+      padding: 56px 32px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      position: relative;
+      background: var(--grey-bg);
+    }
+
+    .upload-zone:hover, .upload-zone.drag {
+      border-color: var(--pink);
+      background: var(--pink-bg);
+    }
+
+    .upload-zone input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+
+    .upload-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--navy-2);
+      margin-bottom: 6px;
+    }
+
+    .upload-hint {
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .upload-hint a { color: var(--pink); font-weight: 600; }
+
+    /* FILE PREVIEW */
+    .file-preview {
+      display: none;
+      align-items: center;
+      gap: 14px;
+      background: var(--green-bg);
+      border: 1px solid var(--green-border);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      margin-top: 12px;
+    }
+
+    .file-preview.show { display: flex; }
+
+    .file-info { flex: 1; }
+    .file-name { font-size: 14px; font-weight: 600; color: var(--navy-2); }
+    .file-size { font-size: 12px; color: var(--muted); }
+
+    .file-remove {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 16px;
+      padding: 4px;
+      transition: color 0.2s;
+      line-height: 1;
+    }
+
+    .file-remove:hover { color: var(--pink); }
+
+    /* DIVIDER */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 20px 0;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* TEXTAREA */
+    textarea {
+      width: 100%;
+      background: var(--grey-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--body);
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      padding: 16px 20px;
+      resize: vertical;
+      min-height: 110px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    textarea::placeholder { color: #AAAABC; }
+
+    textarea:focus {
+      border-color: var(--pink);
+      box-shadow: 0 0 0 3px rgba(255,45,120,0.1);
+      background: var(--white);
+    }
+
+    /* SUBMIT */
+    .submit-btn {
+      width: 100%;
+      padding: 17px;
+      border-radius: var(--radius-pill);
+      border: none;
+      background: var(--pink-grad);
+      color: var(--white);
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: var(--pink-glow);
+      font-family: inherit;
+      margin-top: 4px;
+    }
+
+    .submit-btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: var(--pink-glow-lg);
+    }
+
+    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* DISCLAIMER */
+    .disclaimer {
+      font-size: 12px;
+      color: #AAAABC;
+      text-align: center;
+      line-height: 1.6;
+      margin-top: 16px;
+    }
+
+    /* LOADING */
+    .loading-card {
+      display: none;
+      background: var(--white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-card);
+      padding: 64px 32px;
+      box-shadow: var(--shadow-card);
+      text-align: center;
+    }
+
+    .loading-card.show { display: block; }
+
+    .spinner {
+      width: 44px;
+      height: 44px;
+      border: 3px solid var(--border);
+      border-top-color: var(--pink);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 24px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-title { font-size: 18px; font-weight: 700; color: var(--navy-2); margin-bottom: 6px; }
+    .loading-sub { font-size: 14px; color: var(--muted); margin-bottom: 28px; }
+
+    .loading-steps { display: flex; flex-direction: column; gap: 8px; max-width: 320px; margin: 0 auto; text-align: left; }
+
+    .loading-step {
+      font-size: 14px;
+      color: var(--muted);
+      opacity: 0;
+      transition: opacity 0.4s;
+      padding-left: 16px;
+      position: relative;
+    }
+
+    .loading-step::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 8px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--border);
+      transition: background 0.3s;
+    }
+
+    .loading-step.show { opacity: 1; }
+    .loading-step.show::before { background: var(--pink); }
+
+    /* RESULTS */
+    .results { display: none; }
+    .results.show { display: block; }
+
+    .result-header {
+      background: var(--white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-card);
+      padding: 28px 32px;
+      box-shadow: var(--shadow-card);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .result-type { font-size: 24px; font-weight: 800; color: var(--navy-2); letter-spacing: -0.5px; }
+    .result-summary { font-size: 15px; color: var(--muted); margin-top: 6px; line-height: 1.6; }
+
+    .timing-pill {
+      background: var(--green-bg);
+      border: 1px solid var(--green-border);
+      color: var(--green);
+      padding: 5px 12px;
+      border-radius: var(--radius-pill);
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* FINDINGS */
+    .result-section {
+      background: var(--white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-card);
+      padding: 28px 32px;
+      box-shadow: var(--shadow-card);
+      margin-bottom: 20px;
+    }
+
+    .result-section-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .finding-row {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      gap: 12px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      background: var(--red-bg);
+      border: 1px solid var(--red-border);
+      border-radius: var(--radius-sm);
+    }
+
+    .finding-row:last-child { margin-bottom: 0; }
+
+    .finding-tag {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--pink);
+      padding-top: 1px;
+    }
+
+    .finding-desc {
+      font-size: 14px;
+      color: var(--body);
+      line-height: 1.55;
+    }
+
+    .right-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border-light);
+      font-size: 14px;
+      color: var(--body);
+      line-height: 1.55;
+    }
+
+    .right-item:last-child { border-bottom: none; padding-bottom: 0; }
+
+    .right-check {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--pink-tag-bg);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .right-check svg {
+      width: 10px;
+      height: 10px;
+      stroke: var(--pink);
+      stroke-width: 2.5;
+      fill: none;
+    }
+
+    .deadline-box {
+      background: #FFFBEB;
+      border: 1px solid #FDE68A;
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+      font-size: 14px;
+      color: #92400E;
+      line-height: 1.6;
+    }
+
+    /* LETTER */
+    .letter-text {
+      background: var(--grey-bg);
+      border-radius: var(--radius-sm);
+      padding: 28px;
+      font-size: 14px;
+      line-height: 1.85;
+      white-space: pre-wrap;
+      color: var(--body);
+      font-family: Georgia, 'Times New Roman', serif;
+      max-height: 480px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+    }
+
+    .letter-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 20px;
+      border-radius: var(--radius-pill);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      border: none;
+      font-family: inherit;
+    }
+
+    .action-copy {
+      background: var(--white);
+      border: 1px solid var(--border);
+      color: var(--body);
+    }
+
+    .action-copy:hover { border-color: var(--pink); color: var(--pink); }
+
+    .action-download {
+      background: var(--pink-grad);
+      color: var(--white);
+      box-shadow: var(--pink-glow);
+    }
+
+    .action-download:hover { transform: translateY(-1px); box-shadow: var(--pink-glow-lg); }
+
+    .new-btn {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: var(--radius-pill);
+      border: 2px solid var(--border);
+      background: transparent;
+      color: var(--body);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+      font-family: inherit;
+    }
+
+    .new-btn:hover { border-color: var(--pink); color: var(--pink); }
+
+    @media (max-width: 600px) {
+      nav { padding: 0 20px; }
+      .page { padding: 32px 16px 60px; }
+      .card { padding: 24px 20px; }
+      .result-section { padding: 20px; }
+      .result-header { padding: 20px; }
+      .finding-row { grid-template-columns: 1fr; gap: 4px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">JustiXia</a>
+    <a href="/" class="nav-back">← Retour</a>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- FORM -->
+  <div id="formSection">
+    <div class="page-header">
+      <h1>Analyser mon document</h1>
+      <p>Upload ton document ou colle le texte. Résultat en 30 secondes.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Langue de réponse</div>
+      <div class="lang-grid">
+        <button class="lang-btn active" data-lang="français">Français</button>
+        <button class="lang-btn" data-lang="anglais">English</button>
+        <button class="lang-btn" data-lang="arabe">العربية</button>
+        <button class="lang-btn" data-lang="roumain">Română</button>
+        <button class="lang-btn" data-lang="portugais">Português</button>
+        <button class="lang-btn" data-lang="espagnol">Español</button>
+        <button class="lang-btn" data-lang="wolof">Wolof</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Ton document</div>
+
+      <div class="upload-zone" id="dropZone">
+        <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png,.webp,.heic" />
+        <div class="upload-title">Glisse ton document ici</div>
+        <div class="upload-hint">PDF ou photo de la lettre — <a>parcourir</a></div>
+      </div>
+
+      <div class="file-preview" id="filePreview">
+        <div class="file-info">
+          <div class="file-name" id="fileName"></div>
+          <div class="file-size" id="fileSize"></div>
+        </div>
+        <button class="file-remove" id="fileRemove">✕</button>
+      </div>
+
+      <div class="divider">ou colle le texte</div>
+
+      <textarea id="textInput" placeholder="Colle ici le contenu de la lettre ou du document que tu as reçu..."></textarea>
+
+      <button class="submit-btn" id="submitBtn" style="margin-top:20px">
+        Analyser mes droits gratuitement
+      </button>
+    </div>
+
+    <p class="disclaimer">
+      Vos documents ne sont jamais stockés. JustiXia n'est pas un cabinet d'avocats — les analyses sont indicatives.<br />
+      Sources : LEGIFRANCE · EUR-Lex
+    </p>
+  </div>
+
+  <!-- LOADING -->
+  <div class="loading-card" id="loadingSection">
+    <div class="spinner"></div>
+    <div class="loading-title">Analyse en cours</div>
+    <div class="loading-sub">JustiXia lit ton document et identifie tes droits</div>
+    <div class="loading-steps">
+      <div class="loading-step" id="step1">Lecture du document</div>
+      <div class="loading-step" id="step2">Identification du type de document</div>
+      <div class="loading-step" id="step3">Vérification des irrégularités légales</div>
+      <div class="loading-step" id="step4">Rédaction de ta lettre de réponse</div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="results" id="resultsSection">
+
+    <div class="result-header">
+      <div>
+        <div class="result-type" id="resultType"></div>
+        <div class="result-summary" id="resultSummary"></div>
+      </div>
+      <div class="timing-pill" id="resultTiming"></div>
+    </div>
+
+    <div class="result-section" id="irregSection">
+      <div class="result-section-title">Irrégularités détectées</div>
+      <div id="irregList"></div>
+    </div>
+
+    <div class="result-section" id="droitsSection">
+      <div class="result-section-title">Tes droits</div>
+      <div id="droitsList"></div>
+    </div>
+
+    <div class="result-section">
+      <div class="result-section-title">Délais légaux</div>
+      <div class="deadline-box" id="delaisText"></div>
+    </div>
+
+    <div class="result-section">
+      <div class="result-section-title">Lettre de réponse générée</div>
+      <div class="letter-text" id="lettreText"></div>
+      <div class="letter-actions">
+        <button class="action-btn action-copy" id="copyBtn">Copier la lettre</button>
+        <button class="action-btn action-download" id="downloadBtn">Télécharger (.txt)</button>
+      </div>
+    </div>
+
+    <button class="new-btn" id="newAnalysisBtn">Analyser un autre document</button>
+
+    <p class="disclaimer" style="margin-top:24px">
+      JustiXia n'est pas un avocat. Pour des situations complexes, consultez un professionnel.<br />
+      Sources : LEGIFRANCE · EUR-Lex
+    </p>
+  </div>
+
+</div>
+
+<script>
+  const API = '/api';
+  let selectedFile = null;
+  let selectedLang = 'français';
+  let startTime = null;
+
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedLang = btn.dataset.lang;
+    });
+  });
+
+  const fileInput = document.getElementById('fileInput');
+  const dropZone = document.getElementById('dropZone');
+  const filePreview = document.getElementById('filePreview');
+
+  fileInput.addEventListener('change', () => { if (fileInput.files[0]) handleFile(fileInput.files[0]); });
+
+  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag'));
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropZone.classList.remove('drag');
+    if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+  });
+
+  function handleFile(file) {
+    selectedFile = file;
+    document.getElementById('fileName').textContent = file.name;
+    document.getElementById('fileSize').textContent = formatSize(file.size);
+    filePreview.classList.add('show');
+    document.getElementById('textInput').value = '';
+  }
+
+  function formatSize(b) {
+    if (b < 1024) return b + ' o';
+    if (b < 1048576) return (b / 1024).toFixed(1) + ' Ko';
+    return (b / 1048576).toFixed(1) + ' Mo';
+  }
+
+  document.getElementById('fileRemove').addEventListener('click', () => {
+    selectedFile = null;
+    fileInput.value = '';
+    filePreview.classList.remove('show');
+  });
+
+  document.getElementById('submitBtn').addEventListener('click', analyze);
+
+  async function analyze() {
+    const text = document.getElementById('textInput').value.trim();
+    if (!selectedFile && !text) { alert('Envoie un document ou colle du texte pour commencer.'); return; }
+
+    document.getElementById('formSection').style.display = 'none';
+    document.getElementById('loadingSection').classList.add('show');
+    startTime = Date.now();
+
+    ['step1','step2','step3','step4'].forEach((id, i) => {
+      setTimeout(() => document.getElementById(id).classList.add('show'), i * 4500);
+    });
+
+    const form = new FormData();
+    if (selectedFile) form.append('file', selectedFile);
+    if (text) form.append('text', text);
+    form.append('langue', selectedLang);
+
+    try {
+      const resp = await fetch(`${API}/analyze`, { method: 'POST', body: form });
+      if (!resp.ok) throw new Error('Erreur serveur ' + resp.status);
+      showResults(await resp.json());
+    } catch (err) {
+      document.getElementById('loadingSection').classList.remove('show');
+      document.getElementById('formSection').style.display = 'block';
+      alert('Erreur : ' + err.message + '\nVérifie que le serveur est démarré (./start.sh).');
+    }
+  }
+
+  function showResults(result) {
+    const elapsed = ((Date.now() - startTime) / 1000).toFixed(1) + 's';
+    document.getElementById('loadingSection').classList.remove('show');
+
+    document.getElementById('resultType').textContent = result.type_document || 'Document analysé';
+    document.getElementById('resultSummary').textContent = result.resume || '';
+    document.getElementById('resultTiming').textContent = 'Analysé en ' + elapsed;
+
+    const irregList = document.getElementById('irregList');
+    irregList.innerHTML = '';
+    (result.irregularites || []).forEach(irr => {
+      irregList.innerHTML += `<div class="finding-row"><span class="finding-tag">${irr.article || ''}</span><span class="finding-desc">${irr.description || ''}</span></div>`;
+    });
+    if (!result.irregularites?.length) {
+      irregList.innerHTML = '<div class="right-item"><span class="right-check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Aucune irrégularité majeure détectée</div>';
+    }
+
+    const droitsList = document.getElementById('droitsList');
+    droitsList.innerHTML = '';
+    (result.droits || []).forEach(d => {
+      droitsList.innerHTML += `<div class="right-item"><span class="right-check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>${d}</div>`;
+    });
+
+    document.getElementById('delaisText').textContent = result.delais || 'À vérifier avec un professionnel.';
+
+    const lettre = result.lettre || '';
+    document.getElementById('lettreText').textContent = lettre;
+
+    document.getElementById('copyBtn').onclick = () => {
+      navigator.clipboard.writeText(lettre);
+      document.getElementById('copyBtn').textContent = 'Copié !';
+      setTimeout(() => document.getElementById('copyBtn').textContent = 'Copier la lettre', 2000);
+    };
+
+    document.getElementById('downloadBtn').onclick = () => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([lettre], { type: 'text/plain;charset=utf-8' }));
+      a.download = 'lettre_justixia.txt';
+      a.click();
+    };
+
+    document.getElementById('resultsSection').classList.add('show');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  document.getElementById('newAnalysisBtn').addEventListener('click', () => {
+    selectedFile = null;
+    fileInput.value = '';
+    filePreview.classList.remove('show');
+    document.getElementById('textInput').value = '';
+    document.getElementById('resultsSection').classList.remove('show');
+    document.getElementById('formSection').style.display = 'block';
+    ['step1','step2','step3','step4'].forEach(id => document.getElementById(id).classList.remove('show'));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+</script>
+</body>
+</html>
