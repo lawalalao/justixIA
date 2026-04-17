@@ -113,17 +113,8 @@
 
   <a href="/" class="back-link">Retour au site</a>
 
-  <script>
-    let supabaseClient = null;
-
-    async function initSupabase() {
-      const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
-      const resp = await fetch('/api/config');
-      const config = await resp.json();
-      supabaseClient = createClient(config.supabase_url, config.supabase_anon_key, {
-        auth: { persistSession: true, storageKey: 'jx_admin_session' },
-      });
-    }
+  <script type="module">
+    import { getSupabase } from '/dashboard/_auth.js';
 
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -137,8 +128,8 @@
       const password = document.getElementById('password').value;
 
       try {
-        if (!supabaseClient) await initSupabase();
-        const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+        const sb = await getSupabase();
+        const { data, error } = await sb.auth.signInWithPassword({ email, password });
         if (error) throw error;
 
         // Verify admin access before redirecting
@@ -147,8 +138,12 @@
         });
 
         if (resp.status === 403) {
-          await supabaseClient.auth.signOut();
+          await sb.auth.signOut();
           throw new Error('Accès refusé. Ce compte n\'a pas les droits d\'administration.');
+        }
+
+        if (!resp.ok) {
+          throw new Error('Erreur de vérification. Réessaie.');
         }
 
         window.location.href = '/admin/';
@@ -161,8 +156,6 @@
         btn.textContent = 'Se connecter';
       }
     });
-
-    initSupabase();
   </script>
 </body>
 </html>
