@@ -758,7 +758,13 @@
 
     try {
       const resp = await fetch(`${API}/analyze`, { method: 'POST', body: form });
-      if (!resp.ok) throw new Error('Erreur serveur ' + resp.status);
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({}));
+        const msg = resp.status === 429
+          ? 'Trop de requêtes. Attends quelques secondes et réessaie.'
+          : (err.detail || 'Erreur serveur ' + resp.status);
+        throw new Error(msg);
+      }
       showResults(await resp.json());
     } catch (err) {
       document.getElementById('loadingSection').classList.remove('show');

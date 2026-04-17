@@ -3,6 +3,7 @@ import base64
 import json
 import anthropic
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -108,12 +109,23 @@ async def analyze_document(
         "text": f"Analyse ce document en droit français/européen. Réponds en {langue}. Retourne uniquement le JSON demandé, sans markdown ni code block.",
     })
 
-    response = client.messages.create(
-        model="claude-sonnet-4-6",
-        max_tokens=4096,
-        system=SYSTEM_PROMPT,
-        messages=[{"role": "user", "content": content_blocks}],
-    )
+    try:
+        response = client.messages.create(
+            model="claude-sonnet-4-6",
+            max_tokens=4096,
+            system=SYSTEM_PROMPT,
+            messages=[{"role": "user", "content": content_blocks}],
+        )
+    except anthropic.RateLimitError:
+        return JSONResponse(
+            status_code=429,
+            content={"detail": "Trop de requêtes simultanées. Attends quelques secondes et réessaie."},
+        )
+    except anthropic.APIStatusError as e:
+        return JSONResponse(
+            status_code=502,
+            content={"detail": f"Erreur API : {e.message}"},
+        )
 
     raw = response.content[0].text.strip()
     if raw.startswith("```"):
@@ -121,9 +133,9 @@ async def analyze_document(
         if raw.startswith("json"):
             raw = raw[4:]
     try:
-        result = json.loads(raw)
+        return json.loads(raw)
     except json.JSONDecodeError:
-        result = {
+        return {
             "type_document": "Document analysé",
             "resume": raw,
             "irregularites": [],
@@ -132,8 +144,6 @@ async def analyze_document(
             "lettre": "",
             "langue": langue,
         }
-
-    return result
 
 
 APP_DIR = os.path.join(os.path.dirname(__file__), "..", "app")
