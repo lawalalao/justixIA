@@ -1,8 +1,12 @@
 {
   "framework": null,
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/index.py" },
-    { "source": "/app",      "destination": "/app/index.html" },
-    { "source": "/app/",     "destination": "/app/index.html" }
+    { "source": "/api/(.*)",              "destination": "/api/index.py" },
+    { "source": "/app",                   "destination": "/app/index.html" },
+    { "source": "/app/",                  "destination": "/app/index.html" },
+    { "source": "/dashboard",             "destination": "/dashboard/index.html" },
+    { "source": "/dashboard/",            "destination": "/dashboard/index.html" },
+    { "source": "/dashboard/login",       "destination": "/dashboard/login.html" },
+    { "source": "/dashboard/case",        "destination": "/dashboard/case.html" }
   ]
 }
