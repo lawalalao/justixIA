@@ -1188,6 +1188,7 @@
   let stripeLink = '';
   let authToken = null;
   let currentCaseId = null;
+  let supabaseUserId = null;
 
   // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -1211,6 +1212,14 @@
     return (b / 1048576).toFixed(1) + ' Mo';
   }
 
+  // ── Stripe URL builder ────────────────────────────────────────────────────────
+  function buildStripeUrl(baseLink) {
+    const redirectUrl = encodeURIComponent(window.location.origin + '/app?paid=true');
+    let url = baseLink + '?redirect_url=' + redirectUrl;
+    if (supabaseUserId) url += '&client_reference_id=' + encodeURIComponent(supabaseUserId);
+    return url;
+  }
+
   // ── Auth init ─────────────────────────────────────────────────────────────────
   // Check for Stripe redirect (?paid=true) before anything else
   const urlParams = new URLSearchParams(window.location.search);
@@ -1228,8 +1237,7 @@
 
       stripeLink = config.stripe_link || '';
       if (stripeLink) {
-        const redirectUrl = encodeURIComponent(window.location.origin + '/app?paid=true');
-        document.getElementById('paywallStripeLink').href = stripeLink + '?redirect_url=' + redirectUrl;
+        document.getElementById('paywallStripeLink').href = buildStripeUrl(stripeLink);
       } else {
         document.getElementById('paywallStripeLink').style.display = 'none';
       }
@@ -1240,7 +1248,10 @@
       });
       const { data: { session } } = await sb.auth.getSession();
       isLoggedIn = !!session;
-      if (session) authToken = session.access_token;
+      if (session) {
+        authToken = session.access_token;
+        supabaseUserId = session.user?.id || null;
+      }
 
       if (isLoggedIn) {
         // jx_paid is for anonymous Stripe one-shot users only.
@@ -1406,8 +1417,7 @@
       const preview = lettre ? lettre.substring(0, 280) + '...' : 'Madame, Monsieur,\n\nSuite à votre courrier du ...';
       document.getElementById('lettreBlurPreview').textContent = preview;
       if (stripeLink) {
-        const redirectUrl = encodeURIComponent(window.location.href);
-        document.getElementById('lockStripeBtn').href = stripeLink + '?redirect_url=' + redirectUrl;
+        document.getElementById('lockStripeBtn').href = buildStripeUrl(stripeLink);
       }
     }
 

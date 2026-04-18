@@ -46,6 +46,12 @@ SUPABASE_URL = os.environ.get("SUPABASE_URL", "")
 SUPABASE_ANON_KEY = os.environ.get("SUPABASE_ANON_KEY", "")
 SUPABASE_SERVICE_KEY = os.environ.get("SUPABASE_SERVICE_KEY", "")
 ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL", "")
+STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
+
+# Map Stripe Price IDs → plan names (set these in env vars)
+STRIPE_PRICE_ONESHOT = os.environ.get("STRIPE_PRICE_ONESHOT", "")
+STRIPE_PRICE_STARTER = os.environ.get("STRIPE_PRICE_STARTER", "")
+STRIPE_PRICE_PRO     = os.environ.get("STRIPE_PRICE_PRO", "")
 
 security = HTTPBearer(auto_error=False)
 
@@ -726,3 +732,118 @@ async def admin_stats(user: dict = Depends(require_admin)):
         },
         "trend": trend,
     }
+
+
+# ── Stripe Webhook ─────────────────────────────────────────────────────────────
+
+def _plan_from_price(price_id: str) -> str:
+    if price_id == STRIPE_PRICE_STARTER:
+        return "starter"
+    if price_id == STRIPE_PRICE_PRO:
+        return "pro"
+    if price_id == STRIPE_PRICE_ONESHOT:
+        return "oneshot"
+    return "free"
+
+
+def _update_user_plan(user_id: str, plan: str):
+    """Update profiles.plan for a given Supabase user_id."""
+    if not user_id or not SUPABASE_URL or not SUPABASE_SERVICE_KEY:
+        return
+    try:
+        from supabase import create_client
+        sb = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
+        sb.table("profiles").update({"plan": plan}).eq("id", user_id).execute()
+    except Exception:
+        pass
+
+
+def _user_id_from_email(email: str) -> Optional[str]:
+    """Resolve a Supabase user_id from an email address."""
+    if not email or not SUPABASE_URL or not SUPABASE_SERVICE_KEY:
+        return None
+    try:
+        from supabase import create_client
+        sb = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
+        result = sb.auth.admin.list_users()
+        for u in result:
+            if u.email == email:
+                return str(u.id)
+    except Exception:
+        pass
+    return None
+
+
+@app.post("/api/webhook/stripe")
+async def stripe_webhook(request: Request):
+    import stripe as stripe_lib
+
+    payload = await request.body()
+    sig = request.headers.get("stripe-signature", "")
+
+    if not STRIPE_WEBHOOK_SECRET:
+        raise HTTPException(500, "Webhook secret manquant.")
+
+    try:
+        event = stripe_lib.Webhook.construct_event(payload, sig, STRIPE_WEBHOOK_SECRET)
+    except stripe_lib.errors.SignatureVerificationError:
+        raise HTTPException(400, "Signature invalide.")
+    except Exception:
+        raise HTTPException(400, "Payload invalide.")
+
+    etype = event["type"]
+    obj   = event["data"]["object"]
+
+    # ── Paiement one-shot ou première session d'abonnement ─────────────────────
+    if etype == "checkout.session.completed":
+        user_id = obj.get("client_reference_id")
+        email   = (obj.get("customer_details") or {}).get("email")
+        mode    = obj.get("mode")  # "payment" ou "subscription"
+
+        # Résoudre user_id si absent (fallback email)
+        if not user_id and email:
+            user_id = _user_id_from_email(email)
+
+        if user_id:
+            if mode == "payment":
+                _update_user_plan(user_id, "oneshot")
+            # Pour les abonnements, on attend customer.subscription.created
+
+    # ── Abonnement créé ou réactivé ────────────────────────────────────────────
+    elif etype in ("customer.subscription.created", "customer.subscription.updated"):
+        status = obj.get("status")
+        if status not in ("active", "trialing"):
+            return {"ok": True}
+        # Trouver le Price ID de l'item principal
+        items = (obj.get("items") or {}).get("data", [])
+        price_id = items[0]["price"]["id"] if items else ""
+        plan = _plan_from_price(price_id)
+        # Trouver le user_id via les métadonnées ou customer email
+        user_id = (obj.get("metadata") or {}).get("supabase_user_id")
+        if not user_id:
+            email = obj.get("customer_email")
+            if not email:
+                # Récupérer l'email depuis le Customer Stripe
+                try:
+                    import stripe as sl
+                    sl.api_key = os.environ.get("STRIPE_SECRET_KEY", "")
+                    customer = sl.Customer.retrieve(obj.get("customer", ""))
+                    email = customer.get("email")
+                except Exception:
+                    pass
+            if email:
+                user_id = _user_id_from_email(email)
+        if user_id and plan != "free":
+            _update_user_plan(user_id, plan)
+
+    # ── Abonnement annulé ou expiré ────────────────────────────────────────────
+    elif etype == "customer.subscription.deleted":
+        user_id = (obj.get("metadata") or {}).get("supabase_user_id")
+        if not user_id:
+            email = obj.get("customer_email")
+            if email:
+                user_id = _user_id_from_email(email)
+        if user_id:
+            _update_user_plan(user_id, "free")
+
+    return {"ok": True}
