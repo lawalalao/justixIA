@@ -7,7 +7,7 @@ from collections import Counter
 from datetime import datetime, timedelta, timezone
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel, field_validator
 from typing import Optional
@@ -84,6 +84,54 @@ def detect_mime_from_bytes(data: bytes) -> Optional[str]:
     if data[:4] == b'RIFF' and data[8:12] == b'WEBP':
         return 'image/webp'
     return None
+
+
+BASE_URL = "https://justix-ia.vercel.app"
+
+@app.get("/robots.txt")
+async def robots_txt():
+    content = f"""User-agent: *
+Allow: /
+Disallow: /dashboard/
+Disallow: /api/
+Disallow: /admin/
+
+Sitemap: {BASE_URL}/sitemap.xml
+"""
+    return Response(content=content, media_type="text/plain")
+
+
+@app.get("/sitemap.xml")
+async def sitemap_xml():
+    content = f"""<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>{BASE_URL}/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>{BASE_URL}/app</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>{BASE_URL}/mentions-legales</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>{BASE_URL}/confidentialite</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>{BASE_URL}/cgu</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+</urlset>"""
+    return Response(content=content, media_type="application/xml")
 
 
 # ── Config publique ───────────────────────────────────────────────────────────
