@@ -3,11 +3,37 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>JustiXia  Le droit, dans ta langue, en 30 secondes</title>
-  <meta name="description" content="Tu as reçu une lettre que tu ne comprends pas ? JustiXia analyse ton document, explique tes droits et rédige ta réponse en 30 secondes." />
+  <meta name="theme-color" content="#FF2D78" />
+  <meta name="robots" content="index, follow" />
+  <title>JustiXia — Le droit, dans ta langue, en 30 secondes</title>
+  <meta name="description" content="Tu as reçu une lettre que tu ne comprends pas ? JustiXia analyse ton document juridique, explique tes droits et rédige ta réponse en 30 secondes. Droit français et européen. 7 langues." />
+
+  <!-- Canonical -->
+  <link rel="canonical" href="https://justix-ia.vercel.app/" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://justix-ia.vercel.app/" />
+  <meta property="og:title" content="JustiXia — Le droit, dans ta langue, en 30 secondes" />
+  <meta property="og:description" content="Analyse tes documents juridiques avec l'IA. Droit français et européen. 7 langues. Semi-analyse gratuite avec inscription. Résultat en 30 secondes." />
+  <meta property="og:image" content="https://justix-ia.vercel.app/og-image.png" />
+  <meta property="og:locale" content="fr_FR" />
+  <meta property="og:site_name" content="JustiXia" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="JustiXia — Le droit, dans ta langue, en 30 secondes" />
+  <meta name="twitter:description" content="Analyse tes documents juridiques avec l'IA. Droit français et européen. 7 langues. Résultat en 30 secondes." />
+  <meta name="twitter:image" content="https://justix-ia.vercel.app/og-image.png" />
+
+  <!-- Preconnect -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://images.unsplash.com" />
+
+  <!-- Google Fonts async (non-render-blocking) -->
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" /></noscript>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -1416,6 +1442,7 @@
   </div>
 </nav>
 
+<main>
 <!-- HERO -->
 <section class="hero">
   <div class="hero-grid">
@@ -1434,7 +1461,7 @@
     </div>
     <div class="hero-photo-col">
       <div class="hero-photo-wrap">
-        <img class="hero-photo-img" src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=880&q=80" alt="Utilisatrice JustiXia" />
+        <img class="hero-photo-img" src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=880&q=80" alt="Utilisatrice JustiXia" fetchpriority="high" />
         <div class="hero-photo-card">
           <div class="hero-card-icon">
             <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
@@ -1598,7 +1625,7 @@
 
       <div class="testi-card reveal">
         <div class="testi-header">
-          <img class="testi-avatar" src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=104&h=104&q=80" alt="Fatou" />
+          <img class="testi-avatar" src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=104&h=104&q=80" alt="Fatou" loading="lazy" />
           <div>
             <div class="testi-meta-name">Fatou M.</div>
             <div class="testi-meta-role">34 ans · Bordeaux</div>
@@ -1611,7 +1638,7 @@
 
       <div class="testi-card reveal">
         <div class="testi-header">
-          <img class="testi-avatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=104&h=104&q=80" alt="Mihai" />
+          <img class="testi-avatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=104&h=104&q=80" alt="Mihai" loading="lazy" />
           <div>
             <div class="testi-meta-name">Mihai D.</div>
             <div class="testi-meta-role">41 ans · Lyon</div>
@@ -1624,7 +1651,7 @@
 
       <div class="testi-card reveal">
         <div class="testi-header">
-          <img class="testi-avatar" src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=104&h=104&q=80" alt="Amina" />
+          <img class="testi-avatar" src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=104&h=104&q=80" alt="Amina" loading="lazy" />
           <div>
             <div class="testi-meta-name">Amina K.</div>
             <div class="testi-meta-role">29 ans · Marseille</div>
@@ -1729,7 +1756,7 @@
       <p>JustiXia n'est pas un avocat. JustiXia est <strong>l'outil que votre avocat aurait utilisé pour préparer votre dossier</strong>  maintenant accessible à tous.</p>
     </div>
     <div class="trust-photo-wrap reveal">
-      <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1400&q=80" alt="Permanence juridique" />
+      <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1400&q=80" alt="Permanence juridique" loading="lazy" />
       <div class="trust-photo-overlay">
         <p class="trust-photo-caption">Des permanences juridiques aux personnes seules face à l'administration.</p>
       </div>
@@ -1825,10 +1852,10 @@
 <section class="cta-dark">
   <div class="container">
     <div class="cta-avatars reveal">
-      <img class="cta-avatar" src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=88&h=88&q=80" alt="" />
-      <img class="cta-avatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=88&h=88&q=80" alt="" />
-      <img class="cta-avatar" src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=88&h=88&q=80" alt="" />
-      <img class="cta-avatar" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=88&h=88&q=80" alt="" />
+      <img class="cta-avatar" src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=88&h=88&q=80" alt="" loading="lazy" />
+      <img class="cta-avatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=88&h=88&q=80" alt="" loading="lazy" />
+      <img class="cta-avatar" src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=88&h=88&q=80" alt="" loading="lazy" />
+      <img class="cta-avatar" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=88&h=88&q=80" alt="" loading="lazy" />
       <span class="cta-avatar-label">+2 400 personnes aidées</span>
     </div>
     <h2 class="reveal">Tu as reçu un document<br />que tu ne comprends pas ?</h2>
@@ -1839,6 +1866,8 @@
     </div>
   </div>
 </section>
+
+</main>
 
 <!-- FOOTER -->
 <footer>
@@ -1898,17 +1927,103 @@
 </script>
 
 <script>
-  fetch('/api/config').then(r => r.json()).then(cfg => {
-    if (cfg.stripe_link) {
-      document.getElementById('planOneShotBtn').href = cfg.stripe_link;
+  document.addEventListener('DOMContentLoaded', () => {
+    fetch('/api/config').then(r => r.json()).then(cfg => {
+      if (cfg.stripe_link) document.getElementById('planOneShotBtn').href = cfg.stripe_link;
+      if (cfg.stripe_starter) document.getElementById('planStarterBtn').href = cfg.stripe_starter;
+      if (cfg.stripe_pro) document.getElementById('planProBtn').href = cfg.stripe_pro;
+    }).catch(() => {});
+  });
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "JustiXia",
+  "description": "Assistant juridique IA multilingue pour analyser vos documents légaux en droit français et européen. Résultat en 30 secondes.",
+  "url": "https://justix-ia.vercel.app/",
+  "applicationCategory": "LegalApplication",
+  "operatingSystem": "Web, Telegram",
+  "inLanguage": ["fr", "en", "ar", "ro", "pt", "es", "wo"],
+  "offers": [
+    {
+      "@type": "Offer",
+      "name": "Gratuit",
+      "price": "0.00",
+      "priceCurrency": "EUR",
+      "description": "Semi-analyse : irrégularités + droits, inscription requise"
+    },
+    {
+      "@type": "Offer",
+      "name": "One-shot",
+      "price": "5.00",
+      "priceCurrency": "EUR",
+      "description": "1 analyse complète avec lettre de réponse, sans abonnement"
+    },
+    {
+      "@type": "Offer",
+      "name": "Starter asso",
+      "price": "29.00",
+      "priceCurrency": "EUR",
+      "description": "Jusqu'à 50 dossiers/mois, dashboard, 3 jours d'essai gratuit"
+    },
+    {
+      "@type": "Offer",
+      "name": "Pro asso",
+      "price": "99.00",
+      "priceCurrency": "EUR",
+      "description": "Dossiers illimités, stats avancées, multi-utilisateurs, 7 jours d'essai"
     }
-    if (cfg.stripe_starter) {
-      document.getElementById('planStarterBtn').href = cfg.stripe_starter;
+  ],
+  "provider": {
+    "@type": "Organization",
+    "name": "JustiXia",
+    "email": "contact@justixia.com",
+    "url": "https://justix-ia.vercel.app/"
+  }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Comment fonctionne JustiXia ?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Uploadez votre document juridique (OQTF, contrat, mise en demeure, avis d'expulsion) et notre IA l'analyse en moins de 30 secondes en droit français et européen. Vous recevez une explication de vos droits et une lettre de réponse prête à envoyer."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Quelles langues sont supportées ?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "JustiXia supporte 7 langues : français, anglais, arabe, roumain, portugais, espagnol et wolof."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Quel est le prix de JustiXia ?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "JustiXia propose une semi-analyse gratuite avec inscription, un one-shot à 5€ pour 1 dossier complet, et des abonnements pour associations à partir de 29€/mois avec 3 jours d'essai gratuit."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Mes documents sont-ils stockés ?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Non. Vos documents sont traités en mémoire vive uniquement et supprimés immédiatement après l'analyse. Ils ne sont jamais stockés ni utilisés pour entraîner des modèles d'IA."
+      }
     }
-    if (cfg.stripe_pro) {
-      document.getElementById('planProBtn').href = cfg.stripe_pro;
-    }
-  }).catch(() => {});
+  ]
+}
 </script>
 </body>
 </html>

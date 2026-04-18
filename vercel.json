@@ -22,6 +22,9 @@
     { "source": "/dashboard/case",       "destination": "/dashboard/case.html" },
     { "source": "/admin",                "destination": "/admin/index.html" },
     { "source": "/admin/",               "destination": "/admin/index.html" },
-    { "source": "/admin/login",          "destination": "/admin/login.html" }
+    { "source": "/admin/login",          "destination": "/admin/login.html" },
+    { "source": "/mentions-legales",     "destination": "/mentions-legales/index.html" },
+    { "source": "/confidentialite",      "destination": "/confidentialite/index.html" },
+    { "source": "/cgu",                  "destination": "/cgu/index.html" }
   ]
 }
