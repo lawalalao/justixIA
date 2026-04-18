@@ -92,9 +92,11 @@ async def public_config():
     if not SUPABASE_URL or not SUPABASE_ANON_KEY:
         raise HTTPException(503, "Supabase non configuré.")
     return {
-        "supabase_url":     SUPABASE_URL,
+        "supabase_url":      SUPABASE_URL,
         "supabase_anon_key": SUPABASE_ANON_KEY,
-        "stripe_link":      os.environ.get("STRIPE_LINK", ""),
+        "stripe_link":       os.environ.get("STRIPE_LINK", ""),
+        "stripe_starter":    os.environ.get("STRIPE_LINK_STARTER", ""),
+        "stripe_pro":        os.environ.get("STRIPE_LINK_PRO", ""),
     }
 
 

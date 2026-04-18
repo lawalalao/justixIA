@@ -1406,14 +1406,14 @@
       <div class="plan-card reveal">
         <div class="plan-name">One-shot</div>
         <div class="plan-price">5<sup>€</sup></div>
-        <div class="plan-period">accès illimité · sans compte</div>
+        <div class="plan-period">1 dossier · sans compte</div>
         <ul class="plan-features">
-          <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Analyses illimitées</li>
+          <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>1 analyse complète</li>
           <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>7 langues disponibles</li>
           <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Lettres prêtes à envoyer</li>
           <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Téléchargement PDF</li>
         </ul>
-        <a href="/app" class="plan-btn plan-btn-outline">Payer 5€ et analyser</a>
+        <a href="/app" id="planOneShotBtn" class="plan-btn plan-btn-outline">Payer 5€ et analyser</a>
       </div>
 
       <!-- STARTER ASSO -->
@@ -1421,7 +1421,7 @@
         <div class="plan-featured-badge">Recommandé</div>
         <div class="plan-name">Starter asso</div>
         <div class="plan-price">29<sup>€</sup></div>
-        <div class="plan-period">par mois · par organisation</div>
+        <div class="plan-period">par mois · 3 jours d'essai gratuit</div>
         <ul class="plan-features">
           <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Jusqu'à 50 dossiers/mois</li>
           <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Dashboard de gestion</li>
@@ -1429,14 +1429,14 @@
           <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Notes internes par dossier</li>
           <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>7 langues disponibles</li>
         </ul>
-        <a href="/dashboard/register.html" class="plan-btn plan-btn-primary">Créer un compte</a>
+        <a href="/dashboard/register.html" id="planStarterBtn" class="plan-btn plan-btn-primary">Essai gratuit 3 jours</a>
       </div>
 
       <!-- PRO ASSO -->
       <div class="plan-card reveal">
         <div class="plan-name">Pro asso</div>
         <div class="plan-price">99<sup>€</sup></div>
-        <div class="plan-period">par mois · par organisation</div>
+        <div class="plan-period">par mois · 7 jours d'essai gratuit</div>
         <ul class="plan-features">
           <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Dossiers illimités</li>
           <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Dashboard + statistiques avancées</li>
@@ -1444,7 +1444,7 @@
           <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Export des données</li>
           <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Accompagnement dédié</li>
         </ul>
-        <a href="mailto:contact@justixia.com" class="plan-btn plan-btn-ghost">Nous contacter</a>
+        <a href="/dashboard/register.html" id="planProBtn" class="plan-btn plan-btn-ghost">Essai gratuit 7 jours</a>
       </div>
 
     </div>
@@ -1620,6 +1620,20 @@
   }, { threshold: 0.12, rootMargin: '0px 0px -32px 0px' });
 
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+
+<script>
+  fetch('/api/config').then(r => r.json()).then(cfg => {
+    if (cfg.stripe_link) {
+      document.getElementById('planOneShotBtn').href = cfg.stripe_link;
+    }
+    if (cfg.stripe_starter) {
+      document.getElementById('planStarterBtn').href = cfg.stripe_starter;
+    }
+    if (cfg.stripe_pro) {
+      document.getElementById('planProBtn').href = cfg.stripe_pro;
+    }
+  }).catch(() => {});
 </script>
 </body>
 </html>
