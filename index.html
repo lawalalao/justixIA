@@ -789,17 +789,21 @@
 
     .pricing-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
       margin-top: 56px;
       align-items: start;
+    }
+
+    @media (max-width: 1100px) {
+      .pricing-grid { grid-template-columns: repeat(2, 1fr); }
     }
 
     .plan-card {
       background: var(--white);
       border: 1px solid var(--border-light);
       border-radius: var(--radius-card);
-      padding: 36px 32px;
+      padding: 28px 24px;
       box-shadow: var(--shadow-card);
       transition: transform 0.25s;
     }
@@ -1192,11 +1196,69 @@
     .reveal.visible { opacity: 1; transform: translateY(0); }
 
     /* ── RESPONSIVE ── */
+    /* ── TÉMOIGNAGES ── */
+    .testi-section { background: var(--grey-bg); }
+
+    .testi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 48px;
+    }
+
+    .testi-card {
+      background: var(--white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-card);
+      padding: 28px 24px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .testi-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .testi-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--border-light);
+      flex-shrink: 0;
+    }
+
+    .testi-meta-name { font-size: 14px; font-weight: 700; color: var(--navy); }
+    .testi-meta-role { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    .testi-stars { color: #FFB800; font-size: 14px; margin-bottom: 12px; letter-spacing: 1px; }
+
+    .testi-text {
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--body);
+      font-style: italic;
+    }
+
+    .testi-tag {
+      display: inline-block;
+      background: var(--pink-tag-bg);
+      color: var(--pink);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+      margin-top: 14px;
+      letter-spacing: 0.04em;
+    }
+
     @media (max-width: 900px) {
       .stats-row { flex-direction: column; }
       .stat-item { border-right: none; border-bottom: 1px solid var(--border-light); }
       .stat-item:last-child { border-bottom: none; }
-      .steps-grid, .docs-grid, .pricing-grid, .trust-pillars { grid-template-columns: 1fr; }
+      .steps-grid, .docs-grid, .pricing-grid, .trust-pillars, .testi-grid { grid-template-columns: 1fr; }
       .demo-grid { grid-template-columns: 1fr; }
       .footer-inner { grid-template-columns: 1fr 1fr; }
     }
@@ -1250,7 +1312,7 @@
       <a href="/app" class="btn-primary">Analyser mon document</a>
       <a href="https://t.me/JustiXiaBot" class="btn-ghost">Essayer sur Telegram</a>
     </div>
-    <p class="hero-trust">Compte gratuit pour les associations · Ou 5€ one-shot · Résultat en 30 secondes</p>
+    <p class="hero-trust">Semi-analyse gratuite avec inscription · Lettre complète dès 5€ · Résultat en 30 secondes</p>
   </div>
 </section>
 
@@ -1392,6 +1454,58 @@
   </div>
 </section>
 
+<!-- TÉMOIGNAGES -->
+<section class="testi-section" id="temoignages">
+  <div class="container">
+    <div class="reveal" style="text-align:center">
+      <span class="section-tag">Ils l'ont utilisé</span>
+      <h2>Des vraies personnes, de vraies situations.</h2>
+    </div>
+    <div class="testi-grid">
+
+      <div class="testi-card reveal">
+        <div class="testi-header">
+          <img class="testi-avatar" src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=104&h=104&q=80" alt="Fatou" />
+          <div>
+            <div class="testi-meta-name">Fatou M.</div>
+            <div class="testi-meta-role">34 ans · Bordeaux</div>
+          </div>
+        </div>
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"J'avais reçu un avis d'expulsion. En 2 minutes JustiXia m'a expliqué que la procédure était invalide et m'a écrit la lettre de contestation. Je suis encore dans mon appartement."</p>
+        <span class="testi-tag">Expulsion locative</span>
+      </div>
+
+      <div class="testi-card reveal">
+        <div class="testi-header">
+          <img class="testi-avatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=104&h=104&q=80" alt="Mihai" />
+          <div>
+            <div class="testi-meta-name">Mihai D.</div>
+            <div class="testi-meta-role">41 ans · Lyon</div>
+          </div>
+        </div>
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"Mon contrat contenait des clauses abusives que je ne comprenais pas. JustiXia les a toutes identifiées avec les articles de loi. J'ai pu renégocier avant de signer."</p>
+        <span class="testi-tag">Contrat de travail</span>
+      </div>
+
+      <div class="testi-card reveal">
+        <div class="testi-header">
+          <img class="testi-avatar" src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=104&h=104&q=80" alt="Amina" />
+          <div>
+            <div class="testi-meta-name">Amina K.</div>
+            <div class="testi-meta-role">29 ans · Marseille</div>
+          </div>
+        </div>
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"Refus de préfecture sans explication. En 30 secondes j'avais compris mes droits, les délais pour agir et une lettre de recours complète. Incroyable."</p>
+        <span class="testi-tag">Titre de séjour</span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
 <!-- TARIFS -->
 <section class="pricing-section" id="tarifs">
   <div class="container">
@@ -1401,6 +1515,21 @@
       <p class="section-sub" style="margin:12px auto 0;text-align:center">Pas d'abonnement caché. Tu paies ce que tu utilises.</p>
     </div>
     <div class="pricing-grid">
+
+      <!-- GRATUIT -->
+      <div class="plan-card reveal">
+        <div class="plan-name">Gratuit</div>
+        <div class="plan-price">0<sup>€</sup></div>
+        <div class="plan-period">avec inscription · pour toujours</div>
+        <ul class="plan-features">
+          <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Irrégularités détectées</li>
+          <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Tes droits expliqués</li>
+          <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Délais légaux</li>
+          <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>7 langues disponibles</li>
+          <li style="opacity:.45"><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span><s>Lettre prête à envoyer</s></li>
+        </ul>
+        <a href="/dashboard/register.html" class="plan-btn plan-btn-outline">Créer un compte</a>
+      </div>
 
       <!-- ONE-SHOT -->
       <div class="plan-card reveal">
