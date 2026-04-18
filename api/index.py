@@ -265,6 +265,75 @@ FORMAT DE RÉPONSE (JSON uniquement, sans markdown) :
 
 
 # ── Analyse ───────────────────────────────────────────────────────────────────
+def _build_content_blocks(file_bytes: Optional[bytes], text_input: Optional[str], langue_clean: str) -> list:
+    """Build Claude content blocks from raw bytes or text."""
+    blocks = []
+    if file_bytes:
+        real_mime = detect_mime_from_bytes(file_bytes)
+        if real_mime is None:
+            try:
+                blocks.append({"type": "text", "text": file_bytes.decode("utf-8")})
+            except Exception:
+                raise HTTPException(415, "Format de fichier non supporté.")
+        elif real_mime == "application/pdf":
+            blocks.append({
+                "type": "document",
+                "source": {"type": "base64", "media_type": "application/pdf",
+                           "data": base64.standard_b64encode(file_bytes).decode()},
+            })
+        else:
+            blocks.append({
+                "type": "image",
+                "source": {"type": "base64", "media_type": real_mime,
+                           "data": base64.standard_b64encode(file_bytes).decode()},
+            })
+    if text_input:
+        blocks.append({"type": "text", "text": text_input})
+    blocks.append({
+        "type": "text",
+        "text": (
+            f"Analyse ce document et/ou ce contexte en droit français/européen. "
+            f"Identifie la situation réelle de l'utilisateur, pas seulement le type de document. "
+            f"Réponds en {langue_clean}. "
+            f"Retourne uniquement le JSON demandé, sans markdown ni code block."
+        ),
+    })
+    return blocks
+
+
+def _call_claude(content_blocks: list, langue_clean: str) -> dict:
+    """Call Claude and return parsed analysis dict."""
+    try:
+        response = client.messages.create(
+            model=os.environ.get("CLAUDE_MODEL", "claude-sonnet-4-6"),
+            max_tokens=4096,
+            system=SYSTEM_PROMPT,
+            messages=[{"role": "user", "content": content_blocks}],
+        )
+    except anthropic.RateLimitError:
+        raise HTTPException(429, "Trop de requêtes. Attends quelques secondes et réessaie.")
+    except anthropic.APIStatusError:
+        raise HTTPException(502, "Le service d'analyse est temporairement indisponible.")
+
+    raw = response.content[0].text.strip()
+    if raw.startswith("```"):
+        raw = raw.split("```")[1]
+        if raw.startswith("json"):
+            raw = raw[4:]
+    try:
+        return json.loads(raw)
+    except json.JSONDecodeError:
+        return {
+            "type_document": "Document analysé",
+            "resume": raw,
+            "irregularites": [],
+            "droits": [],
+            "delais": "Consultez un professionnel pour les délais exacts.",
+            "lettre": "",
+            "langue": langue_clean,
+        }
+
+
 @app.post("/api/analyze")
 async def analyze_document(
     request: Request,
@@ -278,86 +347,25 @@ async def analyze_document(
     if not file and not text:
         raise HTTPException(400, "Fournir un fichier ou du texte.")
 
-    # Sanitize langue (prevent prompt injection via langue field)
     langue_clean = langue.strip().lower()
     if langue_clean not in ALLOWED_LANGUES:
         langue_clean = "français"
 
-    # Validate text length
     if text and len(text) > MAX_TEXT_LEN:
         raise HTTPException(413, f"Texte trop long (max {MAX_TEXT_LEN} caractères).")
 
-    content_blocks = []
-
+    file_bytes = None
     if file:
-        data = await file.read()
-
-        # Enforce file size limit
-        if len(data) > MAX_FILE_SIZE:
+        file_bytes = await file.read()
+        if len(file_bytes) > MAX_FILE_SIZE:
             raise HTTPException(413, "Fichier trop volumineux (max 10 Mo).")
 
-        # Validate file type via magic bytes (not client-supplied MIME)
-        real_mime = detect_mime_from_bytes(data)
-        if real_mime is None:
-            # Fall back: try to decode as plain text
-            try:
-                content_blocks.append({"type": "text", "text": data.decode("utf-8")})
-            except Exception:
-                raise HTTPException(415, "Format de fichier non supporté. Utilise un PDF, une image ou un fichier texte.")
-        elif real_mime == 'application/pdf':
-            content_blocks.append({
-                "type": "document",
-                "source": {"type": "base64", "media_type": "application/pdf", "data": base64.standard_b64encode(data).decode()},
-            })
-        else:
-            content_blocks.append({
-                "type": "image",
-                "source": {"type": "base64", "media_type": real_mime, "data": base64.standard_b64encode(data).decode()},
-            })
-
-    if text:
-        content_blocks.append({"type": "text", "text": text})
-
-    content_blocks.append({
-        "type": "text",
-        "text": (
-            f"Analyse ce document et/ou ce contexte en droit français/européen. "
-            f"Identifie la situation réelle de l'utilisateur, pas seulement le type de document. "
-            f"Réponds en {langue_clean}. "
-            f"Retourne uniquement le JSON demandé, sans markdown ni code block."
-        ),
-    })
+    content_blocks = _build_content_blocks(file_bytes, text, langue_clean)
 
     try:
-        response = client.messages.create(
-            model=os.environ.get("CLAUDE_MODEL", "claude-sonnet-4-6"),
-            max_tokens=4096,
-            system=SYSTEM_PROMPT,
-            messages=[{"role": "user", "content": content_blocks}],
-        )
-    except anthropic.RateLimitError:
-        return JSONResponse(status_code=429, content={"detail": "Trop de requêtes. Attends quelques secondes et réessaie."})
-    except anthropic.APIStatusError:
-        return JSONResponse(status_code=502, content={"detail": "Le service d'analyse est temporairement indisponible. Réessaie dans quelques instants."})
-
-    raw = response.content[0].text.strip()
-    if raw.startswith("```"):
-        raw = raw.split("```")[1]
-        if raw.startswith("json"):
-            raw = raw[4:]
-
-    try:
-        result = json.loads(raw)
-    except json.JSONDecodeError:
-        result = {
-            "type_document": "Document analysé",
-            "resume": raw,
-            "irregularites": [],
-            "droits": [],
-            "delais": "Consultez un professionnel pour les délais exacts.",
-            "lettre": "",
-            "langue": langue_clean,
-        }
+        result = _call_claude(content_blocks, langue_clean)
+    except HTTPException as e:
+        return JSONResponse(status_code=e.status_code, content={"detail": e.detail})
 
     # Auth + plan check for letter access
     is_authenticated = False
@@ -365,11 +373,6 @@ async def analyze_document(
     authenticated_user = None
     user_profile = None
     sb_check = None
-
-    # Internal bot call with verified secret (paying bot user)
-    bot_secret_header = request.headers.get("X-Bot-Secret", "")
-    if BOT_INTERNAL_SECRET and bot_secret_header and bot_secret_header == BOT_INTERNAL_SECRET:
-        can_access_letter = True
 
     if not can_access_letter and credentials and SUPABASE_URL and SUPABASE_SERVICE_KEY:
         try:
@@ -1004,27 +1007,18 @@ async def _tg_get_user_plan(supabase_user_id: Optional[str]) -> str:
     return "free"
 
 
-async def _tg_analyze_call(file_bytes: Optional[bytes], filename: Optional[str],
-                           mime: Optional[str], text_input: Optional[str],
-                           langue: str, with_letter: bool = False) -> Optional[dict]:
-    """Call /api/analyze and return parsed JSON or None.
-    Pass with_letter=True for paying users to receive the full letter."""
-    import httpx
-    url = f"{BASE_URL}/api/analyze"
-    headers = {}
-    if with_letter and BOT_INTERNAL_SECRET:
-        headers["X-Bot-Secret"] = BOT_INTERNAL_SECRET
+def _tg_analyze_call(file_bytes: Optional[bytes], text_input: Optional[str],
+                     langue: str, with_letter: bool = False) -> Optional[dict]:
+    """Run analysis directly (no HTTP self-call) and return result dict or None."""
     try:
-        async with httpx.AsyncClient(timeout=90) as h:
-            if file_bytes:
-                resp = await h.post(url, files={"file": (filename, file_bytes, mime)},
-                                    data={"langue": langue}, headers=headers)
-            else:
-                resp = await h.post(url, data={"text": text_input, "langue": langue},
-                                    headers=headers)
-        if resp.status_code != 200:
-            return None
-        return resp.json()
+        langue_clean = langue.strip().lower()
+        if langue_clean not in ALLOWED_LANGUES:
+            langue_clean = "français"
+        blocks = _build_content_blocks(file_bytes, text_input, langue_clean)
+        result = _call_claude(blocks, langue_clean)
+        if not with_letter:
+            result["lettre"] = None
+        return result
     except Exception:
         return None
 
@@ -1195,8 +1189,7 @@ async def telegram_webhook(request: Request):
             await _tg_send(chat_id, "❌ Fichier trop volumineux (max 10 Mo).")
             return {"ok": True}
 
-        result = await _tg_analyze_call(file_bytes, filename, mime, None, langue,
-                                        with_letter=has_letter_access)
+        result = _tg_analyze_call(file_bytes, None, langue, with_letter=has_letter_access)
 
         if progress_id:
             await _tg_post("deleteMessage", {"chat_id": chat_id, "message_id": progress_id})
@@ -1217,8 +1210,7 @@ async def telegram_webhook(request: Request):
         has_letter_access = plan in ("oneshot", "starter", "pro", "association")
 
         await _tg_send(chat_id, "Analyse en cours...")
-        result = await _tg_analyze_call(None, None, None, text[:MAX_TEXT_LEN], langue,
-                                        with_letter=has_letter_access)
+        result = _tg_analyze_call(None, text[:MAX_TEXT_LEN], langue, with_letter=has_letter_access)
         if not result:
             await _tg_send(chat_id, "❌ Erreur lors de l'analyse. Réessaie.")
             return {"ok": True}
