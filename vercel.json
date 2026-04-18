@@ -28,6 +28,13 @@
     { "source": "/avis",                 "destination": "/avis/index.html" },
     { "source": "/mentions-legales",     "destination": "/mentions-legales/index.html" },
     { "source": "/confidentialite",      "destination": "/confidentialite/index.html" },
-    { "source": "/cgu",                  "destination": "/cgu/index.html" }
+    { "source": "/cgu",                  "destination": "/cgu/index.html" },
+    { "source": "/blog",                            "destination": "/blog/index.html" },
+    { "source": "/blog/",                           "destination": "/blog/index.html" },
+    { "source": "/blog/expulsion-locative",         "destination": "/blog/expulsion-locative.html" },
+    { "source": "/blog/mise-en-demeure",            "destination": "/blog/mise-en-demeure.html" },
+    { "source": "/blog/oqtf-droits",                "destination": "/blog/oqtf-droits.html" },
+    { "source": "/blog/licenciement-abusif",        "destination": "/blog/licenciement-abusif.html" },
+    { "source": "/blog/clause-abusive-bail",        "destination": "/blog/clause-abusive-bail.html" }
   ]
 }

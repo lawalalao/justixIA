@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog JustiXia - Conseils juridiques gratuits en français</title>
+  <meta name="description" content="Articles juridiques gratuits : expulsion, mise en demeure, OQTF, licenciement, bail. Comprendre vos droits en langage clair." />
+  <link rel="canonical" href="https://justix-ia.vercel.app/blog" />
+  <meta property="og:title" content="Blog JustiXia - Conseils juridiques gratuits" />
+  <meta property="og:description" content="Articles pratiques pour comprendre vos droits en France. Expulsion, mise en demeure, OQTF, licenciement." />
+  <meta property="og:url" content="https://justix-ia.vercel.app/blog" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --pink: #FF2D78; --pink-grad: linear-gradient(135deg, #FF2D78, #FF5CA8);
+      --navy: #1A1A2E; --body: #333344; --muted: #6B6B7B;
+      --white: #FFFFFF; --grey: #F8F8FB; --border: #EBEBEB;
+      --shadow: 0 2px 20px rgba(0,0,0,0.06); --r-card: 16px; --r-pill: 9999px;
+    }
+    body { font-family: 'Inter', -apple-system, sans-serif; background: var(--grey); color: var(--body); -webkit-font-smoothing: antialiased; }
+    nav {
+      background: var(--white); box-shadow: 0 1px 0 rgba(0,0,0,0.08);
+      height: 64px; display: flex; align-items: center; padding: 0 24px;
+      position: sticky; top: 0; z-index: 10;
+    }
+    .nav-inner { max-width: 900px; margin: 0 auto; width: 100%; display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { font-size: 20px; font-weight: 800; background: var(--pink-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-decoration: none; }
+    .nav-cta { background: var(--pink-grad); color: #fff; padding: 9px 18px; border-radius: var(--r-pill); font-weight: 700; font-size: 13px; text-decoration: none; }
+    .hero { background: var(--white); padding: 64px 24px 48px; text-align: center; border-bottom: 1px solid var(--border); }
+    .hero-tag { display: inline-block; background: #FFE8EF; color: var(--pink); font-size: 12px; font-weight: 700; padding: 5px 14px; border-radius: var(--r-pill); margin-bottom: 16px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .hero h1 { font-size: clamp(28px, 5vw, 42px); font-weight: 800; color: var(--navy); letter-spacing: -0.8px; margin-bottom: 12px; }
+    .hero p { font-size: 16px; color: var(--muted); max-width: 520px; margin: 0 auto; line-height: 1.7; }
+    .container { max-width: 900px; margin: 0 auto; padding: 48px 24px 80px; }
+    .articles-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+    .article-card {
+      background: var(--white); border: 1px solid var(--border); border-radius: var(--r-card);
+      box-shadow: var(--shadow); overflow: hidden; text-decoration: none; color: inherit;
+      display: block; transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .article-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.1); transform: translateY(-2px); }
+    .article-img { width: 100%; height: 180px; object-fit: cover; display: block; background: var(--grey); }
+    .article-body { padding: 22px; }
+    .article-tag { display: inline-block; background: #FFE8EF; color: var(--pink); font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: var(--r-pill); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .article-title { font-size: 18px; font-weight: 800; color: var(--navy); line-height: 1.35; letter-spacing: -0.3px; margin-bottom: 8px; }
+    .article-excerpt { font-size: 14px; color: var(--muted); line-height: 1.65; margin-bottom: 14px; }
+    .article-meta { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+    .article-meta-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--muted); }
+    .cta-band {
+      background: linear-gradient(135deg, #1A1A2E, #0F0F1A);
+      border-radius: var(--r-card); padding: 36px 32px; text-align: center; margin-top: 48px;
+    }
+    .cta-band h2 { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 8px; letter-spacing: -0.4px; }
+    .cta-band p { font-size: 14px; color: #9999BB; margin-bottom: 24px; }
+    .cta-btn { display: inline-block; background: var(--pink-grad); color: #fff; padding: 13px 28px; border-radius: var(--r-pill); font-weight: 700; font-size: 15px; text-decoration: none; }
+    footer { text-align: center; padding: 32px 24px; font-size: 13px; color: var(--muted); border-top: 1px solid var(--border); background: var(--white); }
+    footer a { color: var(--pink); text-decoration: none; }
+    @media (max-width: 600px) {
+      .articles-grid { grid-template-columns: 1fr; }
+      .hero { padding: 48px 20px 36px; }
+    }
+  </style>
+</head>
+<body>
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">JustiXia</a>
+    <a href="/app" class="nav-cta">Analyser mon document</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <span class="hero-tag">Ressources juridiques</span>
+  <h1>Comprendre vos droits, <br/>en langage clair</h1>
+  <p>Articles pratiques rédigés par l'équipe JustiXia pour vous aider à naviguer dans le droit français.</p>
+</div>
+
+<div class="container">
+  <div class="articles-grid">
+
+    <a href="/blog/expulsion-locative" class="article-card">
+      <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=600&auto=format&fit=crop&q=70" alt="Expulsion locative" class="article-img" loading="lazy" />
+      <div class="article-body">
+        <span class="article-tag">Logement</span>
+        <div class="article-title">Expulsion locative : vos droits et comment vous défendre</div>
+        <div class="article-excerpt">Votre propriétaire veut vous expulser ? Voici ce que dit la loi, les délais à respecter et comment contester une expulsion abusive.</div>
+        <div class="article-meta">
+          <span>15 novembre 2025</span>
+          <span class="article-meta-dot"></span>
+          <span>6 min de lecture</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="/blog/mise-en-demeure" class="article-card">
+      <img src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=600&auto=format&fit=crop&q=70" alt="Mise en demeure" class="article-img" loading="lazy" />
+      <div class="article-body">
+        <span class="article-tag">Courrier juridique</span>
+        <div class="article-title">Mise en demeure : comment repondre sans avocat</div>
+        <div class="article-excerpt">Vous avez recu une mise en demeure et vous ne savez pas quoi faire ? On vous explique comment la lire, l'analyser et y repondre efficacement.</div>
+        <div class="article-meta">
+          <span>8 decembre 2025</span>
+          <span class="article-meta-dot"></span>
+          <span>5 min de lecture</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="/blog/oqtf-droits" class="article-card">
+      <img src="https://images.unsplash.com/photo-1436450412740-6b988f486c6b?w=600&auto=format&fit=crop&q=70" alt="OQTF droits" class="article-img" loading="lazy" />
+      <div class="article-body">
+        <span class="article-tag">Immigration</span>
+        <div class="article-title">OQTF : vos droits et comment contester la decision</div>
+        <div class="article-excerpt">Une obligation de quitter le territoire francais peut etre contestee. Delais, recours, arguments juridiques : tout ce qu'il faut savoir.</div>
+        <div class="article-meta">
+          <span>3 janvier 2026</span>
+          <span class="article-meta-dot"></span>
+          <span>7 min de lecture</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="/blog/licenciement-abusif" class="article-card">
+      <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=600&auto=format&fit=crop&q=70" alt="Licenciement abusif" class="article-img" loading="lazy" />
+      <div class="article-body">
+        <span class="article-tag">Travail</span>
+        <div class="article-title">Licenciement abusif : reconnaitre et contester</div>
+        <div class="article-excerpt">Votre employeur vous a licencie sans motif valable ? Decouvrez les criteres d'un licenciement abusif et les demarches pour obtenir reparation.</div>
+        <div class="article-meta">
+          <span>12 fevrier 2026</span>
+          <span class="article-meta-dot"></span>
+          <span>6 min de lecture</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="/blog/clause-abusive-bail" class="article-card">
+      <img src="https://images.unsplash.com/photo-1554469384-e58fac16e23a?w=600&auto=format&fit=crop&q=70" alt="Clause abusive bail" class="article-img" loading="lazy" />
+      <div class="article-body">
+        <span class="article-tag">Logement</span>
+        <div class="article-title">Clause abusive dans un bail : identifier et contester</div>
+        <div class="article-excerpt">Certaines clauses inserees dans un contrat de location sont illegales. Comment les reperer, les contester et proteger vos droits de locataire.</div>
+        <div class="article-meta">
+          <span>7 mars 2026</span>
+          <span class="article-meta-dot"></span>
+          <span>5 min de lecture</span>
+        </div>
+      </div>
+    </a>
+
+  </div>
+
+  <div class="cta-band">
+    <h2>Vous avez recu un document juridique ?</h2>
+    <p>Analysez-le en 30 secondes avec JustiXia. Gratuit avec inscription.</p>
+    <a href="/app" class="cta-btn">Analyser mon document</a>
+  </div>
+</div>
+
+<footer>
+  <a href="/">JustiXia</a> &nbsp;·&nbsp;
+  <a href="/mentions-legales">Mentions legales</a> &nbsp;·&nbsp;
+  <a href="/confidentialite">Confidentialite</a>
+</footer>
+</body>
+</html>
