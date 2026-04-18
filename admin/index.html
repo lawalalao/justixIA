@@ -161,6 +161,35 @@
     .trend-dates { display: flex; justify-content: space-between; margin-top: 6px; }
     .trend-date-label { font-size: 10px; color: var(--muted); }
 
+    /* NPS */
+    .nps-card { background: var(--white); border: 1px solid var(--border-light); border-radius: var(--r-card); padding: 24px 28px; box-shadow: var(--shadow); margin-top: 24px; }
+    .nps-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .nps-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+    .nps-kpi { background: var(--grey); border-radius: var(--r-sm); padding: 14px 16px; }
+    .nps-kpi-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em; color: var(--muted); margin-bottom: 6px; }
+    .nps-kpi-val { font-size: 26px; font-weight: 800; color: var(--navy); letter-spacing: -1px; }
+    .nps-kpi-val.green { color: #16A34A; }
+    .nps-kpi-val.yellow { color: #D97706; }
+    .nps-kpi-val.red { color: #DC2626; }
+    .nps-dist { display: flex; gap: 4px; height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 8px; }
+    .nps-dist-seg { height: 100%; transition: width 0.5s ease; }
+    .nps-dist-legend { display: flex; gap: 16px; }
+    .nps-legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted); }
+    .nps-legend-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+    .nps-reviews-title { font-size: 13px; font-weight: 700; color: var(--navy); margin: 20px 0 12px; }
+    .review-row { border-bottom: 1px solid var(--border-light); padding: 12px 0; display: flex; gap: 14px; align-items: flex-start; }
+    .review-row:last-child { border-bottom: none; }
+    .review-score { width: 32px; height: 32px; border-radius: 8px; font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .review-score.promoter { background: #DCFCE7; color: #16A34A; }
+    .review-score.passive { background: #FEF3C7; color: #D97706; }
+    .review-score.detractor { background: #FEE2E2; color: #DC2626; }
+    .review-body { flex: 1; }
+    .review-meta { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+    .review-comment { font-size: 13px; color: var(--body); line-height: 1.55; }
+    .review-empty { font-size: 13px; color: var(--muted); font-style: italic; }
+    .nps-link { font-size: 13px; color: var(--pink); text-decoration: none; font-weight: 600; }
+    .nps-link:hover { text-decoration: underline; }
+
     /* EMPTY / LOADING */
     .loading-state { padding: 48px; text-align: center; color: var(--muted); font-size: 14px; }
     .error-state {
@@ -322,6 +351,15 @@
       </div>
     </div>
 
+    <!-- NPS -->
+    <div class="nps-card">
+      <div class="nps-header">
+        <div class="card-title" style="margin-bottom:0">Avis utilisateurs (NPS)</div>
+        <a href="/avis" target="_blank" class="nps-link">Voir la page avis</a>
+      </div>
+      <div id="npsContent"><div class="loading-state">Chargement...</div></div>
+    </div>
+
   </main>
 </div>
 
@@ -330,23 +368,6 @@
   import { getSupabase, logout as sbLogout, authHeaders } from '/dashboard/_auth.js';
 
   let SESSION = null;
-
-  async function init() {
-    const sb = await getSupabase();
-    const { data: { session } } = await sb.auth.getSession();
-    if (!session) {
-      window.location.href = '/admin/login.html';
-      return;
-    }
-    SESSION = session;
-
-    const email = SESSION.user?.email || '';
-    document.getElementById('userEmail').textContent = email;
-    document.getElementById('userAvatar').textContent = email.charAt(0).toUpperCase() || 'A';
-    document.getElementById('lastUpdated').textContent = 'Mise a jour : ' + new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-
-    await loadStats();
-  }
 
   async function loadStats() {
     try {
@@ -429,7 +450,94 @@
     return new Date(iso).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' });
   }
 
+  async function loadNPS() {
+    try {
+      const resp = await fetch('/api/admin/avis', { headers: authHeaders(SESSION) });
+      if (!resp.ok) throw new Error();
+      const n = await resp.json();
+      renderNPS(n);
+    } catch {
+      document.getElementById('npsContent').innerHTML = '<p style="font-size:13px;color:var(--muted)">Impossible de charger les avis.</p>';
+    }
+  }
+
+  function renderNPS(n) {
+    if (n.total === 0) {
+      document.getElementById('npsContent').innerHTML = `
+        <p style="font-size:13px;color:var(--muted)">Aucun avis recu pour l'instant.</p>
+        <a href="/avis" target="_blank" class="nps-link" style="display:inline-block;margin-top:10px">Partager la page avis</a>`;
+      return;
+    }
+
+    const npsColor = n.nps >= 50 ? 'green' : n.nps >= 0 ? 'yellow' : 'red';
+    const pPct = Math.round(n.promoteurs  / n.total * 100);
+    const aPct = Math.round(n.passifs     / n.total * 100);
+    const dPct = Math.round(n.detracteurs / n.total * 100);
+
+    const recentHTML = n.recents.map(r => {
+      const cat = r.score >= 9 ? 'promoter' : r.score >= 7 ? 'passive' : 'detractor';
+      const who = [r.name, r.role].filter(Boolean).join(' · ') || 'Anonyme';
+      const date = new Date(r.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' });
+      return `
+        <div class="review-row">
+          <div class="review-score ${cat}">${r.score}</div>
+          <div class="review-body">
+            <div class="review-meta">${who} · ${date}</div>
+            ${r.comment
+              ? `<div class="review-comment">${r.comment.replace(/</g, '&lt;')}</div>`
+              : `<div class="review-empty">Sans commentaire</div>`}
+          </div>
+        </div>`;
+    }).join('');
+
+    document.getElementById('npsContent').innerHTML = `
+      <div class="nps-kpis">
+        <div class="nps-kpi">
+          <div class="nps-kpi-label">Score NPS</div>
+          <div class="nps-kpi-val ${npsColor}">${n.nps > 0 ? '+' : ''}${n.nps}</div>
+        </div>
+        <div class="nps-kpi">
+          <div class="nps-kpi-label">Note moyenne</div>
+          <div class="nps-kpi-val">${n.avg}/10</div>
+        </div>
+        <div class="nps-kpi">
+          <div class="nps-kpi-label">Promoteurs</div>
+          <div class="nps-kpi-val green">${n.promoteurs}</div>
+        </div>
+        <div class="nps-kpi">
+          <div class="nps-kpi-label">Total avis</div>
+          <div class="nps-kpi-val">${n.total}</div>
+        </div>
+      </div>
+      <div class="nps-dist">
+        <div class="nps-dist-seg" style="width:${dPct}%;background:#EF4444"></div>
+        <div class="nps-dist-seg" style="width:${aPct}%;background:#F59E0B"></div>
+        <div class="nps-dist-seg" style="width:${pPct}%;background:#22C55E"></div>
+      </div>
+      <div class="nps-dist-legend">
+        <span class="nps-legend-item"><span class="nps-legend-dot" style="background:#EF4444"></span>Detracteurs ${dPct}%</span>
+        <span class="nps-legend-item"><span class="nps-legend-dot" style="background:#F59E0B"></span>Passifs ${aPct}%</span>
+        <span class="nps-legend-item"><span class="nps-legend-dot" style="background:#22C55E"></span>Promoteurs ${pPct}%</span>
+      </div>
+      <div class="nps-reviews-title">Derniers avis</div>
+      ${recentHTML}`;
+  }
+
   document.getElementById('logoutBtn').addEventListener('click', sbLogout);
+
+  async function init() {
+    const sb = await getSupabase();
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { window.location.href = '/admin/login.html'; return; }
+    SESSION = session;
+
+    const email = SESSION.user?.email || '';
+    document.getElementById('userEmail').textContent = email;
+    document.getElementById('userAvatar').textContent = email.charAt(0).toUpperCase() || 'A';
+    document.getElementById('lastUpdated').textContent = 'Mise a jour : ' + new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+
+    await Promise.all([loadStats(), loadNPS()]);
+  }
 
   init();
 </script>

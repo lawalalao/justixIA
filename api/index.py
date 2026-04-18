@@ -415,6 +415,83 @@ async def patch_case(case_id: str, body: CasePatch, user: dict = Depends(require
     return result.data[0] if result.data else {"ok": True}
 
 
+# ── Avis / NPS ────────────────────────────────────────────────────────────────
+
+class AvisCreate(BaseModel):
+    score: int
+    comment: Optional[str] = None
+    name:    Optional[str] = None
+    role:    Optional[str] = None
+
+    @field_validator("score")
+    @classmethod
+    def score_range(cls, v):
+        if not 0 <= v <= 10:
+            raise ValueError("Score invalide (0-10).")
+        return v
+
+    @field_validator("comment")
+    @classmethod
+    def comment_length(cls, v):
+        if v and len(v) > 2000:
+            raise ValueError("Commentaire trop long (max 2000 caractères).")
+        return v.strip() if v else None
+
+    @field_validator("name")
+    @classmethod
+    def name_length(cls, v):
+        if v and len(v) > 100:
+            raise ValueError("Nom trop long.")
+        return v.strip() if v else None
+
+    @field_validator("role")
+    @classmethod
+    def role_allowed(cls, v):
+        allowed = {"particulier", "association", "travailleur social", "juriste", "autre", ""}
+        if v and v not in allowed:
+            raise ValueError("Rôle invalide.")
+        return v or None
+
+
+@app.post("/api/avis")
+async def submit_avis(data: AvisCreate):
+    sb = get_supabase_admin()
+    sb.table("avis").insert({
+        "score":   data.score,
+        "comment": data.comment,
+        "name":    data.name,
+        "role":    data.role,
+    }).execute()
+    return {"ok": True}
+
+
+@app.get("/api/admin/avis")
+async def admin_avis(user: dict = Depends(require_admin)):
+    sb = get_supabase_admin()
+    result = sb.table("avis").select("score,comment,name,role,created_at").order("created_at", desc=True).limit(100).execute()
+    data = result.data or []
+
+    total = len(data)
+    if total == 0:
+        return {"total": 0, "nps": 0, "avg": 0, "promoteurs": 0, "passifs": 0, "detracteurs": 0, "recents": []}
+
+    promoteurs  = sum(1 for a in data if a["score"] >= 9)
+    passifs     = sum(1 for a in data if 7 <= a["score"] <= 8)
+    detracteurs = sum(1 for a in data if a["score"] <= 6)
+    nps = round((promoteurs / total - detracteurs / total) * 100)
+    avg = round(sum(a["score"] for a in data) / total, 1)
+
+    return {
+        "total":       total,
+        "nps":         nps,
+        "avg":         avg,
+        "promoteurs":  promoteurs,
+        "passifs":     passifs,
+        "detracteurs": detracteurs,
+        "recents":     data[:10],
+    }
+
+
 # ── Admin Stats (RGPD-safe: agrégats uniquement, aucun contenu personnel) ─────
 
 @app.get("/api/admin/stats")

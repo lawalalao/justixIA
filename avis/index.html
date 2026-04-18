@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Donnez votre avis — JustiXia</title>
+  <meta name="robots" content="noindex" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --pink: #FF2D78;
+      --pink-grad: linear-gradient(135deg, #FF2D78, #FF5CA8);
+      --pink-glow: 0 4px 20px rgba(255,45,120,0.32);
+      --pink-bg: #FFF5F8;
+      --navy: #1A1A2E;
+      --body: #333344;
+      --muted: #6B6B7B;
+      --white: #FFFFFF;
+      --grey: #F8F8FB;
+      --border: #EBEBEB;
+      --border-light: #F0F0F8;
+      --green: #16A34A;
+      --green-bg: #F0FDF4;
+      --yellow: #D97706;
+      --yellow-bg: #FFFBEB;
+      --r-pill: 9999px;
+      --r-card: 16px;
+      --r-sm: 12px;
+      --shadow: 0 2px 20px rgba(0,0,0,0.06);
+    }
+
+    html { min-height: 100%; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--grey);
+      color: var(--body);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 16px 80px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: 800;
+      background: var(--pink-grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-decoration: none;
+      margin-bottom: 40px;
+    }
+
+    .card {
+      background: var(--white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--r-card);
+      padding: 40px 36px;
+      box-shadow: var(--shadow);
+      width: 100%;
+      max-width: 560px;
+    }
+
+    /* STEP INDICATOR */
+    .steps {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 32px;
+    }
+    .step-dot {
+      height: 4px;
+      flex: 1;
+      border-radius: 2px;
+      background: var(--border);
+      transition: background 0.3s;
+    }
+    .step-dot.active { background: var(--pink); }
+    .step-dot.done { background: rgba(255,45,120,0.3); }
+
+    /* HEADING */
+    .card-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--pink);
+      margin-bottom: 10px;
+    }
+    .card-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--navy);
+      letter-spacing: -0.4px;
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+    .card-sub {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 32px;
+      line-height: 1.6;
+    }
+
+    /* NPS SCALE */
+    .nps-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .nps-grid {
+      display: grid;
+      grid-template-columns: repeat(11, 1fr);
+      gap: 4px;
+      margin-bottom: 24px;
+    }
+    .nps-btn {
+      aspect-ratio: 1;
+      border-radius: 8px;
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--body);
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s;
+      -webkit-tap-highlight-color: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .nps-btn:hover { border-color: var(--pink); color: var(--pink); transform: translateY(-1px); }
+    .nps-btn.selected-detractor { background: #FEE2E2; border-color: #EF4444; color: #DC2626; }
+    .nps-btn.selected-passive { background: #FEF3C7; border-color: #F59E0B; color: #D97706; }
+    .nps-btn.selected-promoter { background: #DCFCE7; border-color: #22C55E; color: #16A34A; }
+
+    /* COMMENT SECTION */
+    .comment-section {
+      display: none;
+      animation: fadeIn 0.25s ease;
+    }
+    .comment-section.show { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .score-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: var(--r-pill);
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .score-badge.detractor { background: #FEE2E2; color: #DC2626; }
+    .score-badge.passive { background: #FEF3C7; color: #D97706; }
+    .score-badge.promoter { background: #DCFCE7; color: #16A34A; }
+
+    .comment-question {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 12px;
+    }
+
+    textarea {
+      width: 100%;
+      background: var(--grey);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-sm);
+      padding: 14px 16px;
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--body);
+      line-height: 1.6;
+      resize: vertical;
+      min-height: 100px;
+      outline: none;
+      transition: border-color 0.2s;
+      margin-bottom: 20px;
+    }
+    textarea::placeholder { color: #AAAABC; }
+    textarea:focus { border-color: var(--pink); background: var(--white); }
+
+    /* IDENTITY */
+    .identity-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .field label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 6px;
+    }
+    .field input, .field select {
+      width: 100%;
+      background: var(--grey);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-sm);
+      padding: 11px 14px;
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--body);
+      outline: none;
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+    }
+    .field input:focus, .field select:focus { border-color: var(--pink); background: var(--white); }
+    .field input::placeholder { color: #AAAABC; }
+
+    /* SUBMIT */
+    .submit-btn {
+      width: 100%;
+      padding: 15px;
+      border-radius: var(--r-pill);
+      border: none;
+      background: var(--pink-grad);
+      color: var(--white);
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      box-shadow: var(--pink-glow);
+      transition: opacity 0.2s;
+      min-height: 52px;
+    }
+    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .submit-btn:active { opacity: 0.85; }
+
+    /* SUCCESS */
+    .success-state {
+      display: none;
+      text-align: center;
+      padding: 20px 0;
+    }
+    .success-state.show { display: block; }
+    .success-icon {
+      width: 64px;
+      height: 64px;
+      background: #DCFCE7;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+    .success-icon svg { width: 28px; height: 28px; stroke: var(--green); fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+    .success-title { font-size: 22px; font-weight: 800; color: var(--navy); margin-bottom: 8px; letter-spacing: -0.3px; }
+    .success-sub { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 28px; }
+    .success-share {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .share-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 18px;
+      border-radius: var(--r-pill);
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      border: 1.5px solid var(--border);
+      color: var(--body);
+      transition: border-color 0.2s;
+      cursor: pointer;
+      background: none;
+      font-family: inherit;
+    }
+    .share-btn:hover { border-color: var(--pink); color: var(--pink); }
+    .back-link { display: block; text-align: center; margin-top: 20px; font-size: 13px; color: var(--muted); text-decoration: none; }
+    .back-link:hover { color: var(--body); }
+
+    @media (max-width: 480px) {
+      .card { padding: 28px 20px; }
+      .nps-btn { font-size: 11px; border-radius: 6px; }
+      .identity-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<a href="/" class="logo">JustiXia</a>
+
+<div class="card">
+
+  <!-- FORM -->
+  <div id="formView">
+    <div class="steps">
+      <div class="step-dot active" id="dot1"></div>
+      <div class="step-dot" id="dot2"></div>
+    </div>
+
+    <div class="card-eyebrow">Votre avis</div>
+    <h1 class="card-title">Recommanderiez-vous JustiXia ?</h1>
+    <p class="card-sub">Sur une échelle de 0 à 10, quelle est la probabilité que vous recommandiez JustiXia à quelqu'un qui en a besoin ?</p>
+
+    <div class="nps-labels">
+      <span>Pas du tout</span>
+      <span>Absolument</span>
+    </div>
+    <div class="nps-grid" id="npsGrid">
+      <!-- 0 to 10 generated by JS -->
+    </div>
+
+    <!-- COMMENT SECTION -->
+    <div class="comment-section" id="commentSection">
+      <div class="steps">
+        <div class="step-dot done"></div>
+        <div class="step-dot active"></div>
+      </div>
+
+      <div class="score-badge" id="scoreBadge"></div>
+      <p class="comment-question" id="commentQuestion"></p>
+      <textarea id="commentInput" placeholder="Votre réponse (facultatif)..."></textarea>
+
+      <div class="identity-row">
+        <div class="field">
+          <label for="nameInput">Prénom (facultatif)</label>
+          <input type="text" id="nameInput" placeholder="Ex: Fatou" maxlength="80" />
+        </div>
+        <div class="field">
+          <label for="roleSelect">Vous êtes</label>
+          <select id="roleSelect">
+            <option value="">Sélectionner...</option>
+            <option value="particulier">Particulier</option>
+            <option value="association">Association / ONG</option>
+            <option value="travailleur social">Travailleur social</option>
+            <option value="juriste">Juriste / avocat</option>
+            <option value="autre">Autre</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="submit-btn" id="submitBtn">Envoyer mon avis</button>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="success-state" id="successView">
+    <div class="success-icon">
+      <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <h2 class="success-title">Merci pour votre retour !</h2>
+    <p class="success-sub">Chaque avis nous aide à améliorer JustiXia pour les personnes qui en ont le plus besoin.</p>
+    <div class="success-share">
+      <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://justix-ia.vercel.app" target="_blank" rel="noopener" class="share-btn">
+        Partager sur LinkedIn
+      </a>
+      <button class="share-btn" id="copyLinkBtn">Copier le lien</button>
+    </div>
+  </div>
+
+</div>
+
+<a href="/" class="back-link">Retour au site</a>
+
+<script>
+  let selectedScore = null;
+
+  const QUESTIONS = {
+    detractor: "Qu'est-ce qui n'a pas fonctionné ? On veut vraiment comprendre.",
+    passive:   "Qu'est-ce qu'on pourrait améliorer ?",
+    promoter:  "Super ! Qu'est-ce qui vous a le plus aidé ?"
+  };
+
+  function getCategory(score) {
+    if (score <= 6) return 'detractor';
+    if (score <= 8) return 'passive';
+    return 'promoter';
+  }
+
+  const LABELS = {
+    detractor: { text: 'Score ' + selectedScore, emoji: '' },
+    passive:   { text: 'Score ' + selectedScore, emoji: '' },
+    promoter:  { text: 'Score ' + selectedScore, emoji: '' }
+  };
+
+  const BADGE_TEXTS = {
+    detractor: 'Pas encore convaincu',
+    passive:   'Plutôt satisfait',
+    promoter:  'Très satisfait'
+  };
+
+  // Build NPS grid
+  const grid = document.getElementById('npsGrid');
+  for (let i = 0; i <= 10; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'nps-btn';
+    btn.textContent = i;
+    btn.dataset.score = i;
+    btn.addEventListener('click', () => selectScore(i));
+    grid.appendChild(btn);
+  }
+
+  function selectScore(score) {
+    selectedScore = score;
+    const cat = getCategory(score);
+
+    // Update button styles
+    document.querySelectorAll('.nps-btn').forEach(b => {
+      b.className = 'nps-btn';
+      if (parseInt(b.dataset.score) === score) {
+        b.classList.add('selected-' + cat);
+      }
+    });
+
+    // Update badge
+    const badge = document.getElementById('scoreBadge');
+    badge.className = 'score-badge ' + cat;
+    badge.textContent = `${score}/10 — ${BADGE_TEXTS[cat]}`;
+
+    // Update question
+    document.getElementById('commentQuestion').textContent = QUESTIONS[cat];
+
+    // Show comment section
+    document.getElementById('commentSection').classList.add('show');
+
+    // Scroll to comment
+    setTimeout(() => {
+      document.getElementById('commentSection').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 100);
+  }
+
+  document.getElementById('submitBtn').addEventListener('click', async () => {
+    if (selectedScore === null) return;
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Envoi...';
+
+    const payload = {
+      score: selectedScore,
+      comment: document.getElementById('commentInput').value.trim() || null,
+      name:    document.getElementById('nameInput').value.trim() || null,
+      role:    document.getElementById('roleSelect').value || null,
+    };
+
+    try {
+      const resp = await fetch('/api/avis', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!resp.ok) throw new Error();
+
+      document.getElementById('formView').style.display = 'none';
+      document.getElementById('successView').classList.add('show');
+    } catch {
+      btn.disabled = false;
+      btn.textContent = 'Envoyer mon avis';
+      alert('Erreur lors de l\'envoi. Réessayez.');
+    }
+  });
+
+  document.getElementById('copyLinkBtn').addEventListener('click', () => {
+    navigator.clipboard.writeText('https://justix-ia.vercel.app').then(() => {
+      document.getElementById('copyLinkBtn').textContent = 'Lien copié !';
+      setTimeout(() => { document.getElementById('copyLinkBtn').textContent = 'Copier le lien'; }, 2000);
+    });
+  });
+</script>
+
+</body>
+</html>
