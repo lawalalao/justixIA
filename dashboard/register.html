@@ -9,76 +9,67 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --pink: #FF2D78;
-      --pink-grad: linear-gradient(135deg, #FF2D78, #FF5CA8);
-      --pink-glow: 0 4px 20px rgba(255,45,120,0.32);
-      --pink-tag: #FFE8EF;
-      --navy: #1A1A2E;
-      --body: #333344;
-      --muted: #6B6B7B;
-      --white: #FFFFFF;
-      --grey: #F8F8FB;
-      --border: #EBEBEB;
-      --border-light: #F0F0F8;
-      --green: #16A34A;
-      --green-bg: #F0FDF4;
-      --green-border: #BBF7D0;
-      --shadow: 0 2px 20px rgba(0,0,0,0.06);
-      --r-pill: 9999px;
-      --r-card: 16px;
-      --r-sm: 12px;
+      --pink: #FF2D78; --pink-grad: linear-gradient(135deg, #FF2D78, #FF5CA8);
+      --pink-glow: 0 4px 20px rgba(255,45,120,0.32); --pink-tag: #FFE8EF;
+      --navy: #1A1A2E; --body: #333344; --muted: #6B6B7B;
+      --white: #FFFFFF; --grey: #F8F8FB; --border: #EBEBEB;
+      --border-light: #F0F0F8; --green: #16A34A; --green-bg: #F0FDF4;
+      --green-border: #BBF7D0; --shadow: 0 2px 20px rgba(0,0,0,0.06);
+      --r-pill: 9999px; --r-card: 16px; --r-sm: 12px;
     }
-    html { height: 100%; }
     body {
       font-family: 'Inter', -apple-system, sans-serif;
-      background: var(--grey);
-      color: var(--body);
-      min-height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 24px 16px;
-      -webkit-font-smoothing: antialiased;
+      background: var(--grey); color: var(--body);
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 24px 16px; -webkit-font-smoothing: antialiased;
     }
-
     .logo {
       font-size: 24px; font-weight: 800;
-      background: var(--pink-grad);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-      text-decoration: none; display: block; text-align: center; margin-bottom: 4px;
+      background: var(--pink-grad); -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent; background-clip: text;
+      text-decoration: none; display: block; text-align: center; margin-bottom: 28px;
     }
-
-    .logo-sub { font-size: 13px; color: var(--muted); text-align: center; margin-bottom: 32px; }
-
     .card {
-      background: var(--white);
-      border: 1px solid var(--border-light);
-      border-radius: var(--r-card);
-      padding: 36px 32px;
-      box-shadow: var(--shadow);
-      width: 100%; max-width: 440px;
+      background: var(--white); border: 1px solid var(--border-light);
+      border-radius: var(--r-card); padding: 36px 32px;
+      box-shadow: var(--shadow); width: 100%; max-width: 460px;
     }
+    .card-title { font-size: 22px; font-weight: 800; color: var(--navy); letter-spacing: -0.5px; margin-bottom: 6px; }
+    .card-sub { font-size: 14px; color: var(--muted); margin-bottom: 28px; }
 
-    .card h1 { font-size: 22px; font-weight: 800; color: var(--navy); letter-spacing: -0.5px; margin-bottom: 4px; }
-    .card p { font-size: 14px; color: var(--muted); margin-bottom: 28px; }
+    /* TYPE TOGGLE */
+    .type-toggle {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 10px; margin-bottom: 28px;
+    }
+    .type-btn {
+      padding: 14px 12px; border-radius: var(--r-sm);
+      border: 2px solid var(--border); background: var(--white);
+      cursor: pointer; font-family: inherit; text-align: center;
+      transition: border-color 0.15s, background 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .type-btn.active { border-color: var(--pink); background: var(--pink-tag); }
+    .type-btn-icon { font-size: 24px; margin-bottom: 6px; }
+    .type-btn-label { font-size: 14px; font-weight: 700; color: var(--navy); display: block; }
+    .type-btn-sub { font-size: 11px; color: var(--muted); display: block; margin-top: 2px; }
+    .type-btn.active .type-btn-label { color: var(--pink); }
 
+    /* FORM */
     .field { margin-bottom: 16px; }
-
     label { display: block; font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 6px; }
-
-    input {
-      width: 100%;
-      background: var(--grey); border: 1px solid var(--border);
-      border-radius: var(--r-sm); color: var(--body);
-      font-family: inherit; font-size: 15px; padding: 13px 16px;
-      outline: none; transition: border-color 0.2s, box-shadow 0.2s;
-      -webkit-appearance: none;
+    input, select {
+      width: 100%; background: var(--grey); border: 1px solid var(--border);
+      border-radius: var(--r-sm); color: var(--body); font-family: inherit;
+      font-size: 15px; padding: 13px 16px; outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s; -webkit-appearance: none;
     }
-
     input::placeholder { color: #AAAABC; }
-    input:focus { border-color: var(--pink); box-shadow: 0 0 0 3px rgba(255,45,120,0.1); background: var(--white); }
-
+    input:focus, select:focus {
+      border-color: var(--pink); box-shadow: 0 0 0 3px rgba(255,45,120,0.1);
+      background: var(--white);
+    }
     .submit-btn {
       width: 100%; margin-top: 8px; padding: 15px;
       border-radius: var(--r-pill); border: none;
@@ -87,138 +78,233 @@
       box-shadow: var(--pink-glow); font-family: inherit;
       min-height: 52px; transition: opacity 0.2s;
     }
-
     .submit-btn:active { opacity: 0.85; }
     .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    .alert {
-      display: none;
-      border-radius: var(--r-sm);
-      padding: 12px 16px;
-      font-size: 13px;
-      margin-bottom: 16px;
-      line-height: 1.5;
+    /* PLAN CARDS (asso only) */
+    .plan-section { display: none; margin-bottom: 16px; }
+    .plan-section.show { display: block; }
+    .plan-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .plan-card {
+      padding: 16px; border-radius: var(--r-sm);
+      border: 2px solid var(--border); background: var(--white);
+      cursor: pointer; transition: border-color 0.15s;
+      -webkit-tap-highlight-color: transparent;
     }
+    .plan-card.active { border-color: var(--pink); background: var(--pink-tag); }
+    .plan-card-name { font-size: 14px; font-weight: 800; color: var(--navy); }
+    .plan-card.active .plan-card-name { color: var(--pink); }
+    .plan-card-price { font-size: 20px; font-weight: 800; color: var(--navy); margin: 4px 0; }
+    .plan-card-price span { font-size: 12px; font-weight: 500; color: var(--muted); }
+    .plan-card-feat { font-size: 11px; color: var(--muted); }
 
+    /* FREE NOTICE (particulier) */
+    .free-notice {
+      display: none; background: var(--grey); border: 1px solid var(--border);
+      border-radius: var(--r-sm); padding: 14px 16px;
+      font-size: 13px; color: var(--muted); line-height: 1.6;
+      margin-bottom: 16px;
+    }
+    .free-notice.show { display: block; }
+    .free-notice strong { color: var(--navy); }
+
+    /* ALERT */
+    .alert {
+      display: none; border-radius: var(--r-sm); padding: 12px 16px;
+      font-size: 13px; margin-bottom: 16px; line-height: 1.5;
+    }
     .alert.error { display: block; background: #FFF5F8; border: 1px solid rgba(255,45,120,0.2); color: var(--pink); }
     .alert.success { display: block; background: var(--green-bg); border: 1px solid var(--green-border); color: var(--green); }
 
     .divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; color: var(--muted); font-size: 12px; }
     .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-
     .switch-link { text-align: center; font-size: 14px; color: var(--muted); }
     .switch-link a { color: var(--pink); font-weight: 600; text-decoration: none; }
-    .switch-link a:hover { text-decoration: underline; }
-
     .back-link { display: block; text-align: center; margin-top: 20px; font-size: 13px; color: var(--muted); text-decoration: none; }
-    .back-link:hover { color: var(--body); }
-
+    .asso-field { display: none; }
+    .asso-field.show { display: block; }
     @media (max-width: 480px) { .card { padding: 28px 20px; } }
   </style>
 </head>
 <body>
 
-  <a href="/" class="logo">JustiXia</a>
-  <p class="logo-sub">Espace associations et partenaires</p>
+<a href="/" class="logo">JustiXia</a>
 
-  <div class="card">
-    <h1>Créer un compte</h1>
-    <p>Accès gratuit pour les associations partenaires.</p>
+<div class="card">
+  <div class="card-title">Créer un compte</div>
+  <div class="card-sub">Choisissez votre profil pour démarrer</div>
 
-    <div class="alert" id="alertBox"></div>
-
-    <form id="registerForm">
-      <div class="field">
-        <label for="org">Nom de l'organisation</label>
-        <input type="text" id="org" placeholder="La Cimade  Paris" required />
-      </div>
-      <div class="field">
-        <label for="email">Adresse email</label>
-        <input type="email" id="email" placeholder="contact@association.fr" autocomplete="email" required />
-      </div>
-      <div class="field">
-        <label for="password">Mot de passe</label>
-        <input type="password" id="password" placeholder="8 caractères minimum" autocomplete="new-password" minlength="8" required />
-      </div>
-      <div class="field">
-        <label for="confirm">Confirmer le mot de passe</label>
-        <input type="password" id="confirm" placeholder="••••••••" autocomplete="new-password" required />
-      </div>
-      <button type="submit" class="submit-btn" id="submitBtn">Créer mon compte</button>
-    </form>
-
-    <div class="divider">déjà un compte ?</div>
-    <p class="switch-link"><a href="/dashboard/login.html">Se connecter</a></p>
+  <!-- Type selector -->
+  <div class="type-toggle">
+    <button class="type-btn active" data-type="particulier">
+      <div class="type-btn-icon">👤</div>
+      <span class="type-btn-label">Particulier</span>
+      <span class="type-btn-sub">Accès gratuit, lettre dès 5€</span>
+    </button>
+    <button class="type-btn" data-type="association">
+      <div class="type-btn-icon">🏢</div>
+      <span class="type-btn-label">Association</span>
+      <span class="type-btn-sub">Multi-utilisateurs, dossiers partagés</span>
+    </button>
   </div>
 
-  <a href="/" class="back-link">Retour au site</a>
+  <div class="alert" id="alertBox"></div>
 
-  <script>
-    // Redirige si déjà connecté
-    const stored = localStorage.getItem('jx_session');
-    if (stored) window.location.href = '/dashboard/';
+  <!-- Particulier notice -->
+  <div class="free-notice show" id="freeNotice">
+    <strong>Compte gratuit :</strong> analyse complète (irrégularités + droits) incluse.
+    La lettre de réponse est disponible à partir de 5€ par dossier ou avec un abonnement.
+  </div>
 
-    async function getConfig() {
-      const resp = await fetch('/api/config');
-      return resp.json();
-    }
+  <!-- Association plan picker -->
+  <div class="plan-section" id="planSection">
+    <label style="margin-bottom:10px;display:block">Choisissez votre plan</label>
+    <div class="plan-cards">
+      <div class="plan-card active" data-plan="starter">
+        <div class="plan-card-name">Starter</div>
+        <div class="plan-card-price">29€<span>/mois</span></div>
+        <div class="plan-card-feat">3 membres · Dossiers illimités · Lettre incluse</div>
+      </div>
+      <div class="plan-card" data-plan="pro">
+        <div class="plan-card-name">Pro</div>
+        <div class="plan-card-price">99€<span>/mois</span></div>
+        <div class="plan-card-feat">10 membres · Statistiques · Priorité support</div>
+      </div>
+    </div>
+  </div>
 
-    let supabaseClient = null;
+  <form id="registerForm">
+    <!-- Association only fields -->
+    <div class="field asso-field" id="orgField">
+      <label for="org">Nom de l'organisation</label>
+      <input type="text" id="org" placeholder="La Cimade  Paris" />
+    </div>
 
-    async function initSupabase() {
-      const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
-      const config = await getConfig();
-      supabaseClient = createClient(config.supabase_url, config.supabase_anon_key);
-    }
+    <div class="field">
+      <label for="email">Adresse email</label>
+      <input type="email" id="email" placeholder="vous@exemple.fr" autocomplete="email" required />
+    </div>
+    <div class="field">
+      <label for="password">Mot de passe</label>
+      <input type="password" id="password" placeholder="8 caractères minimum" autocomplete="new-password" minlength="8" required />
+    </div>
+    <div class="field">
+      <label for="confirm">Confirmer le mot de passe</label>
+      <input type="password" id="confirm" placeholder="••••••••" autocomplete="new-password" required />
+    </div>
 
-    function showAlert(msg, type = 'error') {
-      const box = document.getElementById('alertBox');
-      box.textContent = msg;
-      box.className = `alert ${type}`;
-    }
+    <button type="submit" class="submit-btn" id="submitBtn">Créer mon compte</button>
+  </form>
 
-    document.getElementById('registerForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const btn = document.getElementById('submitBtn');
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
-      const confirm = document.getElementById('confirm').value;
-      const org = document.getElementById('org').value.trim();
+  <div class="divider">déjà un compte ?</div>
+  <p class="switch-link"><a href="/dashboard/login.html">Se connecter</a></p>
+</div>
 
-      if (password !== confirm) {
-        showAlert('Les mots de passe ne correspondent pas.');
+<a href="/" class="back-link">Retour au site</a>
+
+<script>
+  const stored = localStorage.getItem('jx_session');
+  if (stored) window.location.href = '/dashboard/';
+
+  let accountType = 'particulier';
+  let selectedPlan = 'starter';
+  let supabaseClient = null;
+
+  // Type toggle
+  document.querySelectorAll('.type-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      accountType = btn.dataset.type;
+      const isAsso = accountType === 'association';
+      document.getElementById('freeNotice').classList.toggle('show', !isAsso);
+      document.getElementById('planSection').classList.toggle('show', isAsso);
+      document.querySelectorAll('.asso-field').forEach(f => f.classList.toggle('show', isAsso));
+      if (isAsso) document.getElementById('org').required = true;
+      else document.getElementById('org').required = false;
+    });
+  });
+
+  // Plan picker
+  document.querySelectorAll('.plan-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      selectedPlan = card.dataset.plan;
+    });
+  });
+
+  async function getConfig() {
+    const resp = await fetch('/api/config');
+    return resp.json();
+  }
+
+  async function initSupabase() {
+    if (supabaseClient) return;
+    const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
+    const config = await getConfig();
+    supabaseClient = createClient(config.supabase_url, config.supabase_anon_key);
+  }
+
+  function showAlert(msg, type = 'error') {
+    const box = document.getElementById('alertBox');
+    box.textContent = msg;
+    box.className = `alert ${type}`;
+  }
+
+  document.getElementById('registerForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('submitBtn');
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const confirm = document.getElementById('confirm').value;
+    const org = document.getElementById('org').value.trim();
+
+    if (password !== confirm) { showAlert('Les mots de passe ne correspondent pas.'); return; }
+    if (accountType === 'association' && !org) { showAlert("Renseignez le nom de l'organisation."); return; }
+
+    btn.disabled = true;
+    btn.textContent = 'Création du compte...';
+
+    try {
+      await initSupabase();
+
+      const meta = { account_type: accountType };
+      if (accountType === 'association') meta.organization = org;
+
+      const { data, error } = await supabaseClient.auth.signUp({
+        email, password,
+        options: { data: meta },
+      });
+
+      if (error) throw error;
+
+      if (accountType === 'association' && data.user) {
+        // Create org + profile update via a short wait (trigger creates profile)
+        // For now, show success and let admin activate the plan manually
+        showAlert(
+          `Compte créé ! Vérifiez votre email pour confirmer. Notre équipe activera votre plan ${selectedPlan} sous 24h.`,
+          'success'
+        );
+        btn.textContent = 'Compte créé';
         return;
       }
 
-      btn.disabled = true;
-      btn.textContent = 'Création du compte...';
-
-      try {
-        if (!supabaseClient) await initSupabase();
-
-        const { data, error } = await supabaseClient.auth.signUp({
-          email,
-          password,
-          options: { data: { organization: org } },
-        });
-
-        if (error) throw error;
-
-        if (data.session) {
-          localStorage.setItem('jx_session', JSON.stringify(data.session));
-          window.location.href = '/dashboard/';
-        } else {
-          showAlert('Compte créé ! Vérifie ta boite email pour confirmer ton adresse, puis connecte-toi.', 'success');
-          btn.textContent = 'Compte créé';
-        }
-      } catch (err) {
-        showAlert(err.message || 'Erreur lors de la création du compte.');
-        btn.disabled = false;
-        btn.textContent = 'Créer mon compte';
+      if (data.session) {
+        localStorage.setItem('jx_session', JSON.stringify(data.session));
+        window.location.href = '/app';
+      } else {
+        showAlert('Compte créé ! Vérifiez votre boite email pour confirmer votre adresse, puis connectez-vous.', 'success');
+        btn.textContent = 'Email envoyé';
       }
-    });
+    } catch (err) {
+      showAlert(err.message || 'Erreur lors de la création du compte.');
+      btn.disabled = false;
+      btn.textContent = 'Créer mon compte';
+    }
+  });
 
-    initSupabase();
-  </script>
+  initSupabase();
+</script>
 </body>
 </html>

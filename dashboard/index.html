@@ -419,6 +419,68 @@
       text-decoration: none;
     }
 
+    /* PLAN BADGE */
+    .plan-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 10px; border-radius: var(--r-pill);
+      font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
+    }
+    .plan-free     { background: #F3F4F6; color: #6B7280; }
+    .plan-oneshot  { background: #EFF6FF; color: #1D4ED8; }
+    .plan-starter  { background: var(--pink-tag); color: var(--pink); }
+    .plan-pro      { background: #1A1A2E; color: #fff; }
+
+    /* MEMBERS CARD */
+    .members-card {
+      display: none; background: var(--white);
+      border: 1px solid var(--border-light); border-radius: var(--r-card);
+      box-shadow: var(--shadow); margin-bottom: 28px; overflow: hidden;
+    }
+    .members-card.show { display: block; }
+    .members-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 20px; border-bottom: 1px solid var(--border-light);
+    }
+    .members-title { font-size: 15px; font-weight: 700; color: var(--navy); }
+    .members-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .invite-form { display: flex; gap: 8px; padding: 16px 20px; border-bottom: 1px solid var(--border-light); }
+    .invite-input {
+      flex: 1; background: var(--grey); border: 1px solid var(--border);
+      border-radius: var(--r-sm); color: var(--body); font-family: inherit;
+      font-size: 14px; padding: 10px 14px; outline: none;
+      transition: border-color 0.2s;
+    }
+    .invite-input:focus { border-color: var(--pink); }
+    .invite-btn {
+      padding: 10px 18px; border-radius: var(--r-sm); border: none;
+      background: var(--pink-grad); color: var(--white); font-size: 13px;
+      font-weight: 700; cursor: pointer; font-family: inherit;
+      box-shadow: var(--pink-glow); white-space: nowrap; transition: opacity 0.15s;
+    }
+    .invite-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .member-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 20px; border-bottom: 1px solid var(--border-light); gap: 12px;
+    }
+    .member-row:last-child { border-bottom: none; }
+    .member-avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: var(--pink-grad); color: #fff; font-size: 13px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .member-info { flex: 1; min-width: 0; }
+    .member-email { font-size: 13px; font-weight: 600; color: var(--navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .member-meta { font-size: 11px; color: var(--muted); }
+    .member-remove {
+      background: none; border: none; color: #EF4444; font-size: 13px;
+      font-weight: 600; cursor: pointer; font-family: inherit; padding: 6px 10px;
+      border-radius: var(--r-sm); transition: background 0.15s;
+    }
+    .member-remove:hover { background: #FEF2F2; }
+
+    .td-ref { font-weight: 600; color: var(--navy); }
+    .td-ref small { display: block; font-weight: 400; color: var(--muted); font-size: 12px; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 220px; }
+
     /* PAGINATION */
     .pagination {
       display: flex;
@@ -471,7 +533,7 @@
   <aside class="sidebar">
     <div class="sidebar-logo">
       <a href="/">JustiXia</a>
-      <p>Espace associations</p>
+      <p id="sidebarSub">Mon espace</p>
     </div>
     <nav class="sidebar-nav">
       <a href="/dashboard/" class="nav-item active">
@@ -486,7 +548,10 @@
     <div class="sidebar-footer">
       <div class="user-info">
         <div class="user-avatar" id="userAvatar">?</div>
-        <div class="user-email" id="userEmail">chargement...</div>
+        <div>
+          <div class="user-email" id="userEmail">chargement...</div>
+          <span class="plan-badge plan-free" id="planBadge">free</span>
+        </div>
       </div>
       <button class="nav-item" id="logoutBtn" style="color:#EF4444">
         <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
@@ -531,6 +596,21 @@
       </div>
     </div>
 
+    <!-- Members card (org owner only) -->
+    <div class="members-card" id="membersCard">
+      <div class="members-header">
+        <div>
+          <div class="members-title">Membres de l'organisation</div>
+          <div class="members-sub" id="membersSubtitle">Chargement...</div>
+        </div>
+      </div>
+      <div class="invite-form">
+        <input class="invite-input" id="inviteEmail" type="email" placeholder="email@collaborateur.fr" />
+        <button class="invite-btn" id="inviteBtn">Inviter</button>
+      </div>
+      <div id="membersList"></div>
+    </div>
+
     <!-- Filters -->
     <div class="filters">
       <input class="search-input" id="searchInput" placeholder="Rechercher un dossier..." />
@@ -557,7 +637,7 @@
       <table>
         <thead>
           <tr>
-            <th>Type de document</th>
+            <th>Référence / Document</th>
             <th>Date</th>
             <th>Langue</th>
             <th>Statut</th>
@@ -606,50 +686,115 @@
   import { requireAuth, logout as sbLogout, authHeaders } from '/dashboard/_auth.js';
 
   let SESSION = null;
+  const STATUT_LABELS = { open: 'Ouvert', progress: 'En cours', resolved: 'Résolu' };
+  const STATUT_CLASS  = { open: 'status-open', progress: 'status-progress', resolved: 'status-resolved' };
+  const PLAN_CLASS    = { free: 'plan-free', oneshot: 'plan-oneshot', starter: 'plan-starter', pro: 'plan-pro' };
+  const PLAN_LABELS   = { free: 'Gratuit', oneshot: 'One-shot', starter: 'Starter', pro: 'Pro' };
+
+  let allCases = [], filtered = [], page = 1;
+  const perPage = 10;
+
+  function escapeHTML(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+  }
+  function formatDate(iso) {
+    if (!iso) return '-';
+    return new Date(iso).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
 
   async function init() {
     SESSION = await requireAuth();
     const email = SESSION.user?.email || '';
     document.getElementById('userEmail').textContent = email;
     document.getElementById('userAvatar').textContent = email.charAt(0).toUpperCase() || 'U';
-    loadCases();
+    await Promise.all([loadProfile(), loadCases()]);
   }
+
+  async function loadProfile() {
+    try {
+      const resp = await fetch('/api/profile', { headers: authHeaders(SESSION) });
+      if (!resp.ok) return;
+      const p = await resp.json();
+
+      // Plan badge
+      const plan = p.plan || 'free';
+      const badge = document.getElementById('planBadge');
+      badge.textContent = PLAN_LABELS[plan] || plan;
+      badge.className = `plan-badge ${PLAN_CLASS[plan] || 'plan-free'}`;
+
+      // Sidebar subtitle
+      const sub = p.account_type === 'association' ? (p.org?.name || 'Association') : 'Mon espace';
+      document.getElementById('sidebarSub').textContent = sub;
+
+      // Members card (org owners only)
+      if (p.is_org_owner) {
+        document.getElementById('membersCard').classList.add('show');
+        document.getElementById('membersSubtitle').textContent =
+          `${p.member_count} / ${p.member_limit} membres actifs`;
+        loadMembers();
+      }
+    } catch { /* silent */ }
+  }
+
+  async function loadMembers() {
+    try {
+      const resp = await fetch('/api/org/members', { headers: authHeaders(SESSION) });
+      if (!resp.ok) return;
+      const data = await resp.json();
+      const list = document.getElementById('membersList');
+      if (!data.members?.length) {
+        list.innerHTML = '<div style="padding:16px 20px;font-size:13px;color:var(--muted)">Aucun membre invité pour l\'instant.</div>';
+        return;
+      }
+      list.innerHTML = data.members.map(m => `
+        <div class="member-row">
+          <div class="member-avatar">${(m.invited_email || '?').charAt(0).toUpperCase()}</div>
+          <div class="member-info">
+            <div class="member-email">${escapeHTML(m.invited_email || 'Membre')}</div>
+            <div class="member-meta">${m.role === 'owner' ? 'Directeur' : 'Membre'} · ${m.status === 'pending' ? 'Invitation en attente' : 'Actif'}</div>
+          </div>
+          ${m.role !== 'owner' ? `<button class="member-remove" data-id="${escapeHTML(m.id)}">Retirer</button>` : ''}
+        </div>
+      `).join('');
+      list.querySelectorAll('.member-remove').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          if (!confirm('Retirer ce membre ?')) return;
+          btn.disabled = true;
+          await fetch(`/api/org/members/${btn.dataset.id}`, { method: 'DELETE', headers: authHeaders(SESSION) });
+          loadMembers();
+          loadProfile();
+        });
+      });
+    } catch { /* silent */ }
+  }
+
+  document.getElementById('inviteBtn').addEventListener('click', async () => {
+    const email = document.getElementById('inviteEmail').value.trim();
+    if (!email) return;
+    const btn = document.getElementById('inviteBtn');
+    btn.disabled = true; btn.textContent = '...';
+    try {
+      const resp = await fetch('/api/org/invite', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...authHeaders(SESSION) },
+        body: JSON.stringify({ email }),
+      });
+      const data = await resp.json();
+      if (!resp.ok) { alert(data.detail || 'Erreur'); }
+      else { document.getElementById('inviteEmail').value = ''; loadMembers(); loadProfile(); }
+    } catch { alert('Erreur réseau'); }
+    btn.disabled = false; btn.textContent = 'Inviter';
+  });
 
   async function logout() { await sbLogout(); }
-
   document.getElementById('logoutBtn').addEventListener('click', logout);
   document.getElementById('mobileLogout').addEventListener('click', logout);
-
-  init();
-
-  const STATUT_LABELS = { open: 'Ouvert', progress: 'En cours', resolved: 'Résolu' };
-  const STATUT_CLASS  = { open: 'status-open', progress: 'status-progress', resolved: 'status-resolved' };
-
-  let allCases = [];
-  let filtered = [];
-  let page = 1;
-  const perPage = 10;
-
-  function escapeHTML(str) {
-    if (!str) return '';
-    return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
-  }
-
-  function formatDate(iso) {
-    if (!iso) return '-';
-    return new Date(iso).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
-  }
 
   function render() {
     const start = (page - 1) * perPage;
     const slice = filtered.slice(start, start + perPage);
     const tbody = document.getElementById('casesBody');
-
     if (!slice.length) {
       tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><p>Aucun dossier trouvé.</p><a href="/app" class="btn-primary" style="display:inline-flex">Créer le premier dossier</a></div></td></tr>`;
       document.getElementById('paginationInfo').textContent = '0 dossier';
@@ -657,17 +802,18 @@
       document.getElementById('nextBtn').disabled = true;
       return;
     }
-
-    tbody.innerHTML = slice.map(c => `
-      <tr onclick="window.location='/dashboard/case.html?id=${escapeHTML(c.id)}'">
-        <td class="td-type">${escapeHTML(c.type_document) || 'Document'}<small>${escapeHTML(c.resume) || ''}</small></td>
-        <td>${formatDate(c.created_at)}</td>
-        <td><span class="lang-pill">${escapeHTML(c.langue) || 'fr'}</span></td>
-        <td><span class="status-pill ${STATUT_CLASS[c.status] || 'status-open'}">${STATUT_LABELS[c.status] || 'Ouvert'}</span></td>
-        <td><a class="action-link" href="/dashboard/case.html?id=${escapeHTML(c.id)}" onclick="event.stopPropagation()">Voir</a></td>
-      </tr>
-    `).join('');
-
+    tbody.innerHTML = slice.map(c => {
+      const ref = escapeHTML(c.reference || c.type_document || 'Analyse');
+      const sub = escapeHTML(c.reference ? (c.type_document || '') : (c.resume || ''));
+      return `
+        <tr onclick="window.location='/dashboard/case.html?id=${escapeHTML(c.id)}'">
+          <td class="td-ref">${ref}<small>${sub}</small></td>
+          <td>${formatDate(c.created_at)}</td>
+          <td><span class="lang-pill">${escapeHTML(c.langue) || 'fr'}</span></td>
+          <td><span class="status-pill ${STATUT_CLASS[c.status] || 'status-open'}">${STATUT_LABELS[c.status] || 'Ouvert'}</span></td>
+          <td><a class="action-link" href="/dashboard/case.html?id=${escapeHTML(c.id)}" onclick="event.stopPropagation()">Voir</a></td>
+        </tr>`;
+    }).join('');
     const total = filtered.length;
     document.getElementById('paginationInfo').textContent = `${start + 1}-${Math.min(start + perPage, total)} sur ${total}`;
     document.getElementById('prevBtn').disabled = page === 1;
@@ -679,13 +825,12 @@
     const st = document.getElementById('statusFilter').value;
     const lg = document.getElementById('langFilter').value;
     filtered = allCases.filter(c => {
-      const matchQ = !q || (c.type_document || '').toLowerCase().includes(q) || (c.resume || '').toLowerCase().includes(q);
+      const matchQ = !q || (c.reference || c.type_document || '').toLowerCase().includes(q) || (c.resume || '').toLowerCase().includes(q);
       const matchSt = !st || c.status === st;
       const matchLg = !lg || c.langue === lg;
       return matchQ && matchSt && matchLg;
     });
-    page = 1;
-    render();
+    page = 1; render();
   }
 
   document.getElementById('searchInput').addEventListener('input', applyFilters);
@@ -696,32 +841,23 @@
 
   async function loadCases() {
     try {
-      const resp = await fetch('/api/cases', {
-        headers: authHeaders(SESSION)
-      });
+      const resp = await fetch('/api/cases', { headers: authHeaders(SESSION) });
       if (resp.status === 401) { logout(); return; }
       const data = await resp.json();
       allCases = data.cases || [];
-
-      const now = new Date();
-      const weekAgo = new Date(now - 7 * 86400000);
-      const thisWeek = allCases.filter(c => new Date(c.created_at) > weekAgo).length;
-      const inProgress = allCases.filter(c => c.status === 'progress').length;
-      const resolved = allCases.filter(c => c.status === 'resolved').length;
-
+      const now = new Date(), weekAgo = new Date(now - 7 * 86400000);
       document.getElementById('statTotal').textContent = allCases.length;
-      document.getElementById('statProgress').textContent = inProgress;
-      document.getElementById('statWeek').textContent = thisWeek;
-      document.getElementById('statResolved').textContent = resolved;
-
+      document.getElementById('statProgress').textContent = allCases.filter(c => c.status === 'progress').length;
+      document.getElementById('statWeek').textContent = allCases.filter(c => new Date(c.created_at) > weekAgo).length;
+      document.getElementById('statResolved').textContent = allCases.filter(c => c.status === 'resolved').length;
       filtered = [...allCases];
       render();
     } catch {
-      document.getElementById('casesBody').innerHTML = `<tr><td colspan="5"><div class="empty-state"><p>Impossible de charger les dossiers. Vérifie ta connexion.</p></div></td></tr>`;
+      document.getElementById('casesBody').innerHTML = `<tr><td colspan="5"><div class="empty-state"><p>Impossible de charger les dossiers.</p></div></td></tr>`;
     }
   }
 
-  loadCases();
+  init();
 </script>
 </body>
 </html>

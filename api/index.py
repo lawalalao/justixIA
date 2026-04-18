@@ -235,6 +235,7 @@ async def analyze_document(
     text: Optional[str] = Form(None),
     langue: str = Form("français"),
     save: Optional[str] = Form(None),
+    reference: Optional[str] = Form(None),
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
 ):
     if not file and not text:
@@ -321,45 +322,201 @@ async def analyze_document(
             "langue": langue_clean,
         }
 
-    # Verify authentication and decide letter access
-    # Logged-in users (valid JWT) → full letter
-    # Anonymous users (Stripe one-shot, no JWT) → letter stripped server-side
-    # The client shows/hides based on isPaid() for anonymous Stripe payers,
-    # but we don't expose the letter in the API response to unauthenticated requests.
+    # Auth + plan check for letter access
     is_authenticated = False
+    can_access_letter = False
+    authenticated_user = None
+    user_profile = None
+    sb_check = None
+
     if credentials and SUPABASE_URL and SUPABASE_SERVICE_KEY:
         try:
             from supabase import create_client
             sb_check = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
             user_check = sb_check.auth.get_user(credentials.credentials)
-            is_authenticated = bool(user_check.user)
+            if user_check.user:
+                is_authenticated = True
+                authenticated_user = user_check.user
+                # Fetch profile to determine plan
+                try:
+                    profile_resp = sb_check.table("profiles").select(
+                        "account_type,plan,org_id"
+                    ).eq("id", authenticated_user.id).maybe_single().execute()
+                    user_profile = profile_resp.data
+                except Exception:
+                    pass
+                # Associations always get letter; particuliers need a paid plan
+                if user_profile:
+                    if user_profile.get("account_type") == "association":
+                        can_access_letter = True
+                    elif user_profile.get("plan") in ("oneshot", "starter", "pro"):
+                        can_access_letter = True
+                # No profile yet (trigger race): be permissive, profile will be created
+                else:
+                    can_access_letter = True
         except Exception:
             pass
 
-    if not is_authenticated:
+    if not can_access_letter:
         result["lettre"] = None
 
-    # Auto-save if authenticated and requested
-    if save == "true" and is_authenticated and SUPABASE_URL:
+    # Auto-save for logged-in users (always save, reference optional)
+    if is_authenticated and authenticated_user and SUPABASE_URL and sb_check:
         try:
-            user_resp = sb_check.auth.get_user(credentials.credentials)
-            if user_resp.user:
-                sb_check.table("cases").insert({
-                    "user_id":       user_resp.user.id,
-                    "type_document": result.get("type_document"),
-                    "resume":        result.get("resume"),
-                    "irregularites": result.get("irregularites"),
-                    "droits":        result.get("droits"),
-                    "delais":        result.get("delais"),
-                    "lettre":        result.get("lettre"),
-                    "langue":        result.get("langue"),
-                    "status":        "open",
-                }).execute()
-                result["saved"] = True
+            ref = (reference or "").strip()[:200] or result.get("type_document") or "Analyse"
+            row = {
+                "user_id":       authenticated_user.id,
+                "reference":     ref,
+                "type_document": result.get("type_document"),
+                "resume":        result.get("resume"),
+                "irregularites": result.get("irregularites"),
+                "droits":        result.get("droits"),
+                "delais":        result.get("delais"),
+                "lettre":        result.get("lettre"),
+                "langue":        result.get("langue"),
+                "status":        "open",
+            }
+            if user_profile and user_profile.get("org_id"):
+                row["org_id"] = user_profile["org_id"]
+            saved = sb_check.table("cases").insert(row).execute()
+            result["case_id"] = saved.data[0]["id"] if saved.data else None
+            result["saved"] = True
         except Exception:
             pass
 
     return result
+
+
+# ── Profile ───────────────────────────────────────────────────────────────────
+
+@app.get("/api/profile")
+async def get_profile(user: dict = Depends(require_auth)):
+    sb = get_supabase_admin()
+    try:
+        profile = sb.table("profiles").select(
+            "account_type,plan,org_id,created_at"
+        ).eq("id", user["id"]).maybe_single().execute().data or {}
+    except Exception:
+        profile = {}
+    org = None
+    if profile.get("org_id"):
+        try:
+            org_resp = sb.table("organizations").select(
+                "id,name,plan,owner_id"
+            ).eq("id", profile["org_id"]).maybe_single().execute()
+            org = org_resp.data
+        except Exception:
+            pass
+    member_count = 0
+    member_limit = 0
+    is_owner = False
+    if org:
+        is_owner = org.get("owner_id") == user["id"]
+        limits = {"starter": 3, "pro": 10}
+        member_limit = limits.get(org.get("plan", "starter"), 3)
+        try:
+            cnt = sb.table("organization_members").select(
+                "id", count="exact"
+            ).eq("org_id", org["id"]).eq("status", "active").execute()
+            member_count = cnt.count or 0
+        except Exception:
+            pass
+
+    return {
+        "id":           user["id"],
+        "email":        user["email"],
+        "account_type": profile.get("account_type", "particulier"),
+        "plan":         profile.get("plan", "free"),
+        "org":          org,
+        "is_org_owner": is_owner,
+        "member_count": member_count,
+        "member_limit": member_limit,
+    }
+
+
+# ── Organisation ───────────────────────────────────────────────────────────────
+
+class OrgInvite(BaseModel):
+    email: str
+
+    @field_validator("email")
+    @classmethod
+    def email_valid(cls, v):
+        v = v.strip().lower()
+        if "@" not in v or len(v) > 254:
+            raise ValueError("Email invalide.")
+        return v
+
+
+@app.get("/api/org/members")
+async def list_org_members(user: dict = Depends(require_auth)):
+    sb = get_supabase_admin()
+    profile = sb.table("profiles").select("org_id").eq("id", user["id"]).maybe_single().execute().data or {}
+    org_id = profile.get("org_id")
+    if not org_id:
+        raise HTTPException(404, "Aucune organisation associée.")
+    # Only owner can list all members
+    org = sb.table("organizations").select("owner_id,plan").eq("id", org_id).maybe_single().execute().data or {}
+    if org.get("owner_id") != user["id"]:
+        raise HTTPException(403, "Réservé au directeur de l'organisation.")
+    members = sb.table("organization_members").select(
+        "id,role,status,invited_email,created_at,user_id"
+    ).eq("org_id", org_id).execute().data or []
+    limits = {"starter": 3, "pro": 10}
+    return {
+        "members":      members,
+        "member_count": len([m for m in members if m["status"] == "active"]),
+        "member_limit": limits.get(org.get("plan", "starter"), 3),
+        "org_id":       org_id,
+    }
+
+
+@app.post("/api/org/invite")
+async def invite_member(body: OrgInvite, user: dict = Depends(require_auth)):
+    sb = get_supabase_admin()
+    profile = sb.table("profiles").select("org_id").eq("id", user["id"]).maybe_single().execute().data or {}
+    org_id = profile.get("org_id")
+    if not org_id:
+        raise HTTPException(404, "Aucune organisation associée.")
+    org = sb.table("organizations").select("owner_id,plan,name").eq("id", org_id).maybe_single().execute().data or {}
+    if org.get("owner_id") != user["id"]:
+        raise HTTPException(403, "Réservé au directeur de l'organisation.")
+    # Check member limit
+    limits = {"starter": 3, "pro": 10}
+    limit = limits.get(org.get("plan", "starter"), 3)
+    current = sb.table("organization_members").select(
+        "id", count="exact"
+    ).eq("org_id", org_id).eq("status", "active").execute()
+    if (current.count or 0) >= limit:
+        raise HTTPException(403, f"Limite atteinte ({limit} membres pour le plan {org.get('plan')}).")
+    # Insert pending invite
+    existing = sb.table("organization_members").select("id,status").eq(
+        "org_id", org_id
+    ).eq("invited_email", body.email).maybe_single().execute().data
+    if existing:
+        raise HTTPException(409, "Une invitation existe déjà pour cet email.")
+    sb.table("organization_members").insert({
+        "org_id":        org_id,
+        "invited_email": body.email,
+        "role":          "member",
+        "status":        "pending",
+    }).execute()
+    return {"ok": True, "invited": body.email}
+
+
+@app.delete("/api/org/members/{member_id}")
+async def remove_member(member_id: str, user: dict = Depends(require_auth)):
+    validate_uuid(member_id)
+    sb = get_supabase_admin()
+    profile = sb.table("profiles").select("org_id").eq("id", user["id"]).maybe_single().execute().data or {}
+    org_id = profile.get("org_id")
+    if not org_id:
+        raise HTTPException(404, "Aucune organisation associée.")
+    org = sb.table("organizations").select("owner_id").eq("id", org_id).maybe_single().execute().data or {}
+    if org.get("owner_id") != user["id"]:
+        raise HTTPException(403, "Réservé au directeur.")
+    sb.table("organization_members").delete().eq("id", member_id).eq("org_id", org_id).execute()
+    return {"ok": True}
 
 
 # ── Cases CRUD ────────────────────────────────────────────────────────────────
@@ -375,8 +532,9 @@ class CaseCreate(BaseModel):
 
 
 class CasePatch(BaseModel):
-    status: Optional[str] = None
-    notes:  Optional[str] = None
+    status:    Optional[str] = None
+    notes:     Optional[str] = None
+    reference: Optional[str] = None
 
     @field_validator("status")
     @classmethod
@@ -392,6 +550,13 @@ class CasePatch(BaseModel):
             raise ValueError("Notes trop longues (max 5000 caractères).")
         return v
 
+    @field_validator("reference")
+    @classmethod
+    def reference_max_length(cls, v):
+        if v is not None and len(v) > 200:
+            raise ValueError("Référence trop longue (max 200 caractères).")
+        return v.strip() if v else None
+
 
 @app.post("/api/cases")
 async def create_case(body: CaseCreate, user: dict = Depends(require_auth)):
@@ -406,7 +571,23 @@ async def create_case(body: CaseCreate, user: dict = Depends(require_auth)):
 @app.get("/api/cases")
 async def list_cases(user: dict = Depends(require_auth)):
     sb = get_supabase_admin()
-    result = sb.table("cases").select("*").eq("user_id", user["id"]).order("created_at", desc=True).execute()
+    try:
+        profile = sb.table("profiles").select("org_id").eq("id", user["id"]).maybe_single().execute().data or {}
+    except Exception:
+        profile = {}
+    org_id = profile.get("org_id")
+    if org_id:
+        # Check if user is org owner → sees all org cases
+        try:
+            org = sb.table("organizations").select("owner_id").eq("id", org_id).maybe_single().execute().data or {}
+        except Exception:
+            org = {}
+        if org.get("owner_id") == user["id"]:
+            result = sb.table("cases").select("*").eq("org_id", org_id).order("created_at", desc=True).execute()
+        else:
+            result = sb.table("cases").select("*").eq("user_id", user["id"]).order("created_at", desc=True).execute()
+    else:
+        result = sb.table("cases").select("*").eq("user_id", user["id"]).order("created_at", desc=True).execute()
     return {"cases": result.data}
 
 

@@ -781,6 +781,50 @@
     }
     .paywall-note { font-size: 11px; color: var(--muted); margin-top: 12px; }
 
+    /* SAVE CARD */
+    .save-card {
+      display: none;
+      background: var(--white);
+      border: 1px solid var(--green-border);
+      border-radius: var(--r-card);
+      padding: 18px 20px;
+      box-shadow: var(--shadow);
+      margin-bottom: 12px;
+    }
+    .save-card.show { display: block; }
+    .save-card-top {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
+    }
+    .save-icon {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--green-bg); display: flex; align-items: center;
+      justify-content: center; flex-shrink: 0;
+    }
+    .save-icon svg { width: 16px; height: 16px; stroke: var(--green); fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+    .save-label { font-size: 13px; font-weight: 700; color: var(--green); }
+    .save-sublabel { font-size: 12px; color: var(--muted); }
+    .save-ref-row { display: flex; gap: 8px; align-items: center; }
+    .save-ref-input {
+      flex: 1; background: var(--grey); border: 1px solid var(--border);
+      border-radius: var(--r-sm); color: var(--body); font-family: 'Inter', sans-serif;
+      font-size: 14px; padding: 10px 14px; outline: none;
+      transition: border-color 0.2s; -webkit-appearance: none;
+    }
+    .save-ref-input:focus { border-color: var(--green); }
+    .save-ref-btn {
+      padding: 10px 16px; border-radius: var(--r-sm); border: none;
+      background: var(--green); color: var(--white); font-size: 13px;
+      font-weight: 700; cursor: pointer; font-family: inherit; white-space: nowrap;
+      transition: opacity 0.15s;
+    }
+    .save-ref-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .save-dash-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 13px; color: var(--muted); text-decoration: none;
+      margin-top: 10px; font-weight: 500;
+    }
+    .save-dash-link:hover { color: var(--navy); }
+
     /* NPS POPUP */
     .nps-popup {
       position: fixed;
@@ -1059,6 +1103,27 @@
       </div>
     </div>
 
+    <!-- Save confirmation (logged-in users) -->
+    <div class="save-card" id="saveCard">
+      <div class="save-card-top">
+        <div class="save-icon">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div>
+          <div class="save-label">Dossier enregistré</div>
+          <div class="save-sublabel">Donnez-lui un nom pour le retrouver facilement</div>
+        </div>
+      </div>
+      <div class="save-ref-row">
+        <input class="save-ref-input" id="saveRefInput" placeholder="Ex : Mme Dupont — Expulsion nov. 2026" maxlength="200" />
+        <button class="save-ref-btn" id="saveRefBtn">Renommer</button>
+      </div>
+      <a href="/dashboard/" class="save-dash-link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Voir tous mes dossiers
+      </a>
+    </div>
+
     <button class="new-btn" id="newAnalysisBtn">Analyser un autre document</button>
 
 
@@ -1122,6 +1187,7 @@
   let isLoggedIn = false;
   let stripeLink = '';
   let authToken = null;
+  let currentCaseId = null;
 
   // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -1347,8 +1413,38 @@
 
     document.getElementById('resultsSection').classList.add('show');
     window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Show save card for logged-in users
+    if (isLoggedIn && result.case_id) {
+      currentCaseId = result.case_id;
+      document.getElementById('saveRefInput').value = result.type_document || '';
+      document.getElementById('saveCard').classList.add('show');
+    }
+
     triggerNpsAfterAnalysis();
   }
+
+  // ── Save card rename ──────────────────────────────────────────────────────────
+  document.getElementById('saveRefBtn').addEventListener('click', async () => {
+    if (!currentCaseId) return;
+    const ref = document.getElementById('saveRefInput').value.trim();
+    if (!ref) return;
+    const btn = document.getElementById('saveRefBtn');
+    btn.disabled = true;
+    btn.textContent = '...';
+    try {
+      await fetch(`/api/cases/${currentCaseId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', ...( authToken ? { 'Authorization': `Bearer ${authToken}` } : {}) },
+        body: JSON.stringify({ reference: ref }),
+      });
+      btn.textContent = 'Enregistré';
+      showToast('Nom du dossier mis à jour');
+    } catch {
+      btn.disabled = false;
+      btn.textContent = 'Renommer';
+    }
+  });
 
   // ── New analysis ───────────────────────────────────────────────────────────────
   document.getElementById('newAnalysisBtn').addEventListener('click', () => {
@@ -1359,6 +1455,10 @@
     document.getElementById('textInput').value = '';
     document.getElementById('resultsSection').classList.remove('show');
     document.getElementById('formSection').style.display = 'block';
+    document.getElementById('saveCard').classList.remove('show');
+    document.getElementById('saveRefBtn').disabled = false;
+    document.getElementById('saveRefBtn').textContent = 'Renommer';
+    currentCaseId = null;
     ['step1','step2','step3','step4'].forEach(id => document.getElementById(id).classList.remove('show'));
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
