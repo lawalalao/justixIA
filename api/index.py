@@ -267,6 +267,7 @@ FORMAT DE RÉPONSE (JSON uniquement, sans markdown) :
 # ── Analyse ───────────────────────────────────────────────────────────────────
 @app.post("/api/analyze")
 async def analyze_document(
+    request: Request,
     file: Optional[UploadFile] = File(None),
     text: Optional[str] = Form(None),
     langue: str = Form("français"),
@@ -365,7 +366,12 @@ async def analyze_document(
     user_profile = None
     sb_check = None
 
-    if credentials and SUPABASE_URL and SUPABASE_SERVICE_KEY:
+    # Internal bot call with verified secret (paying bot user)
+    bot_secret_header = request.headers.get("X-Bot-Secret", "")
+    if BOT_INTERNAL_SECRET and bot_secret_header and bot_secret_header == BOT_INTERNAL_SECRET:
+        can_access_letter = True
+
+    if not can_access_letter and credentials and SUPABASE_URL and SUPABASE_SERVICE_KEY:
         try:
             from supabase import create_client
             sb_check = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
@@ -882,6 +888,10 @@ async def stripe_webhook(request: Request):
 # ── Telegram Bot Webhook ───────────────────────────────────────────────────────
 
 TELEGRAM_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
+# Set this in Vercel env vars + in setWebhook call (secret_token param)
+TELEGRAM_WEBHOOK_SECRET = os.environ.get("TELEGRAM_WEBHOOK_SECRET", "")
+# Internal secret so the bot can call /api/analyze and get the full letter for paying users
+BOT_INTERNAL_SECRET = os.environ.get("BOT_INTERNAL_SECRET", "")
 
 TGLANGS = {
     "🇫🇷 Français":  "français",
@@ -995,17 +1005,23 @@ async def _tg_get_user_plan(supabase_user_id: Optional[str]) -> str:
 
 
 async def _tg_analyze_call(file_bytes: Optional[bytes], filename: Optional[str],
-                           mime: Optional[str], text_input: Optional[str], langue: str) -> Optional[dict]:
-    """Call /api/analyze and return parsed JSON or None."""
+                           mime: Optional[str], text_input: Optional[str],
+                           langue: str, with_letter: bool = False) -> Optional[dict]:
+    """Call /api/analyze and return parsed JSON or None.
+    Pass with_letter=True for paying users to receive the full letter."""
     import httpx
     url = f"{BASE_URL}/api/analyze"
+    headers = {}
+    if with_letter and BOT_INTERNAL_SECRET:
+        headers["X-Bot-Secret"] = BOT_INTERNAL_SECRET
     try:
         async with httpx.AsyncClient(timeout=90) as h:
             if file_bytes:
                 resp = await h.post(url, files={"file": (filename, file_bytes, mime)},
-                                    data={"langue": langue})
+                                    data={"langue": langue}, headers=headers)
             else:
-                resp = await h.post(url, data={"text": text_input, "langue": langue})
+                resp = await h.post(url, data={"text": text_input, "langue": langue},
+                                    headers=headers)
         if resp.status_code != 200:
             return None
         return resp.json()
@@ -1056,6 +1072,12 @@ async def _tg_send_result(chat_id: int, result: dict, has_letter_access: bool):
 async def telegram_webhook(request: Request):
     if not TELEGRAM_TOKEN:
         return {"ok": True}
+
+    # Validate Telegram webhook secret to reject forged requests
+    if TELEGRAM_WEBHOOK_SECRET:
+        incoming = request.headers.get("X-Telegram-Bot-Api-Secret-Token", "")
+        if not incoming or incoming != TELEGRAM_WEBHOOK_SECRET:
+            raise HTTPException(403, "Forbidden")
 
     try:
         update = await request.json()
@@ -1142,11 +1164,20 @@ async def telegram_webhook(request: Request):
             file_id = doc["file_id"]
             filename = doc.get("file_name", "document")
             mime = doc.get("mime_type", "application/octet-stream")
+            file_size = doc.get("file_size", 0)
         else:
             photo = msg["photo"][-1]
             file_id = photo["file_id"]
             filename = "photo.jpg"
             mime = "image/jpeg"
+            file_size = photo.get("file_size", 0)
+
+        # Reject files over 10 MB
+        if file_size > MAX_FILE_SIZE:
+            if progress_id:
+                await _tg_post("deleteMessage", {"chat_id": chat_id, "message_id": progress_id})
+            await _tg_send(chat_id, "❌ Fichier trop volumineux (max 10 Mo).")
+            return {"ok": True}
 
         async with httpx.AsyncClient(timeout=30) as h:
             finfo = await h.get(f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/getFile",
@@ -1157,7 +1188,15 @@ async def telegram_webhook(request: Request):
             )
             file_bytes = file_resp.content
 
-        result = await _tg_analyze_call(file_bytes, filename, mime, None, langue)
+        # Double-check actual size after download
+        if len(file_bytes) > MAX_FILE_SIZE:
+            if progress_id:
+                await _tg_post("deleteMessage", {"chat_id": chat_id, "message_id": progress_id})
+            await _tg_send(chat_id, "❌ Fichier trop volumineux (max 10 Mo).")
+            return {"ok": True}
+
+        result = await _tg_analyze_call(file_bytes, filename, mime, None, langue,
+                                        with_letter=has_letter_access)
 
         if progress_id:
             await _tg_post("deleteMessage", {"chat_id": chat_id, "message_id": progress_id})
@@ -1178,7 +1217,8 @@ async def telegram_webhook(request: Request):
         has_letter_access = plan in ("oneshot", "starter", "pro", "association")
 
         await _tg_send(chat_id, "Analyse en cours...")
-        result = await _tg_analyze_call(None, None, None, text[:MAX_TEXT_LEN], langue)
+        result = await _tg_analyze_call(None, None, None, text[:MAX_TEXT_LEN], langue,
+                                        with_letter=has_letter_access)
         if not result:
             await _tg_send(chat_id, "❌ Erreur lors de l'analyse. Réessaie.")
             return {"ok": True}
