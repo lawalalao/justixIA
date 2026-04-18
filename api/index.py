@@ -877,3 +877,311 @@ async def stripe_webhook(request: Request):
             _update_user_plan(user_id, "free")
 
     return {"ok": True}
+
+
+# ── Telegram Bot Webhook ───────────────────────────────────────────────────────
+
+TELEGRAM_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
+
+TGLANGS = {
+    "🇫🇷 Français":  "français",
+    "🇬🇧 English":   "anglais",
+    "🇸🇦 العربية":   "arabe",
+    "🇷🇴 Română":    "roumain",
+    "🇵🇹 Português": "portugais",
+    "🇪🇸 Español":   "espagnol",
+    "🇸🇳 Wolof":     "wolof",
+}
+
+# One-shot Stripe payment link for Telegram users (set in env vars)
+STRIPE_LINK_TELEGRAM = os.environ.get("STRIPE_LINK_TELEGRAM", os.environ.get("STRIPE_LINK", ""))
+
+
+async def _tg_post(method: str, payload: dict):
+    import httpx
+    url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/{method}"
+    async with httpx.AsyncClient(timeout=10) as h:
+        await h.post(url, json=payload)
+
+
+async def _tg_send(chat_id: int, text: str, reply_markup=None, parse_mode="Markdown"):
+    payload: dict = {"chat_id": chat_id, "text": text[:4096], "parse_mode": parse_mode}
+    if reply_markup:
+        payload["reply_markup"] = reply_markup
+    await _tg_post("sendMessage", payload)
+
+
+async def _tg_edit(chat_id: int, message_id: int, text: str):
+    await _tg_post("editMessageText", {
+        "chat_id": chat_id, "message_id": message_id,
+        "text": text[:4096], "parse_mode": "Markdown",
+    })
+
+
+async def _tg_send_doc(chat_id: int, content: bytes, filename: str, caption: str):
+    import httpx
+    url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendDocument"
+    async with httpx.AsyncClient(timeout=10) as h:
+        await h.post(url, data={"chat_id": str(chat_id), "caption": caption},
+                     files={"document": (filename, content, "text/plain")})
+
+
+def _tg_lang_keyboard():
+    return {
+        "inline_keyboard": [
+            [{"text": label, "callback_data": f"lang:{code}"}]
+            for label, code in TGLANGS.items()
+        ]
+    }
+
+
+def _tg_restart_keyboard():
+    return {"inline_keyboard": [[{"text": "🔄 Analyser un autre document", "callback_data": "restart"}]]}
+
+
+def _tg_pay_keyboard(stripe_url: str):
+    return {"inline_keyboard": [[{"text": "💳 Obtenir ma lettre (5€)", "url": stripe_url}]]}
+
+
+async def _tg_get_session(chat_id: int) -> dict:
+    """Retrieve stored session for this chat from Supabase."""
+    try:
+        sb = get_supabase_admin()
+        row = sb.table("telegram_sessions").select("langue,tg_user_id").eq("chat_id", str(chat_id)).maybe_single().execute()
+        if row.data:
+            return row.data
+    except Exception:
+        pass
+    return {}
+
+
+async def _tg_set_langue(chat_id: int, langue: str):
+    try:
+        sb = get_supabase_admin()
+        sb.table("telegram_sessions").upsert({"chat_id": str(chat_id), "langue": langue}).execute()
+    except Exception:
+        pass
+
+
+async def _tg_link_user(chat_id: int, supabase_user_id: str):
+    """Link a Supabase user ID to a Telegram chat."""
+    try:
+        sb = get_supabase_admin()
+        sb.table("telegram_sessions").upsert({
+            "chat_id": str(chat_id),
+            "tg_user_id": supabase_user_id,
+        }).execute()
+    except Exception:
+        pass
+
+
+async def _tg_get_user_plan(supabase_user_id: Optional[str]) -> str:
+    """Return the plan for a Supabase user. Returns 'free' if unknown."""
+    if not supabase_user_id:
+        return "anonymous"
+    try:
+        sb = get_supabase_admin()
+        row = sb.table("profiles").select("plan,account_type").eq("id", supabase_user_id).maybe_single().execute()
+        if row.data:
+            plan = row.data.get("plan", "free")
+            account_type = row.data.get("account_type", "particulier")
+            # Associations always get letter access
+            if account_type == "association":
+                return "association"
+            return plan or "free"
+    except Exception:
+        pass
+    return "free"
+
+
+async def _tg_analyze_call(file_bytes: Optional[bytes], filename: Optional[str],
+                           mime: Optional[str], text_input: Optional[str], langue: str) -> Optional[dict]:
+    """Call /api/analyze and return parsed JSON or None."""
+    import httpx
+    url = f"{BASE_URL}/api/analyze"
+    try:
+        async with httpx.AsyncClient(timeout=90) as h:
+            if file_bytes:
+                resp = await h.post(url, files={"file": (filename, file_bytes, mime)},
+                                    data={"langue": langue})
+            else:
+                resp = await h.post(url, data={"text": text_input, "langue": langue})
+        if resp.status_code != 200:
+            return None
+        return resp.json()
+    except Exception:
+        return None
+
+
+async def _tg_send_result(chat_id: int, result: dict, has_letter_access: bool):
+    """Send analysis result. If no letter access, show paywall."""
+    irregularites = result.get("irregularites", [])
+    droits = result.get("droits", [])
+    irr_text = "\n".join(
+        f"🚨 *{i.get('article', '')}* {i.get('description', '')}"
+        for i in irregularites
+    ) or "_Aucune irrégularité détectée_"
+    droits_text = "\n".join(f"✅ {d}" for d in droits) or "_Voir analyse_"
+    summary = (
+        f"📋 *{result.get('type_document', 'Document')}*\n\n"
+        f"{result.get('resume', '')}\n\n"
+        f"*Irrégularités :*\n{irr_text}\n\n"
+        f"*Tes droits :*\n{droits_text}\n\n"
+        f"⏰ *Délais :* {result.get('delais', 'À vérifier')}"
+    )
+    await _tg_send(chat_id, summary)
+
+    lettre = result.get("lettre", "")
+    if lettre and has_letter_access:
+        await _tg_send(chat_id, f"📄 *Lettre de réponse :*\n\n{lettre[:3800]}")
+        await _tg_send_doc(chat_id, lettre.encode("utf-8"), "lettre_contestation.txt",
+                           "📎 Lettre prête à envoyer")
+        await _tg_send(chat_id,
+                       "✨ Analyse terminée. App web : justix-ia.vercel.app",
+                       reply_markup=_tg_restart_keyboard())
+    else:
+        # Paywall
+        pay_msg = (
+            "📄 *Ta lettre de contestation est prête.*\n\n"
+            "Pour la recevoir, obtiens un accès pour 5€ (paiement unique).\n"
+            "Tu recois ta lettre immédiatement après le paiement."
+        )
+        markup = None
+        if STRIPE_LINK_TELEGRAM:
+            markup = _tg_pay_keyboard(STRIPE_LINK_TELEGRAM)
+        await _tg_send(chat_id, pay_msg, reply_markup=markup)
+
+
+@app.post("/api/telegram")
+async def telegram_webhook(request: Request):
+    if not TELEGRAM_TOKEN:
+        return {"ok": True}
+
+    try:
+        update = await request.json()
+    except Exception:
+        return {"ok": True}
+
+    # ── Callback query (bouton cliqué) ─────────────────────────────────────────
+    if "callback_query" in update:
+        cb = update["callback_query"]
+        chat_id = cb["message"]["chat"]["id"]
+        data = cb.get("data", "")
+        await _tg_post("answerCallbackQuery", {"callback_query_id": cb["id"]})
+
+        if data.startswith("lang:"):
+            langue = data.split(":", 1)[1]
+            await _tg_set_langue(chat_id, langue)
+            await _tg_edit(chat_id, cb["message"]["message_id"],
+                           f"Langue sélectionnée : *{langue}*\n\n"
+                           "Envoie maintenant ton document :\n"
+                           "• 📷 Photo de la lettre\n"
+                           "• 📄 Fichier PDF\n"
+                           "• ✍️ Ou colle le texte directement")
+        elif data == "restart":
+            await _tg_send(chat_id,
+                           "Envoie un nouveau document ou choisis une autre langue.",
+                           reply_markup=_tg_lang_keyboard())
+        return {"ok": True}
+
+    msg = update.get("message", {})
+    if not msg:
+        return {"ok": True}
+
+    chat_id = msg["chat"]["id"]
+    text = msg.get("text", "")
+
+    # ── Commandes ──────────────────────────────────────────────────────────────
+    if text.startswith("/start"):
+        await _tg_send(
+            chat_id,
+            "Bienvenue sur *JustiXia*\n\n"
+            "Je t'aide à comprendre tes droits et à rédiger une réponse juridique.\n\n"
+            "*Comment ca marche :*\n"
+            "1. Choisis ta langue\n"
+            "2. Envoie une photo ou PDF de ton document\n"
+            "3. Je t'explique tes droits et génère ta lettre\n\n"
+            "Commence par choisir ta langue 👇",
+            reply_markup=_tg_lang_keyboard(),
+        )
+        return {"ok": True}
+
+    if text.startswith("/aide") or text.startswith("/help"):
+        await _tg_send(chat_id,
+                       "*Commandes :*\n"
+                       "/start - Recommencer\n"
+                       "/langue - Changer de langue\n\n"
+                       "Envoie directement une photo, un PDF ou du texte pour lancer une analyse.")
+        return {"ok": True}
+
+    if text.startswith("/langue") or text.startswith("/language"):
+        await _tg_send(chat_id, "Choisis ta langue :", reply_markup=_tg_lang_keyboard())
+        return {"ok": True}
+
+    # ── Document ou photo ──────────────────────────────────────────────────────
+    has_doc = bool(msg.get("document") or msg.get("photo"))
+    if has_doc:
+        session = await _tg_get_session(chat_id)
+        langue = session.get("langue", "français")
+        supabase_user_id = session.get("tg_user_id")
+        plan = await _tg_get_user_plan(supabase_user_id)
+        has_letter_access = plan in ("oneshot", "starter", "pro", "association")
+
+        import httpx
+        # Message "en cours"
+        progress_id = None
+        async with httpx.AsyncClient(timeout=10) as h:
+            r = await h.post(
+                f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage",
+                json={"chat_id": chat_id, "text": "Analyse en cours... (30 secondes environ)"}
+            )
+            progress_id = r.json().get("result", {}).get("message_id")
+
+        if msg.get("document"):
+            doc = msg["document"]
+            file_id = doc["file_id"]
+            filename = doc.get("file_name", "document")
+            mime = doc.get("mime_type", "application/octet-stream")
+        else:
+            photo = msg["photo"][-1]
+            file_id = photo["file_id"]
+            filename = "photo.jpg"
+            mime = "image/jpeg"
+
+        async with httpx.AsyncClient(timeout=30) as h:
+            finfo = await h.get(f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/getFile",
+                                params={"file_id": file_id})
+            file_path = finfo.json().get("result", {}).get("file_path", "")
+            file_resp = await h.get(
+                f"https://api.telegram.org/file/bot{TELEGRAM_TOKEN}/{file_path}"
+            )
+            file_bytes = file_resp.content
+
+        result = await _tg_analyze_call(file_bytes, filename, mime, None, langue)
+
+        if progress_id:
+            await _tg_post("deleteMessage", {"chat_id": chat_id, "message_id": progress_id})
+
+        if not result:
+            await _tg_send(chat_id, "❌ Erreur lors de l'analyse. Réessaie ou envoie le texte.")
+            return {"ok": True}
+
+        await _tg_send_result(chat_id, result, has_letter_access)
+        return {"ok": True}
+
+    # ── Texte libre ────────────────────────────────────────────────────────────
+    if text and not text.startswith("/"):
+        session = await _tg_get_session(chat_id)
+        langue = session.get("langue", "français")
+        supabase_user_id = session.get("tg_user_id")
+        plan = await _tg_get_user_plan(supabase_user_id)
+        has_letter_access = plan in ("oneshot", "starter", "pro", "association")
+
+        await _tg_send(chat_id, "Analyse en cours...")
+        result = await _tg_analyze_call(None, None, None, text[:MAX_TEXT_LEN], langue)
+        if not result:
+            await _tg_send(chat_id, "❌ Erreur lors de l'analyse. Réessaie.")
+            return {"ok": True}
+        await _tg_send_result(chat_id, result, has_letter_access)
+
+    return {"ok": True}
