@@ -439,6 +439,118 @@
       margin-top: 20px;
     }
 
+    /* ── HERO GRID (desktop 2 colonnes) ── */
+    .hero-grid {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+    }
+
+    .hero-grid .hero-text { text-align: left; }
+    .hero-grid .hero-actions { justify-content: flex-start; }
+    .hero-grid .hero-desc { max-width: 100%; margin-left: 0; margin-right: 0; }
+
+    .hero-photo-col { display: flex; justify-content: center; }
+
+    .hero-photo-wrap { position: relative; width: 100%; max-width: 440px; }
+
+    .hero-photo-img {
+      width: 100%;
+      border-radius: 24px;
+      object-fit: cover;
+      aspect-ratio: 4/5;
+      display: block;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.15);
+    }
+
+    .hero-photo-card {
+      position: absolute;
+      bottom: 28px;
+      left: -20px;
+      background: var(--white);
+      border: 1px solid var(--border-light);
+      border-radius: 16px;
+      padding: 14px 18px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 210px;
+    }
+
+    .hero-card-icon {
+      width: 38px; height: 38px;
+      background: var(--pink-tag-bg);
+      border-radius: 10px;
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .hero-card-icon svg { width: 18px; height: 18px; stroke: var(--pink); fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+    .hero-card-main { font-size: 13px; font-weight: 800; color: var(--navy); }
+    .hero-card-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+    /* ── TRUST PHOTO ── */
+    .trust-photo-wrap {
+      margin: 40px 0 48px;
+      border-radius: var(--radius-card);
+      overflow: hidden;
+      position: relative;
+      height: 280px;
+    }
+
+    .trust-photo-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 30%;
+    }
+
+    .trust-photo-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(15,15,26,0.55) 0%, rgba(15,15,26,0.1) 60%);
+      display: flex;
+      align-items: flex-end;
+      padding: 28px 32px;
+    }
+
+    .trust-photo-caption {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.4;
+      max-width: 420px;
+    }
+
+    /* ── CTA AVATARS ── */
+    .cta-avatars {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 36px;
+    }
+
+    .cta-avatar {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--dark-cta);
+      margin-left: -10px;
+    }
+
+    .cta-avatar:first-child { margin-left: 0; }
+
+    .cta-avatar-label {
+      font-size: 14px;
+      color: #9999BB;
+      margin-left: 14px;
+      font-weight: 500;
+    }
+
     /* ── SECTION BASE ── */
     section { padding: 96px 32px; }
 
@@ -1261,6 +1373,11 @@
       .steps-grid, .docs-grid, .pricing-grid, .trust-pillars, .testi-grid { grid-template-columns: 1fr; }
       .demo-grid { grid-template-columns: 1fr; }
       .footer-inner { grid-template-columns: 1fr 1fr; }
+      .hero-grid { grid-template-columns: 1fr; gap: 0; }
+      .hero-photo-col { display: none; }
+      .hero-grid .hero-text { text-align: center; }
+      .hero-grid .hero-actions { justify-content: center; }
+      .hero-grid .hero-desc { max-width: 540px; margin-left: auto; margin-right: auto; }
     }
 
     @media (max-width: 900px) {
@@ -1301,18 +1418,34 @@
 
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-inner">
-    <div class="hero-badge">Droit français &amp; européen · 7 langues</div>
-    <h1>Le droit, dans ta langue,<br /><span class="gradient">en 30 secondes.</span></h1>
-    <p class="hero-desc">
-      Tu as reçu une lettre que tu ne comprends pas. Une expulsion. Un refus de préfecture. Un contrat abusif.<br />
-      Envoie le document  on t'explique tes droits et on écrit la réponse à ta place.
-    </p>
-    <div class="hero-actions">
-      <a href="/app" class="btn-primary">Analyser mon document</a>
-      <a href="https://t.me/JustiXiaBot" class="btn-ghost">Essayer sur Telegram</a>
+  <div class="hero-grid">
+    <div class="hero-text">
+      <div class="hero-badge">Droit français &amp; européen · 7 langues</div>
+      <h1>Le droit, dans ta langue,<br /><span class="gradient">en 30 secondes.</span></h1>
+      <p class="hero-desc">
+        Tu as reçu une lettre que tu ne comprends pas. Une expulsion. Un refus de préfecture. Un contrat abusif.<br />
+        Envoie le document — on t'explique tes droits et on écrit la réponse à ta place.
+      </p>
+      <div class="hero-actions">
+        <a href="/app" class="btn-primary">Analyser mon document</a>
+        <a href="https://t.me/JustiXiaBot" class="btn-ghost">Essayer sur Telegram</a>
+      </div>
+      <p class="hero-trust">Semi-analyse gratuite avec inscription · Lettre complète dès 5€ · Résultat en 30 secondes</p>
     </div>
-    <p class="hero-trust">Semi-analyse gratuite avec inscription · Lettre complète dès 5€ · Résultat en 30 secondes</p>
+    <div class="hero-photo-col">
+      <div class="hero-photo-wrap">
+        <img class="hero-photo-img" src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=880&q=80" alt="Utilisatrice JustiXia" />
+        <div class="hero-photo-card">
+          <div class="hero-card-icon">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div>
+            <div class="hero-card-main">Lettre envoyée</div>
+            <div class="hero-card-sub">Dossier résolu en 30 secondes</div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -1595,6 +1728,12 @@
     <div class="trust-quote reveal">
       <p>JustiXia n'est pas un avocat. JustiXia est <strong>l'outil que votre avocat aurait utilisé pour préparer votre dossier</strong>  maintenant accessible à tous.</p>
     </div>
+    <div class="trust-photo-wrap reveal">
+      <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1400&q=80" alt="Permanence juridique" />
+      <div class="trust-photo-overlay">
+        <p class="trust-photo-caption">Des permanences juridiques aux personnes seules face à l'administration.</p>
+      </div>
+    </div>
     <div class="trust-pillars">
       <div class="pillar-card reveal">
         <div class="pillar-icon">
@@ -1685,6 +1824,13 @@
 <!-- CTA DARK -->
 <section class="cta-dark">
   <div class="container">
+    <div class="cta-avatars reveal">
+      <img class="cta-avatar" src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=88&h=88&q=80" alt="" />
+      <img class="cta-avatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=88&h=88&q=80" alt="" />
+      <img class="cta-avatar" src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=88&h=88&q=80" alt="" />
+      <img class="cta-avatar" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=88&h=88&q=80" alt="" />
+      <span class="cta-avatar-label">+2 400 personnes aidées</span>
+    </div>
     <h2 class="reveal">Tu as reçu un document<br />que tu ne comprends pas ?</h2>
     <p class="reveal">Ne laisse pas un délai légal expirer.</p>
     <div class="cta-dark-actions reveal">
