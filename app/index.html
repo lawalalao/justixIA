@@ -1121,6 +1121,7 @@
   let startTime = null;
   let isLoggedIn = false;
   let stripeLink = '';
+  let authToken = null;
 
   // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -1173,8 +1174,12 @@
       });
       const { data: { session } } = await sb.auth.getSession();
       isLoggedIn = !!session;
+      if (session) authToken = session.access_token;
 
       if (isLoggedIn) {
+        // jx_paid is for anonymous Stripe one-shot users only.
+        // Logged-in users get access via their account, not localStorage.
+        localStorage.removeItem('jx_paid');
         document.getElementById('navLogin').style.display = 'none';
         document.getElementById('navDashboard').classList.add('visible');
         document.getElementById('submitBtn').textContent = 'Analyser mes droits';
@@ -1274,7 +1279,8 @@
     form.append('langue', selectedLang);
 
     try {
-      const resp = await fetch(`${API}/analyze`, { method: 'POST', body: form });
+      const headers = authToken ? { 'Authorization': `Bearer ${authToken}` } : {};
+      const resp = await fetch(`${API}/analyze`, { method: 'POST', body: form, headers });
       if (!resp.ok) {
         const err = await resp.json().catch(() => ({}));
         throw new Error(
@@ -1315,7 +1321,7 @@
 
     const lettre = result.lettre || '';
 
-    if (isPaid()) {
+    if (isPaid() || isLoggedIn) {
       document.getElementById('lettreText').textContent = lettre;
       document.getElementById('lettreUnlocked').style.display = '';
       document.getElementById('lettreLocked').style.display = 'none';

@@ -321,14 +321,30 @@ async def analyze_document(
             "langue": langue_clean,
         }
 
-    # Auto-save if authenticated and requested
-    if save == "true" and credentials and SUPABASE_URL:
+    # Verify authentication and decide letter access
+    # Logged-in users (valid JWT) → full letter
+    # Anonymous users (Stripe one-shot, no JWT) → letter stripped server-side
+    # The client shows/hides based on isPaid() for anonymous Stripe payers,
+    # but we don't expose the letter in the API response to unauthenticated requests.
+    is_authenticated = False
+    if credentials and SUPABASE_URL and SUPABASE_SERVICE_KEY:
         try:
             from supabase import create_client
-            sb = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
-            user_resp = sb.auth.get_user(credentials.credentials)
+            sb_check = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
+            user_check = sb_check.auth.get_user(credentials.credentials)
+            is_authenticated = bool(user_check.user)
+        except Exception:
+            pass
+
+    if not is_authenticated:
+        result["lettre"] = None
+
+    # Auto-save if authenticated and requested
+    if save == "true" and is_authenticated and SUPABASE_URL:
+        try:
+            user_resp = sb_check.auth.get_user(credentials.credentials)
             if user_resp.user:
-                sb.table("cases").insert({
+                sb_check.table("cases").insert({
                     "user_id":       user_resp.user.id,
                     "type_document": result.get("type_document"),
                     "resume":        result.get("resume"),
