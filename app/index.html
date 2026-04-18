@@ -780,6 +780,141 @@
       font-family: inherit; text-decoration: underline;
     }
     .paywall-note { font-size: 11px; color: var(--muted); margin-top: 12px; }
+
+    /* NPS POPUP */
+    .nps-popup {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 150;
+      background: var(--white);
+      border-top: 1px solid var(--border-light);
+      box-shadow: 0 -8px 40px rgba(0,0,0,0.12);
+      padding: 20px 20px 28px;
+      transform: translateY(100%);
+      transition: transform 0.4s cubic-bezier(0.34, 1.2, 0.64, 1);
+      max-height: 90dvh;
+      overflow-y: auto;
+    }
+    .nps-popup.show { transform: translateY(0); }
+    .nps-popup-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .nps-popup-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1.4;
+    }
+    .nps-popup-sub {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .nps-popup-close {
+      background: none;
+      border: none;
+      font-size: 18px;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 4px 6px;
+      border-radius: 50%;
+      line-height: 1;
+      flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .nps-scale {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+    .nps-score-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      color: var(--body);
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s, color 0.15s, transform 0.1s;
+      -webkit-tap-highlight-color: transparent;
+      flex-shrink: 0;
+    }
+    .nps-score-btn:active { transform: scale(0.92); }
+    .nps-score-btn.sel-detractor { border-color: #EF4444; background: #FEF2F2; color: #991B1B; }
+    .nps-score-btn.sel-passive   { border-color: #F59E0B; background: #FFFBEB; color: #92400E; }
+    .nps-score-btn.sel-promoter  { border-color: #16A34A; background: #F0FDF4; color: #14532D; }
+    .nps-scale-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+    .nps-comment-section { display: none; }
+    .nps-comment-section.show { display: block; }
+    .nps-comment-q {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+    .nps-textarea {
+      width: 100%;
+      background: var(--grey);
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      color: var(--body);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      padding: 12px 14px;
+      resize: none;
+      height: 80px;
+      outline: none;
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+      margin-bottom: 10px;
+    }
+    .nps-textarea:focus { border-color: var(--pink); }
+    .nps-submit-btn {
+      width: 100%;
+      padding: 13px;
+      border-radius: var(--r-pill);
+      border: none;
+      background: var(--pink-grad);
+      color: var(--white);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: var(--pink-glow);
+      font-family: inherit;
+      min-height: 48px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .nps-success {
+      display: none;
+      text-align: center;
+      padding: 8px 0 4px;
+    }
+    .nps-success.show { display: block; }
+    .nps-success-emoji { font-size: 36px; margin-bottom: 8px; }
+    .nps-success-title { font-size: 16px; font-weight: 800; color: var(--navy); margin-bottom: 4px; }
+    .nps-success-sub { font-size: 13px; color: var(--muted); }
+    @media (min-width: 480px) {
+      .nps-popup { padding: 24px 32px 32px; border-radius: 20px 20px 0 0; }
+      .nps-scale { flex-wrap: nowrap; justify-content: space-between; }
+      .nps-score-btn { flex: 1; }
+    }
   </style>
 </head>
 <body>
@@ -933,6 +1068,31 @@
     </p>
   </div>
 
+</div>
+
+<!-- NPS Popup -->
+<div class="nps-popup" id="npsPopup" role="dialog" aria-label="Donner un avis">
+  <div id="npsMain">
+    <div class="nps-popup-header">
+      <div>
+        <div class="nps-popup-title">Cette analyse vous a-t-elle aidé ?</div>
+        <div class="nps-popup-sub">De 0 (pas du tout) à 10 (absolument)</div>
+      </div>
+      <button class="nps-popup-close" id="npsClose" aria-label="Fermer">✕</button>
+    </div>
+    <div class="nps-scale" id="npsScale"></div>
+    <div class="nps-scale-labels"><span>Pas du tout</span><span>Absolument</span></div>
+    <div class="nps-comment-section" id="npsCommentSection">
+      <div class="nps-comment-q" id="npsCommentQ"></div>
+      <textarea class="nps-textarea" id="npsComment" placeholder="Votre réponse (optionnel)..."></textarea>
+      <button class="nps-submit-btn" id="npsSubmit">Envoyer mon avis</button>
+    </div>
+  </div>
+  <div class="nps-success" id="npsSuccess">
+    <div class="nps-success-emoji">🙏</div>
+    <div class="nps-success-title">Merci pour votre retour !</div>
+    <div class="nps-success-sub">Votre avis nous aide à améliorer JustiXia.</div>
+  </div>
 </div>
 
 <!-- Paywall modal -->
@@ -1181,6 +1341,7 @@
 
     document.getElementById('resultsSection').classList.add('show');
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    triggerNpsAfterAnalysis();
   }
 
   // ── New analysis ───────────────────────────────────────────────────────────────
@@ -1195,6 +1356,75 @@
     ['step1','step2','step3','step4'].forEach(id => document.getElementById(id).classList.remove('show'));
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
+
+  // ── NPS Popup ─────────────────────────────────────────────────────────────────
+  let npsScore = null;
+  let npsTimer = null;
+
+  (function buildNpsScale() {
+    const scale = document.getElementById('npsScale');
+    for (let i = 0; i <= 10; i++) {
+      const btn = document.createElement('button');
+      btn.className = 'nps-score-btn';
+      btn.textContent = i;
+      btn.dataset.score = i;
+      btn.addEventListener('click', () => selectNpsScore(i, btn));
+      scale.appendChild(btn);
+    }
+  })();
+
+  function selectNpsScore(score, btn) {
+    npsScore = score;
+    document.querySelectorAll('.nps-score-btn').forEach(b => {
+      b.classList.remove('sel-detractor', 'sel-passive', 'sel-promoter');
+    });
+    const cls = score <= 6 ? 'sel-detractor' : score <= 8 ? 'sel-passive' : 'sel-promoter';
+    btn.classList.add(cls);
+    const questions = {
+      detractor: "Qu'est-ce qui n'a pas fonctionné ?",
+      passive:   "Qu'est-ce qu'on pourrait améliorer ?",
+      promoter:  "Super ! Qu'est-ce qui vous a le plus aidé ?"
+    };
+    const q = score <= 6 ? questions.detractor : score <= 8 ? questions.passive : questions.promoter;
+    document.getElementById('npsCommentQ').textContent = q;
+    document.getElementById('npsCommentSection').classList.add('show');
+  }
+
+  function showNpsPopup() {
+    document.getElementById('npsPopup').classList.add('show');
+  }
+
+  function hideNpsPopup() {
+    document.getElementById('npsPopup').classList.remove('show');
+  }
+
+  document.getElementById('npsClose').addEventListener('click', hideNpsPopup);
+
+  document.getElementById('npsSubmit').addEventListener('click', async () => {
+    if (npsScore === null) { return; }
+    const btn = document.getElementById('npsSubmit');
+    btn.disabled = true;
+    btn.textContent = 'Envoi...';
+    try {
+      await fetch('/api/avis', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          score: npsScore,
+          comment: document.getElementById('npsComment').value.trim() || null,
+          role: 'particulier'
+        })
+      });
+    } catch { /* silent fail */ }
+    document.getElementById('npsMain').style.display = 'none';
+    document.getElementById('npsSuccess').classList.add('show');
+    setTimeout(hideNpsPopup, 3000);
+  });
+
+  function triggerNpsAfterAnalysis() {
+    clearTimeout(npsTimer);
+    npsTimer = setTimeout(showNpsPopup, 5000);
+  }
 
   initAuth();
 </script>
