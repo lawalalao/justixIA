@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "🚀 JustiXia — Démarrage"
+echo "🚀 JustiXia  Démarrage"
 
 if [ -z "$ANTHROPIC_API_KEY" ]; then
   echo "❌ ANTHROPIC_API_KEY manquante. Exporte-la : export ANTHROPIC_API_KEY=sk-..."

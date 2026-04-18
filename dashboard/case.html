@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>JustiXia — Dossier</title>
+  <title>JustiXia  Dossier</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
@@ -42,7 +42,7 @@
 
     .layout { display: flex; min-height: 100vh; }
 
-    /* SIDEBAR — même que index.html */
+    /* SIDEBAR  même que index.html */
     .sidebar {
       width: var(--sidebar-w);
       background: var(--white);
@@ -557,7 +557,7 @@
 
   function renderCase(c) {
     currentCase = c;
-    document.title = `JustiXia — ${c.type_document || 'Dossier'}`;
+    document.title = `JustiXia  ${c.type_document || 'Dossier'}`;
     document.getElementById('caseType').textContent = c.type_document || 'Document';
     document.getElementById('caseLang').textContent = c.langue || 'fr';
     document.getElementById('caseDate').textContent = formatDate(c.created_at);

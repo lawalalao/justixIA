@@ -125,7 +125,7 @@ async def send_result(update: Update, result: dict):
     droits = result.get("droits", [])
 
     irr_text = "\n".join(
-        f"🚨 *{i.get('article', '')}* — {i.get('description', '')}"
+        f"🚨 *{i.get('article', '')}*  {i.get('description', '')}"
         for i in irregularites
     ) or "_Aucune irrégularité détectée_"
 
@@ -150,7 +150,7 @@ async def send_result(update: Update, result: dict):
         await update.message.reply_document(
             document=lettre.encode("utf-8"),
             filename="lettre_contestation.txt",
-            caption="📎 Ta lettre — prête à envoyer.",
+            caption="📎 Ta lettre  prête à envoyer.",
         )
 
     keyboard = [[InlineKeyboardButton("🔄 Analyser un autre document", callback_data="restart")]]

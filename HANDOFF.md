@@ -1,4 +1,4 @@
-# JustiXia — Handoff Document
+# JustiXia  Handoff Document
 
 ## Goal
 
@@ -46,12 +46,12 @@ Inspired by DoNotPay. Apply consistently to all new pages.
 - **Brand**: Pink gradient `linear-gradient(135deg, #FF2D78, #FF5CA8)`
 - **Pink accent**: `#FF2D78`
 - **Text**: Navy `#1A1A2E`, body `#333344`, muted `#6B6B7B`
-- **Font**: Inter (400, 500, 600, 700, 800) — no other fonts
+- **Font**: Inter (400, 500, 600, 700, 800)  no other fonts
 - **Buttons**: Pill-shaped (`border-radius: 9999px`), pink gradient, glow shadow
 - **Cards**: White, `border-radius: 16px`, `box-shadow: 0 2px 20px rgba(0,0,0,0.06)`
 - **Footer links**: Lavender `#7B5CF0`
 - **Dark CTA section**: `#0D0D1F`
-- **No emojis**, no decorative icons, no em dashes (—)
+- **No emojis**, no decorative icons, no em dashes ()
 - **Mobile-first**: min touch target 44px, `100dvh`, camera access on mobile
 
 ---
@@ -63,7 +63,7 @@ Inspired by DoNotPay. Apply consistently to all new pages.
 - [x] Landing page (full content, design system applied, scroll reveal animations)
 - [x] Web app (upload PDF/photo + optional context textarea + language selector)
 - [x] Camera access on mobile (`capture="environment"`)
-- [x] Backend API (`POST /api/analyze`) — handles PDF, image, plain text
+- [x] Backend API (`POST /api/analyze`)  handles PDF, image, plain text
 - [x] Claude integration with structured JSON response (type, irregularities, rights, deadlines, letter)
 - [x] System prompt that understands document + user context together
 - [x] Rate limit error handling (429 returns clean message)
@@ -74,25 +74,25 @@ Inspired by DoNotPay. Apply consistently to all new pages.
 
 ### In Progress / Partial
 
-- [ ] Vercel deployment — config fixed, awaiting confirmation it renders correctly
-- [ ] Merchant/association dashboard — not started
+- [ ] Vercel deployment  config fixed, awaiting confirmation it renders correctly
+- [ ] Merchant/association dashboard  not started
 
 ---
 
 ## What Worked
 
-- Keeping the backend stateless (no DB, no session) — fast, simple, Vercel-compatible
+- Keeping the backend stateless (no DB, no session)  fast, simple, Vercel-compatible
 - Sending both the file AND the user context text together to Claude in the same request
 - Improved system prompt that explicitly tells Claude to read document + context as one situation
 - `framework: null` in vercel.json fixes the FastAPI auto-detection conflict
-- Removing `builds`/`routes` keys in favor of `rewrites` — Vercel auto-detects `api/*.py`
+- Removing `builds`/`routes` keys in favor of `rewrites`  Vercel auto-detects `api/*.py`
 
 ## What Did Not Work
 
-- `vercel.json` with `builds` + `routes` (old format) — conflicts with Vercel's FastAPI auto-detection, causes blank render
-- Mounting StaticFiles in FastAPI for `/app` route — returns 404 without trailing slash; fixed by adding explicit `@app.get("/app")` route
-- System prompt without context awareness — Claude analyzed the document type only, missed the user's described situation (e.g. bail + "being pressured to sell quickly" was not understood as one scenario)
-- Using `alert()` for errors on mobile — replaced with toast
+- `vercel.json` with `builds` + `routes` (old format)  conflicts with Vercel's FastAPI auto-detection, causes blank render
+- Mounting StaticFiles in FastAPI for `/app` route  returns 404 without trailing slash; fixed by adding explicit `@app.get("/app")` route
+- System prompt without context awareness  Claude analyzed the document type only, missed the user's described situation (e.g. bail + "being pressured to sell quickly" was not understood as one scenario)
+- Using `alert()` for errors on mobile  replaced with toast
 
 ---
 
@@ -138,7 +138,7 @@ uvicorn main:app --reload --port 8000
 
 ---
 
-## Next Steps — Merchant / Association Dashboard
+## Next Steps  Merchant / Association Dashboard
 
 The dashboard is a B2B interface for associations (La Cimade, ADIL, Emmaüs Connect) and legal aid organizations to manage their beneficiaries' cases.
 
@@ -146,13 +146,13 @@ The dashboard is a B2B interface for associations (La Cimade, ADIL, Emmaüs Conn
 
 **Route**: `/dashboard` (new static page + new API endpoints)
 
-**Authentication**: Simple email/password or magic link (use Supabase or a lightweight JWT approach — no OAuth needed for hackathon)
+**Authentication**: Simple email/password or magic link (use Supabase or a lightweight JWT approach  no OAuth needed for hackathon)
 
 **Pages to create**:
 
-1. `/dashboard/login` — Login page (email + password, pink CTA)
-2. `/dashboard` — Main dashboard: list of analyzed documents/cases
-3. `/dashboard/case/[id]` — Detail view of a single case
+1. `/dashboard/login`  Login page (email + password, pink CTA)
+2. `/dashboard`  Main dashboard: list of analyzed documents/cases
+3. `/dashboard/case/[id]`  Detail view of a single case
 
 **Dashboard main view should show**:
 - Summary cards: total cases, pending cases, cases this week
@@ -174,13 +174,13 @@ The dashboard is a B2B interface for associations (La Cimade, ADIL, Emmaüs Conn
 - Same card/button/shadow system as landing + app
 
 ### API endpoints to add in `api/index.py`
-- `POST /api/cases` — save a case (after analysis)
-- `GET /api/cases` — list all cases (paginated)
-- `GET /api/cases/{id}` — get one case
-- `PATCH /api/cases/{id}` — update status or notes
+- `POST /api/cases`  save a case (after analysis)
+- `GET /api/cases`  list all cases (paginated)
+- `GET /api/cases/{id}`  get one case
+- `PATCH /api/cases/{id}`  update status or notes
 
 ### Storage for hackathon
-Use **Supabase** (free tier, Postgres) — simple REST API, no server needed.
+Use **Supabase** (free tier, Postgres)  simple REST API, no server needed.
 Add `supabase-py` to `requirements.txt`.
 
 Table schema:
@@ -205,7 +205,7 @@ create table cases (
 ## Key Decisions
 
 - No user accounts for the public app (freemium: 1 free analysis, then paywall)
-- Dashboard is B2B only — separate auth, separate route
+- Dashboard is B2B only  separate auth, separate route
 - All analysis is stateless on the public side (no storage)
 - The Telegram bot shares the same `/api/analyze` endpoint
 - Claude model: `claude-sonnet-4-6` (best quality/speed tradeoff for legal analysis)

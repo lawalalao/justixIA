@@ -52,7 +52,7 @@ RÈGLES :
 - Réponds TOUJOURS dans la langue demandée
 - Cite les articles de loi précis (ex: art. L145-15 CCH, art. 313-4 CP)
 - Si la situation implique une pression ou urgence, signale-le clairement dans le résumé
-- Ne dis jamais "je ne sais pas" — analyse avec ce que tu as et indique les limites si nécessaire
+- Ne dis jamais "je ne sais pas"  analyse avec ce que tu as et indique les limites si nécessaire
 - La lettre doit être complète, formelle, prête à envoyer (avec objet, corps, formule de politesse)
 
 FORMAT DE RÉPONSE (JSON uniquement, sans markdown, sans code block) :
