@@ -40,6 +40,9 @@
     { "source": "/blog/avis-expulsion-locataire-droits", "destination": "/blog/avis-expulsion-locataire-droits.html" },
     { "source": "/blog/refus-titre-sejour-recours", "destination": "/blog/refus-titre-sejour-recours.html" },
     { "source": "/afrique",  "destination": "/afrique/index.html" },
-    { "source": "/afrique/", "destination": "/afrique/index.html" }
+    { "source": "/afrique/", "destination": "/afrique/index.html" },
+    { "source": "/blog/mise-en-demeure-ohada",              "destination": "/blog/mise-en-demeure-ohada.html" },
+    { "source": "/blog/licenciement-afrique-ouest-droits",  "destination": "/blog/licenciement-afrique-ouest-droits.html" },
+    { "source": "/blog/contrat-bail-ohada-clauses-abusives","destination": "/blog/contrat-bail-ohada-clauses-abusives.html" }
   ]
 }
