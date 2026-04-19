@@ -432,6 +432,38 @@
     .plan-starter  { background: var(--pink-tag); color: var(--pink); }
     .plan-pro      { background: #1A1A2E; color: #fff; }
 
+    /* REFERRAL CARD */
+    .referral-card {
+      display: none; background: linear-gradient(135deg, #1A1A2E, #0F0F1A);
+      border-radius: var(--r-card); padding: 24px 24px 20px;
+      margin-bottom: 28px; position: relative; overflow: hidden;
+    }
+    .referral-card.show { display: block; }
+    .referral-card::before {
+      content: ''; position: absolute; top: -40px; right: -40px;
+      width: 160px; height: 160px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,45,120,0.15), transparent 70%);
+    }
+    .referral-title { font-size: 15px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+    .referral-sub { font-size: 12px; color: #9999BB; margin-bottom: 16px; line-height: 1.5; }
+    .referral-code-row { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
+    .referral-code-box {
+      flex: 1; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 10px; padding: 11px 16px; font-size: 16px; font-weight: 800;
+      color: #fff; letter-spacing: 0.1em; font-family: monospace;
+    }
+    .referral-copy-btn {
+      padding: 11px 16px; border-radius: 10px; border: none;
+      background: var(--pink-grad); color: #fff; font-size: 13px;
+      font-weight: 700; cursor: pointer; font-family: inherit;
+      white-space: nowrap; transition: opacity 0.15s;
+    }
+    .referral-copy-btn:active { opacity: 0.8; }
+    .referral-stats { display: flex; gap: 20px; }
+    .referral-stat { text-align: center; }
+    .referral-stat-val { font-size: 22px; font-weight: 800; color: var(--pink); line-height: 1; }
+    .referral-stat-lbl { font-size: 11px; color: #9999BB; margin-top: 2px; }
+
     /* MEMBERS CARD */
     .members-card {
       display: none; background: var(--white);
@@ -598,6 +630,26 @@
       </div>
     </div>
 
+    <!-- Referral card (paid users only) -->
+    <div class="referral-card" id="referralCard">
+      <div class="referral-title">Parrainez vos proches</div>
+      <div class="referral-sub">Partagez votre code. Pour chaque personne qui s'inscrit via votre lien, <strong style="color:#fff">vous gagnez tous les deux 1 analyse complète gratuite</strong> (lettre incluse).</div>
+      <div class="referral-code-row">
+        <div class="referral-code-box" id="referralCodeBox">...</div>
+        <button class="referral-copy-btn" id="referralCopyBtn">Copier le lien</button>
+      </div>
+      <div class="referral-stats">
+        <div class="referral-stat">
+          <div class="referral-stat-val" id="referralUses">0</div>
+          <div class="referral-stat-lbl">personnes parrainées</div>
+        </div>
+        <div class="referral-stat">
+          <div class="referral-stat-val" id="referralCredits">0</div>
+          <div class="referral-stat-lbl">analyses gratuites restantes</div>
+        </div>
+      </div>
+    </div>
+
     <!-- Members card (org owner only) -->
     <div class="members-card" id="membersCard">
       <div class="members-header">
@@ -736,6 +788,30 @@
           `${p.member_count} / ${p.member_limit} membres actifs`;
         loadMembers();
       }
+
+      // Referral card (paid plans only)
+      if (['oneshot', 'starter', 'pro'].includes(plan) || p.account_type === 'association') {
+        loadReferral();
+      }
+    } catch { /* silent */ }
+  }
+
+  async function loadReferral() {
+    try {
+      const resp = await fetch('/api/my-referral-code', { headers: authHeaders(SESSION) });
+      if (!resp.ok) return;
+      const data = await resp.json();
+      document.getElementById('referralCard').classList.add('show');
+      document.getElementById('referralCodeBox').textContent = data.code;
+      document.getElementById('referralUses').textContent = data.total_uses;
+      document.getElementById('referralCredits').textContent = data.referral_credits;
+      document.getElementById('referralCopyBtn').addEventListener('click', () => {
+        navigator.clipboard.writeText(data.share_url).then(() => {
+          const btn = document.getElementById('referralCopyBtn');
+          btn.textContent = 'Copié !';
+          setTimeout(() => btn.textContent = 'Copier le lien', 2000);
+        });
+      });
     } catch { /* silent */ }
   }
 

@@ -239,6 +239,19 @@
   const stored = localStorage.getItem('jx_session');
   if (stored) window.location.href = '/dashboard/';
 
+  // Pre-fill referral code from URL ?ref=JXABC123
+  const urlRef = new URLSearchParams(window.location.search).get('ref');
+  if (urlRef) {
+    document.getElementById('promoInput').value = urlRef.toUpperCase();
+    document.getElementById('promoField').classList.add('show');
+    document.getElementById('promoToggle').textContent = 'Masquer';
+    // Show a welcome note
+    const box = document.getElementById('promoSuccess');
+    box.textContent = `Code de parrainage ${urlRef.toUpperCase()} detecté — il sera activé automatiquement après ton inscription.`;
+    box.style.color = '#16A34A';
+    box.className = 'promo-success show';
+  }
+
   let accountType = 'particulier';
   let selectedPlan = 'starter';
   let supabaseClient = null;
