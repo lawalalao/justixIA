@@ -125,6 +125,24 @@
     .back-link { display: block; text-align: center; margin-top: 20px; font-size: 13px; color: var(--muted); text-decoration: none; }
     .asso-field { display: none; }
     .asso-field.show { display: block; }
+
+    /* PROMO CODE */
+    .promo-toggle { font-size: 13px; color: var(--pink); cursor: pointer; text-align: center;
+      display: block; margin-bottom: 16px; font-weight: 600; background: none; border: none;
+      font-family: inherit; width: 100%; }
+    .promo-field { display: none; }
+    .promo-field.show { display: block; }
+    .promo-row { display: flex; gap: 8px; }
+    .promo-row input { flex: 1; text-transform: uppercase; letter-spacing: 0.05em; }
+    .promo-apply-btn { padding: 13px 18px; border-radius: var(--r-sm); border: none;
+      background: var(--pink-grad); color: #fff; font-size: 14px; font-weight: 700;
+      cursor: pointer; font-family: inherit; white-space: nowrap; flex-shrink: 0; }
+    .promo-apply-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .promo-success { display: none; background: var(--green-bg); border: 1px solid var(--green-border);
+      border-radius: var(--r-sm); padding: 10px 14px; font-size: 13px; color: var(--green);
+      margin-top: 8px; }
+    .promo-success.show { display: block; }
+
     @media (max-width: 480px) { .card { padding: 28px 20px; } }
   </style>
 </head>
@@ -197,6 +215,19 @@
 
     <button type="submit" class="submit-btn" id="submitBtn">Créer mon compte</button>
   </form>
+
+  <!-- Promo code (shown after account creation OR pre-fill) -->
+  <div id="promoSection" style="margin-top:16px;">
+    <button class="promo-toggle" id="promoToggle" type="button">J'ai un code promo</button>
+    <div class="promo-field" id="promoField">
+      <label for="promoInput">Code promo</label>
+      <div class="promo-row">
+        <input type="text" id="promoInput" placeholder="EX: BETA2026" maxlength="32" autocomplete="off" />
+        <button type="button" class="promo-apply-btn" id="promoApplyBtn">Activer</button>
+      </div>
+      <div class="promo-success" id="promoSuccess"></div>
+    </div>
+  </div>
 
   <div class="divider">déjà un compte ?</div>
   <p class="switch-link"><a href="/dashboard/login.html">Se connecter</a></p>
@@ -294,10 +325,22 @@
 
       if (data.session) {
         localStorage.setItem('jx_session', JSON.stringify(data.session));
+        sessionToken = data.session.access_token;
+        // If a promo code was pre-filled, apply it now before redirecting
+        const preCode = document.getElementById('promoInput').value.trim().toUpperCase();
+        if (preCode) {
+          await fetch('/api/redeem-code', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${sessionToken}` },
+            body: JSON.stringify({ code: preCode }),
+          });
+        }
         window.location.href = '/app';
       } else {
         showAlert('Compte créé ! Vérifiez votre boite email pour confirmer votre adresse, puis connectez-vous.', 'success');
         btn.textContent = 'Email envoyé';
+        // Allow promo code application even before email confirmation
+        if (data.user) sessionToken = null; // no token until email confirmed — user applies manually after login
       }
     } catch (err) {
       showAlert(err.message || 'Erreur lors de la création du compte.');
@@ -307,6 +350,74 @@
   });
 
   initSupabase();
+
+  // ── Promo code toggle ──
+  let sessionToken = null; // set after registration
+
+  document.getElementById('promoToggle').addEventListener('click', () => {
+    const field = document.getElementById('promoField');
+    const isOpen = field.classList.contains('show');
+    field.classList.toggle('show', !isOpen);
+    document.getElementById('promoToggle').textContent = isOpen ? "J'ai un code promo" : "Masquer";
+    if (!isOpen) document.getElementById('promoInput').focus();
+  });
+
+  document.getElementById('promoApplyBtn').addEventListener('click', async () => {
+    const code = document.getElementById('promoInput').value.trim().toUpperCase();
+    if (!code) return;
+
+    const btn = document.getElementById('promoApplyBtn');
+    btn.disabled = true;
+    btn.textContent = '...';
+
+    // Need a valid session token — either just registered or already logged in
+    let token = sessionToken;
+    if (!token) {
+      const stored = localStorage.getItem('jx_session');
+      if (stored) {
+        try { token = JSON.parse(stored).access_token; } catch {}
+      }
+    }
+
+    if (!token) {
+      document.getElementById('promoSuccess').textContent = 'Créez votre compte d\'abord, puis activez le code.';
+      document.getElementById('promoSuccess').className = 'promo-success show';
+      document.getElementById('promoSuccess').style.color = 'var(--pink)';
+      btn.disabled = false;
+      btn.textContent = 'Activer';
+      return;
+    }
+
+    try {
+      const resp = await fetch('/api/redeem-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ code }),
+      });
+      const data = await resp.json();
+      const box = document.getElementById('promoSuccess');
+      if (resp.ok) {
+        const planLabels = { starter: 'Starter', pro: 'Pro', oneshot: 'Analyse complete' };
+        box.textContent = `✅ Code activé ! Plan ${planLabels[data.plan] || data.plan} débloqué.`;
+        box.style.color = '';
+        box.className = 'promo-success show';
+        document.getElementById('promoApplyBtn').textContent = '✓ Activé';
+        document.getElementById('promoInput').disabled = true;
+      } else {
+        box.textContent = '❌ ' + (data.detail || 'Code invalide.');
+        box.style.color = 'var(--pink)';
+        box.className = 'promo-success show';
+        btn.disabled = false;
+        btn.textContent = 'Activer';
+      }
+    } catch {
+      btn.disabled = false;
+      btn.textContent = 'Activer';
+    }
+  });
+
+  // After registration, store the token so promo can be applied immediately
+  const _origSubmit = document.getElementById('registerForm').onsubmit;
 </script>
 </body>
 </html>

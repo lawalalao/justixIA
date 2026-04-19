@@ -812,6 +812,56 @@ def _update_user_plan(user_id: str, plan: str):
         pass
 
 
+def _redeem_promo_code(code: str, user_id: Optional[str] = None, chat_id: Optional[str] = None) -> dict:
+    """
+    Validate and consume a promo code.
+    - If user_id: applies plan to profiles table.
+    - If chat_id (bot): stores promo_plan in telegram_sessions.
+    Returns {"ok": True, "plan": "starter"} or {"ok": False, "error": "..."}
+    """
+    if not code:
+        return {"ok": False, "error": "Code vide."}
+    code = code.strip().upper()
+    if not SUPABASE_URL or not SUPABASE_SERVICE_KEY:
+        return {"ok": False, "error": "Service indisponible."}
+    try:
+        sb = get_supabase_admin()
+        from datetime import datetime, timezone
+        now = datetime.now(timezone.utc).isoformat()
+
+        row = sb.table("promo_codes").select(
+            "id,plan_granted,max_uses,uses_count,expires_at,active"
+        ).eq("code", code).eq("active", True).maybe_single().execute()
+
+        if not row.data:
+            return {"ok": False, "error": "Code invalide ou expiré."}
+
+        r = row.data
+        # Check expiry
+        if r.get("expires_at") and r["expires_at"] < now:
+            return {"ok": False, "error": "Ce code a expiré."}
+        # Check uses
+        if r.get("max_uses") is not None and r["uses_count"] >= r["max_uses"]:
+            return {"ok": False, "error": "Ce code a atteint sa limite d'utilisation."}
+
+        plan = r.get("plan_granted", "starter")
+
+        # Increment counter
+        sb.table("promo_codes").update({"uses_count": r["uses_count"] + 1}).eq("id", r["id"]).execute()
+
+        # Apply plan to user profile
+        if user_id:
+            sb.table("profiles").update({"plan": plan}).eq("id", user_id).execute()
+
+        # Apply plan to bot session
+        if chat_id:
+            sb.table("telegram_sessions").update({"promo_plan": plan}).eq("chat_id", str(chat_id)).execute()
+
+        return {"ok": True, "plan": plan}
+    except Exception as e:
+        return {"ok": False, "error": "Erreur serveur."}
+
+
 def _user_id_from_email(email: str) -> Optional[str]:
     """Resolve a Supabase user_id from an email address."""
     if not email or not SUPABASE_URL or not SUPABASE_SERVICE_KEY:
@@ -901,6 +951,40 @@ async def stripe_webhook(request: Request):
             _update_user_plan(user_id, "free")
 
     return {"ok": True}
+
+
+# ── Promo code redemption ──────────────────────────────────────────────────────
+
+class RedeemCodeBody(BaseModel):
+    code: str
+
+@app.post("/api/redeem-code")
+async def redeem_code_endpoint(
+    body: RedeemCodeBody,
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
+):
+    """Authenticated endpoint: validate a promo code and apply the plan to the user."""
+    if not credentials:
+        raise HTTPException(401, "Authentification requise.")
+
+    # Verify token and get user_id
+    user_id = None
+    try:
+        sb = get_supabase_admin()
+        user_check = sb.auth.get_user(credentials.credentials)
+        if user_check.user:
+            user_id = str(user_check.user.id)
+    except Exception:
+        pass
+
+    if not user_id:
+        raise HTTPException(401, "Token invalide.")
+
+    result = _redeem_promo_code(body.code, user_id=user_id)
+    if not result["ok"]:
+        raise HTTPException(400, result["error"])
+
+    return {"ok": True, "plan": result["plan"]}
 
 
 # ── Telegram Bot Webhook ───────────────────────────────────────────────────────
@@ -1003,23 +1087,31 @@ async def _tg_link_user(chat_id: int, supabase_user_id: str):
         pass
 
 
-async def _tg_get_user_plan(supabase_user_id: Optional[str]) -> str:
-    """Return the plan for a Supabase user. Returns 'free' if unknown."""
-    if not supabase_user_id:
-        return "anonymous"
-    try:
-        sb = get_supabase_admin()
-        row = sb.table("profiles").select("plan,account_type").eq("id", supabase_user_id).maybe_single().execute()
-        if row.data:
-            plan = row.data.get("plan", "free")
-            account_type = row.data.get("account_type", "particulier")
-            # Associations always get letter access
-            if account_type == "association":
-                return "association"
-            return plan or "free"
-    except Exception:
-        pass
-    return "free"
+async def _tg_get_user_plan(supabase_user_id: Optional[str], chat_id: Optional[int] = None) -> str:
+    """Return the plan for a user. Checks profile plan + promo_plan in bot session."""
+    plan = "free"
+    # Check Supabase profile
+    if supabase_user_id:
+        try:
+            sb = get_supabase_admin()
+            row = sb.table("profiles").select("plan,account_type").eq("id", supabase_user_id).maybe_single().execute()
+            if row.data:
+                account_type = row.data.get("account_type", "particulier")
+                if account_type == "association":
+                    return "association"
+                plan = row.data.get("plan", "free") or "free"
+        except Exception:
+            pass
+    # Check promo_plan in telegram_sessions (for unregistered bot users)
+    if plan == "free" and chat_id:
+        try:
+            sb = get_supabase_admin()
+            row = sb.table("telegram_sessions").select("promo_plan").eq("chat_id", str(chat_id)).maybe_single().execute()
+            if row.data and row.data.get("promo_plan"):
+                plan = row.data["promo_plan"]
+        except Exception:
+            pass
+    return plan
 
 
 def _tg_analyze_call(file_bytes: Optional[bytes], text_input: Optional[str],
@@ -1141,12 +1233,36 @@ async def telegram_webhook(request: Request):
         await _tg_send(chat_id,
                        "*Commandes :*\n"
                        "/start - Recommencer\n"
-                       "/langue - Changer de langue\n\n"
-                       "Envoie directement une photo, un PDF ou du texte pour lancer une analyse.")
+                       "/langue - Changer de langue\n"
+                       "/code TONCODE - Activer un code promo\n\n"
+                       "Envoie directement une photo, un PDF ou du texte pour lancer une analyse.",
+                       parse_mode="Markdown")
         return {"ok": True}
 
     if text.startswith("/langue") or text.startswith("/language"):
         await _tg_send(chat_id, "Choisis ta langue :", reply_markup=_tg_lang_keyboard())
+        return {"ok": True}
+
+    if text.startswith("/code"):
+        parts = text.strip().split(maxsplit=1)
+        if len(parts) < 2 or not parts[1].strip():
+            await _tg_send(chat_id,
+                "Envoie ton code comme ceci :\n`/code TONCODE`",
+                parse_mode="Markdown")
+            return {"ok": True}
+        code_value = parts[1].strip().upper()
+        session = await _tg_get_session(chat_id)
+        supabase_user_id = session.get("tg_user_id")
+        result = _redeem_promo_code(code_value, user_id=supabase_user_id, chat_id=chat_id)
+        if result["ok"]:
+            plan_label = {"starter": "Starter", "pro": "Pro", "oneshot": "Analyse complete"}.get(result["plan"], result["plan"].capitalize())
+            await _tg_send(chat_id,
+                f"✅ Code *{code_value}* active !\n\n"
+                f"Tu as maintenant acces au plan *{plan_label}* — analyses completes + lettre de reponse incluses.\n\n"
+                "Envoie ton document ou decris ta situation pour commencer.",
+                parse_mode="Markdown")
+        else:
+            await _tg_send(chat_id, f"❌ {result['error']}")
         return {"ok": True}
 
     # ── Document ou photo ──────────────────────────────────────────────────────
@@ -1155,7 +1271,7 @@ async def telegram_webhook(request: Request):
         session = await _tg_get_session(chat_id)
         langue = session.get("langue", "français")
         supabase_user_id = session.get("tg_user_id")
-        plan = await _tg_get_user_plan(supabase_user_id)
+        plan = await _tg_get_user_plan(supabase_user_id, chat_id=chat_id)
         has_letter_access = plan in ("oneshot", "starter", "pro", "association")
 
         import httpx
@@ -1221,7 +1337,7 @@ async def telegram_webhook(request: Request):
         session = await _tg_get_session(chat_id)
         langue = session.get("langue", "français")
         supabase_user_id = session.get("tg_user_id")
-        plan = await _tg_get_user_plan(supabase_user_id)
+        plan = await _tg_get_user_plan(supabase_user_id, chat_id=chat_id)
         has_letter_access = plan in ("oneshot", "starter", "pro", "association")
 
         await _tg_send(chat_id, "Analyse en cours...")
