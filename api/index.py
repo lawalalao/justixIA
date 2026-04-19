@@ -166,6 +166,21 @@ async def sitemap_xml():
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
+  <url>
+    <loc>{BASE_URL}/blog/contester-oqtf-2026</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>{BASE_URL}/blog/avis-expulsion-locataire-droits</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>{BASE_URL}/blog/refus-titre-sejour-recours</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
 </urlset>"""
     return Response(content=content, media_type="application/xml")
 

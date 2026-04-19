@@ -1243,6 +1243,30 @@
 
     .btn-outline-white:hover { border-color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.06); }
 
+    /* ── POUR QUI ── */
+    .pour-qui-section { padding: 80px 0; background: var(--white); }
+    .pour-qui-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 32px; }
+    .pour-qui-card { background: var(--grey-bg); border: 1px solid var(--border); border-radius: 16px; padding: 28px; }
+    .pour-qui-icon { font-size: 28px; margin-bottom: 12px; }
+    .pour-qui-card h3 { font-size: 16px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+    .pour-qui-card p { font-size: 15px; color: var(--muted); margin: 0; line-height: 1.65; }
+
+    /* ── POURQUOI ── */
+    .pourquoi-section { padding: 80px 0; background: var(--grey-bg); }
+    .pourquoi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 32px; }
+    .pourquoi-item { text-align: center; padding: 24px 16px; }
+    .pourquoi-num { font-size: 40px; font-weight: 800; background: var(--pink-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 10px; line-height: 1; }
+    .pourquoi-item p { font-size: 14px; color: var(--muted); margin: 0; line-height: 1.6; }
+    .pourquoi-desc { font-size: 16px; color: var(--body); line-height: 1.8; margin-top: 32px; max-width: 700px; }
+
+    /* ── FAQ ── */
+    .faq-section { padding: 80px 0; background: var(--white); }
+    .faq-list { margin-top: 32px; }
+    .faq-item { border-bottom: 1px solid var(--border); padding: 24px 0; }
+    .faq-item:last-child { border-bottom: none; }
+    .faq-item h3 { font-size: 17px; font-weight: 700; color: var(--navy); margin-bottom: 10px; }
+    .faq-item p { font-size: 15px; color: var(--muted); margin: 0; line-height: 1.7; }
+
     /* ── FOOTER ── */
     footer {
       background: var(--grey-bg);
@@ -1421,6 +1445,8 @@
       .nav-cta { font-size: 13px !important; padding: 9px 16px !important; white-space: nowrap; }
       .footer-inner { grid-template-columns: 1fr; gap: 32px; }
       .docs-grid { grid-template-columns: 1fr; }
+      .pour-qui-grid { grid-template-columns: 1fr; }
+      .pourquoi-grid { grid-template-columns: repeat(2, 1fr); }
     }
   </style>
 </head>
@@ -1846,6 +1872,116 @@
         <div class="asso-case-label">Licenciement abusif</div>
         <span class="asso-case-badge badge-ok">Résolu</span>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- POUR QUI -->
+<section class="pour-qui-section" id="pour-qui" aria-label="Pour qui est JustiXia">
+  <div class="container">
+    <div class="reveal">
+      <span class="section-tag">Pour qui</span>
+      <h2>Pour qui est fait JustiXia ?</h2>
+      <p class="section-sub">JustiXia s'adresse à toutes les personnes confrontées à une situation juridique urgente sans avoir les moyens de payer un avocat.</p>
+    </div>
+    <div class="pour-qui-grid reveal">
+      <div class="pour-qui-card">
+        <div class="pour-qui-icon">🏠</div>
+        <h3>Locataires en difficulté</h3>
+        <p>Vous avez reçu un <strong>avis d'expulsion</strong>, un commandement de payer ou une clause abusive dans votre bail. JustiXia analyse le document et prépare votre réponse.</p>
+      </div>
+      <div class="pour-qui-card">
+        <div class="pour-qui-icon">🛂</div>
+        <h3>Etrangers et migrants</h3>
+        <p>Vous avez reçu une <strong>OQTF</strong>, un <strong>refus de titre de séjour</strong> ou une convocation préfectorale. JustiXia identifie les irrégularités et vos voies de recours.</p>
+      </div>
+      <div class="pour-qui-card">
+        <div class="pour-qui-icon">💼</div>
+        <h3>Travailleurs</h3>
+        <p>Licenciement abusif, harcèlement, rupture conventionnelle contestable. JustiXia vous explique vos droits et prépare votre lettre pour les prud'hommes.</p>
+      </div>
+      <div class="pour-qui-card">
+        <div class="pour-qui-icon">📬</div>
+        <h3>Destinataires de courriers juridiques</h3>
+        <p>Mise en demeure, injonction de payer, lettre d'huissier. JustiXia déchiffre le document et vous dit exactement quoi répondre, et dans quel délai.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- POURQUOI JUSTIXIA -->
+<section class="pourquoi-section" id="pourquoi" aria-label="Les avantages de JustiXia">
+  <div class="container">
+    <div class="reveal">
+      <span class="section-tag">Pourquoi JustiXia</span>
+      <h2>L'accès à la justice pour tous.<br />Pas seulement pour ceux qui peuvent payer.</h2>
+    </div>
+    <div class="pourquoi-grid reveal">
+      <div class="pourquoi-item">
+        <div class="pourquoi-num">400€</div>
+        <p>c'est le coût moyen d'une heure chez un avocat. JustiXia analyse votre document pour 5€.</p>
+      </div>
+      <div class="pourquoi-item">
+        <div class="pourquoi-num">7</div>
+        <p>langues disponibles — français, arabe, anglais, espagnol, portugais, roumain, wolof.</p>
+      </div>
+      <div class="pourquoi-item">
+        <div class="pourquoi-num">30s</div>
+        <p>c'est le temps nécessaire pour obtenir votre analyse complète et votre lettre de réponse.</p>
+      </div>
+      <div class="pourquoi-item">
+        <div class="pourquoi-num">24/7</div>
+        <p>disponible depuis Telegram, sans compte, sans ordinateur, depuis n'importe quel téléphone.</p>
+      </div>
+    </div>
+    <p class="pourquoi-desc reveal">Contrairement aux outils génériques, JustiXia est formé sur le droit français (LEGIFRANCE) et européen (EUR-Lex). Il cite les articles de loi, connait les délais légaux, rédige des lettres formelles prêtes à envoyer. Pas un simple chatbot. Un vrai outil de défense juridique.</p>
+  </div>
+</section>
+
+<!-- FAQ SEO -->
+<section class="faq-section" id="faq" aria-label="Questions fréquentes">
+  <div class="container">
+    <div class="reveal">
+      <span class="section-tag">FAQ</span>
+      <h2>Questions fréquentes</h2>
+    </div>
+    <div class="faq-list reveal" itemscope itemtype="https://schema.org/FAQPage">
+
+      <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+        <h3 itemprop="name">Comment contester une OQTF ?</h3>
+        <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+          <p itemprop="text">Pour contester une OQTF (Obligation de Quitter le Territoire Français), vous disposez généralement de 30 jours pour déposer un recours devant le tribunal administratif. Avec JustiXia, analysez votre OQTF en quelques secondes et recevez un modèle de recours personnalisé, basé sur votre situation et les textes de loi en vigueur.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+        <h3 itemprop="name">Que faire face à un avis d'expulsion ?</h3>
+        <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+          <p itemprop="text">Un avis d'expulsion ne signifie pas que vous devez partir immédiatement. Vous avez des droits : délais légaux, protection hivernale du 1er novembre au 31 mars, recours possible. JustiXia analyse votre document et génère une lettre de contestation ou de demande de délai, prête à envoyer.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+        <h3 itemprop="name">Existe-t-il une aide juridique gratuite en ligne en France ?</h3>
+        <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+          <p itemprop="text">Oui. JustiXia propose une analyse juridique gratuite de votre document avec inscription. La lettre de réponse complète est disponible dès 5€, soit moins que 2 minutes chez un avocat. Accessible depuis Telegram, sans ordinateur, en 7 langues.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+        <h3 itemprop="name">Comment répondre à une lettre de préfecture ?</h3>
+        <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+          <p itemprop="text">Une lettre de préfecture peut concerner un refus de titre de séjour, une convocation ou une demande de documents. La réponse doit être précise, envoyée dans les délais et s'appuyer sur les bons textes de loi. JustiXia analyse le courrier et rédige votre réponse en moins de 30 secondes, en français ou dans votre langue.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+        <h3 itemprop="name">JustiXia fonctionne-t-il sans compte ni inscription ?</h3>
+        <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+          <p itemprop="text">Oui. Vous pouvez envoyer votre document directement sur Telegram sans créer de compte. L'analyse (résumé, irrégularités, droits) est accessible gratuitement. La lettre de réponse complète est disponible pour 5€ en paiement unique, sans abonnement.</p>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>

@@ -35,6 +35,9 @@
     { "source": "/blog/mise-en-demeure",            "destination": "/blog/mise-en-demeure.html" },
     { "source": "/blog/oqtf-droits",                "destination": "/blog/oqtf-droits.html" },
     { "source": "/blog/licenciement-abusif",        "destination": "/blog/licenciement-abusif.html" },
-    { "source": "/blog/clause-abusive-bail",        "destination": "/blog/clause-abusive-bail.html" }
+    { "source": "/blog/clause-abusive-bail",        "destination": "/blog/clause-abusive-bail.html" },
+    { "source": "/blog/contester-oqtf-2026",        "destination": "/blog/contester-oqtf-2026.html" },
+    { "source": "/blog/avis-expulsion-locataire-droits", "destination": "/blog/avis-expulsion-locataire-droits.html" },
+    { "source": "/blog/refus-titre-sejour-recours", "destination": "/blog/refus-titre-sejour-recours.html" }
   ]
 }
