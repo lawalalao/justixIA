@@ -70,13 +70,9 @@
     }
 
     .nav-logo {
-      font-size: 20px;
-      font-weight: 800;
-      background: var(--pink-grad);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
       text-decoration: none;
+      display: inline-flex;
+      align-items: center;
     }
 
     .nav-back {
@@ -961,6 +957,9 @@
       .nps-scale { flex-wrap: nowrap; justify-content: space-between; }
       .nps-score-btn { flex: 1; }
     }
+
+    .nav-logo-img { height: 32px; width: auto; display: block; }
+    .footer-logo-img { height: 28px; width: auto; display: block; margin-bottom: 8px; }
   </style>
 </head>
 <body>
@@ -969,7 +968,7 @@
 
 <nav>
   <div class="nav-inner">
-    <a href="/" class="nav-logo">JustiXia</a>
+    <a href="/" class="nav-logo"><img src="/justixia-logo-horizontal.png" alt="JustiXia" class="nav-logo-img" /></a>
     <div style="display:flex;align-items:center;gap:10px">
       <a href="/dashboard/" class="nav-login-link" id="navDashboard">Mon espace</a>
       <a href="/dashboard/login.html" class="nav-login-link visible" id="navLogin">Connexion</a>

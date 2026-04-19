@@ -18,7 +18,7 @@
   <meta property="og:url" content="https://justix-ia.vercel.app/" />
   <meta property="og:title" content="JustiXia — Le droit, dans ta langue, en 30 secondes" />
   <meta property="og:description" content="Analyse tes documents juridiques avec l'IA. Droit français et européen. 7 langues. Semi-analyse gratuite avec inscription. Résultat en 30 secondes." />
-  <meta property="og:image" content="https://justix-ia.vercel.app/justixia-logo-horizontal.png" />
+  <meta property="og:image" content="https://justix-ia.vercel.app/justixia-logo-dark.png" />
   <meta property="og:locale" content="fr_FR" />
   <meta property="og:site_name" content="JustiXia" />
 
@@ -26,7 +26,7 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="JustiXia — Le droit, dans ta langue, en 30 secondes" />
   <meta name="twitter:description" content="Analyse tes documents juridiques avec l'IA. Droit français et européen. 7 langues. Résultat en 30 secondes." />
-  <meta name="twitter:image" content="https://justix-ia.vercel.app/justixia-logo-horizontal.png" />
+  <meta name="twitter:image" content="https://justix-ia.vercel.app/justixia-logo-dark.png" />
 
   <!-- Preconnect -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -105,14 +105,9 @@
     }
 
     .nav-logo {
-      font-size: 22px;
-      font-weight: 800;
-      background: var(--pink-grad);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
       text-decoration: none;
-      letter-spacing: -0.3px;
+      display: inline-flex;
+      align-items: center;
     }
 
     .nav-links {
@@ -1291,15 +1286,8 @@
     }
 
     .footer-brand .footer-logo {
-      font-size: 20px;
-      font-weight: 800;
-      background: var(--pink-grad);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
       text-decoration: none;
       display: inline-block;
-      margin-bottom: 8px;
     }
 
     .footer-brand p {
@@ -1456,6 +1444,9 @@
       .pour-qui-grid { grid-template-columns: 1fr; }
       .pourquoi-grid { grid-template-columns: repeat(2, 1fr); }
     }
+
+    .nav-logo-img { height: 32px; width: auto; display: block; }
+    .footer-logo-img { height: 28px; width: auto; display: block; margin-bottom: 8px; }
   </style>
 </head>
 <body>
@@ -1463,7 +1454,7 @@
 <!-- NAV -->
 <nav>
   <div class="nav-inner">
-    <a href="/" class="nav-logo">JustiXia</a>
+    <a href="/" class="nav-logo"><img src="/justixia-logo-horizontal.png" alt="JustiXia" class="nav-logo-img" /></a>
     <ul class="nav-links">
       <li><a href="#comment">Comment ça marche</a></li>
       <li><a href="#documents">Documents</a></li>
@@ -2035,7 +2026,7 @@
 <footer>
   <div class="footer-inner">
     <div class="footer-brand">
-      <a href="/" class="footer-logo">JustiXia</a>
+      <a href="/" class="footer-logo"><img src="/justixia-logo-horizontal.png" alt="JustiXia" class="footer-logo-img" /></a>
       <p>Le droit accessible à tous.<br />Paris, 2026.</p>
     </div>
     <div>

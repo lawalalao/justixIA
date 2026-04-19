@@ -11,7 +11,7 @@
   <meta property="og:title" content="Blog JustiXia - Conseils juridiques gratuits" />
   <meta property="og:description" content="Articles pratiques pour comprendre vos droits en France. Expulsion, mise en demeure, OQTF, licenciement." />
   <meta property="og:url" content="https://justix-ia.vercel.app/blog" />
-  <meta property="og:image" content="https://justix-ia.vercel.app/justixia-logo-horizontal.png" />
+  <meta property="og:image" content="https://justix-ia.vercel.app/justixia-logo-dark.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
@@ -29,7 +29,7 @@
       position: sticky; top: 0; z-index: 10;
     }
     .nav-inner { max-width: 900px; margin: 0 auto; width: 100%; display: flex; align-items: center; justify-content: space-between; }
-    .nav-logo { font-size: 20px; font-weight: 800; background: var(--pink-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-decoration: none; }
+    .nav-logo { text-decoration: none; display: inline-flex; align-items: center; }
     .nav-cta { background: var(--pink-grad); color: #fff; padding: 9px 18px; border-radius: var(--r-pill); font-weight: 700; font-size: 13px; text-decoration: none; }
     .hero { background: var(--white); padding: 64px 24px 48px; text-align: center; border-bottom: 1px solid var(--border); }
     .hero-tag { display: inline-block; background: #FFE8EF; color: var(--pink); font-size: 12px; font-weight: 700; padding: 5px 14px; border-radius: var(--r-pill); margin-bottom: 16px; letter-spacing: 0.05em; text-transform: uppercase; }
@@ -63,12 +63,15 @@
       .articles-grid { grid-template-columns: 1fr; }
       .hero { padding: 48px 20px 36px; }
     }
+
+    .nav-logo-img { height: 32px; width: auto; display: block; }
+    .footer-logo-img { height: 28px; width: auto; display: block; margin-bottom: 8px; }
   </style>
 </head>
 <body>
 <nav>
   <div class="nav-inner">
-    <a href="/" class="nav-logo">JustiXia</a>
+    <a href="/" class="nav-logo"><img src="/justixia-logo-horizontal.png" alt="JustiXia" class="nav-logo-img" /></a>
     <a href="/app" class="nav-cta">Analyser mon document</a>
   </div>
 </nav>

@@ -79,14 +79,9 @@
     }
 
     .nav-logo {
-      font-size: 22px;
-      font-weight: 800;
-      background: var(--pink-grad);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
       text-decoration: none;
-      letter-spacing: -0.3px;
+      display: inline-flex;
+      align-items: center;
     }
 
     .nav-links {
@@ -999,6 +994,9 @@
       .footer-inner { grid-template-columns: 1fr; gap: 32px; }
       .docs-grid { grid-template-columns: 1fr; }
     }
+
+    .nav-logo-img { height: 32px; width: auto; display: block; }
+    .footer-logo-img { height: 28px; width: auto; display: block; margin-bottom: 8px; }
   </style>
 </head>
 <body>
@@ -1006,7 +1004,7 @@
 <!-- NAV -->
 <nav>
   <div class="nav-inner">
-    <a href="/" class="nav-logo">JustiXia</a>
+    <a href="/" class="nav-logo"><img src="/justixia-logo-horizontal.png" alt="JustiXia" class="nav-logo-img" /></a>
     <ul class="nav-links">
       <li><a href="#comment">Comment ça marche</a></li>
       <li><a href="#documents">Documents</a></li>
@@ -1275,7 +1273,7 @@
 <footer>
   <div class="footer-inner">
     <div class="footer-brand">
-      <a href="/" class="footer-logo">JustiXia</a>
+      <a href="/" class="footer-logo"><img src="/justixia-logo-horizontal.png" alt="JustiXia" class="footer-logo-img" /></a>
       <p>Le droit accessible à tous.<br />Paris, 2026.</p>
     </div>
     <div>
