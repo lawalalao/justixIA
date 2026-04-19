@@ -96,7 +96,7 @@ All available in `/styles/components.css`. Use the classes; don't rebuild.
 
 ## DO NOT (anti-slop checklist)
 
-- No `linear-gradient` / `radial-gradient` / `conic-gradient` — anywhere.
+- No `linear-gradient` / `radial-gradient` / `conic-gradient` for **brand colors or decoration**. The single exception: an alpha-only fade (transparent → semi-opaque of the same neutral color) used purely for legibility — e.g. caption overlay on a photo, paywall fade-out on locked text. Never use a gradient that introduces a new hue or that carries visual identity.
 - No colored shadows (no pink glow, no teal glow). Shadows are black/transparent only.
 - No `backdrop-filter: blur(...)` "glass" effects layered on brand colors.
 - No `text-shadow` on body copy.

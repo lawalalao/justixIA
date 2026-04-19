@@ -13,10 +13,40 @@
   <meta property="og:image" content="https://justix-ia.vercel.app/justixia-logo-dark.png" />
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Licenciement en Afrique de l'Ouest : vos droits et indemnites","description":"Licencie au Senegal, Mali, Cote d'Ivoire ou Burkina Faso ? Droits, indemnites et recours selon le code du travail local.","url":"https://justix-ia.vercel.app/blog/licenciement-afrique-ouest-droits","datePublished":"2026-04-19","dateModified":"2026-04-19","author":{"@type":"Organization","name":"JustiXia"},"publisher":{"@type":"Organization","name":"JustiXia"},"keywords":["licenciement Senegal droits","code du travail Afrique Ouest","indemnite licenciement Mali","licenciement abusif Cote d'Ivoire","recours prudhommes Afrique"],"articleSection":"Droit du travail","inLanguage":"fr-FR"}</script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles/tokens.css" />
+  <link rel="stylesheet" href="/styles/components.css" />
+  <script src="/styles/theme.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root { --pink: #FF2D78; --pink-grad: linear-gradient(135deg, #FF2D78, #FF5CA8); --navy: #1A1A2E; --body: #333344; --muted: #6B6B7B; --white: #FFFFFF; --grey: #F8F8FB; --border: #EBEBEB; --r-pill: 9999px; --r-card: 16px; }
+    :root {
+      --pink: var(--secondary);
+      --pink-grad: var(--primary);
+      --pink-glow: var(--shadow-md);
+      --pink-tag: var(--secondary-soft);
+      --pink-bg: var(--secondary-soft);
+      --pink-tag-bg: var(--secondary-soft);
+      --navy: var(--text);
+      --navy-2: var(--text);
+      --body: var(--text);
+      --muted: var(--text-muted);
+      --white: var(--surface);
+      --grey: var(--bg);
+      --grey-bg: var(--surface-2);
+      --border-light: var(--border);
+      --shadow: var(--shadow-md);
+      --shadow-card: var(--shadow-md);
+      --shadow-card-hover: var(--shadow-lg);
+      --r-pill: var(--radius-pill);
+      --r-card: var(--radius-lg);
+      --r-sm: var(--radius-sm);
+      --green: var(--success);
+      --green-bg: var(--success-soft);
+      --green-border: var(--success);
+      --max-w: var(--container-max);
+    }
     body { font-family: 'Inter', -apple-system, sans-serif; background: var(--white); color: var(--body); line-height: 1.8; -webkit-font-smoothing: antialiased; }
     nav { background: #050510; height: 64px; display: flex; align-items: center; padding: 0 24px; position: sticky; top: 0; z-index: 10; }
     .nav-inner { max-width: 900px; margin: 0 auto; width: 100%; display: flex; align-items: center; justify-content: space-between; }
@@ -44,7 +74,7 @@
     .country-card { background: var(--grey); border: 1px solid var(--border); border-radius: var(--r-card); padding: 20px; }
     .country-name { font-size: 14px; font-weight: 800; color: var(--navy); margin-bottom: 8px; }
     .country-info { font-size: 14px; color: var(--muted); line-height: 1.6; }
-    .cta-inline { background: linear-gradient(135deg, #1A1A2E, #0F0F1A); border-radius: var(--r-card); padding: 32px 28px; text-align: center; margin: 48px 0; }
+    .cta-inline { background: var(--surface-inverted); border-radius: var(--r-card); padding: 32px 28px; text-align: center; margin: 48px 0; }
     .cta-inline h3 { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 8px; margin-top: 0; }
     .cta-inline p { color: #9999BB; font-size: 14px; margin-bottom: 20px; }
     .cta-btn { display: inline-block; background: var(--pink-grad); color: #fff; padding: 13px 28px; border-radius: var(--r-pill); font-weight: 700; font-size: 15px; text-decoration: none; }

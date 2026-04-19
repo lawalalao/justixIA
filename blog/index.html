@@ -13,14 +13,39 @@
   <meta property="og:url" content="https://justix-ia.vercel.app/blog" />
   <meta property="og:image" content="https://justix-ia.vercel.app/justixia-logo-dark.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles/tokens.css" />
+  <link rel="stylesheet" href="/styles/components.css" />
+  <script src="/styles/theme.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --pink: #FF2D78; --pink-grad: linear-gradient(135deg, #FF2D78, #FF5CA8);
-      --navy: #1A1A2E; --body: #333344; --muted: #6B6B7B;
-      --white: #FFFFFF; --grey: #F8F8FB; --border: #EBEBEB;
-      --shadow: 0 2px 20px rgba(0,0,0,0.06); --r-card: 16px; --r-pill: 9999px;
+      --pink: var(--secondary);
+      --pink-grad: var(--primary);
+      --pink-glow: var(--shadow-md);
+      --pink-tag: var(--secondary-soft);
+      --pink-bg: var(--secondary-soft);
+      --pink-tag-bg: var(--secondary-soft);
+      --navy: var(--text);
+      --navy-2: var(--text);
+      --body: var(--text);
+      --muted: var(--text-muted);
+      --white: var(--surface);
+      --grey: var(--bg);
+      --grey-bg: var(--surface-2);
+      --border-light: var(--border);
+      --shadow: var(--shadow-md);
+      --shadow-card: var(--shadow-md);
+      --shadow-card-hover: var(--shadow-lg);
+      --r-pill: var(--radius-pill);
+      --r-card: var(--radius-lg);
+      --r-sm: var(--radius-sm);
+      --green: var(--success);
+      --green-bg: var(--success-soft);
+      --green-border: var(--success);
+      --max-w: var(--container-max);
     }
     body { font-family: 'Inter', -apple-system, sans-serif; background: var(--grey); color: var(--body); -webkit-font-smoothing: antialiased; }
     nav {
@@ -51,7 +76,7 @@
     .article-meta { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 8px; }
     .article-meta-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--muted); }
     .cta-band {
-      background: linear-gradient(135deg, #1A1A2E, #0F0F1A);
+      background: var(--surface-inverted);
       border-radius: var(--r-card); padding: 36px 32px; text-align: center; margin-top: 48px;
     }
     .cta-band h2 { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 8px; letter-spacing: -0.4px; }
