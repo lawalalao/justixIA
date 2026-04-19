@@ -7,39 +7,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>JustiXia  Dossier</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles/tokens.css" />
+  <link rel="stylesheet" href="/styles/components.css" />
+  <script src="/styles/theme.js"></script>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --pink: #FF2D78;
-      --pink-grad: linear-gradient(135deg, #FF2D78, #FF5CA8);
-      --pink-glow: 0 4px 20px rgba(255,45,120,0.32);
-      --pink-tag: #FFE8EF;
-      --pink-bg: #FFF5F8;
-      --navy: #1A1A2E;
-      --body: #333344;
-      --muted: #6B6B7B;
-      --white: #FFFFFF;
-      --grey: #F8F8FB;
-      --border: #EBEBEB;
-      --border-light: #F0F0F8;
-      --shadow: 0 2px 20px rgba(0,0,0,0.06);
+      --pink: var(--secondary);
+      --pink-grad: var(--primary);
+      --pink-glow: var(--shadow-md);
+      --pink-tag: var(--secondary-soft);
+      --pink-bg: var(--secondary-soft);
+      --navy: var(--text);
+      --body: var(--text);
+      --muted: var(--text-muted);
+      --white: var(--surface);
+      --grey: var(--bg);
+      --border-light: var(--border);
+      --shadow: var(--shadow-md);
       --sidebar-w: 240px;
-      --r-pill: 9999px;
-      --r-card: 16px;
-      --r-sm: 10px;
-      --green: #16A34A;
-      --green-bg: #F0FDF4;
-      --green-border: #BBF7D0;
+      --r-pill: var(--radius-pill);
+      --r-card: var(--radius-lg);
+      --r-sm: var(--radius-sm);
+      --green: var(--success);
+      --green-bg: var(--success-soft);
+      --green-border: var(--success);
     }
 
     html { height: 100%; }
     body {
-      font-family: 'Inter', -apple-system, sans-serif;
-      background: var(--grey);
-      color: var(--body);
       min-height: 100vh;
-      -webkit-font-smoothing: antialiased;
     }
 
     .layout { display: flex; min-height: 100vh; }

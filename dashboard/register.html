@@ -5,237 +5,219 @@
   <link rel="icon" type="image/png" href="/justixia-logo-dark.png" />
   <link rel="apple-touch-icon" href="/justixia-logo-dark.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>JustiXia  Créer un compte</title>
+  <title>JustiXia — Créer un compte</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles/tokens.css" />
+  <link rel="stylesheet" href="/styles/components.css" />
+  <script src="/styles/theme.js"></script>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --pink: #FF2D78; --pink-grad: linear-gradient(135deg, #FF2D78, #FF5CA8);
-      --pink-glow: 0 4px 20px rgba(255,45,120,0.32); --pink-tag: #FFE8EF;
-      --navy: #1A1A2E; --body: #333344; --muted: #6B6B7B;
-      --white: #FFFFFF; --grey: #F8F8FB; --border: #EBEBEB;
-      --border-light: #F0F0F8; --green: #16A34A; --green-bg: #F0FDF4;
-      --green-border: #BBF7D0; --shadow: 0 2px 20px rgba(0,0,0,0.06);
-      --r-pill: 9999px; --r-card: 16px; --r-sm: 12px;
-    }
-    body {
-      font-family: 'Inter', -apple-system, sans-serif;
-      background: var(--grey); color: var(--body);
-      min-height: 100vh; display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      padding: 24px 16px; -webkit-font-smoothing: antialiased;
-    }
+    .auth-top { position: absolute; top: var(--sp-4); right: var(--sp-4); }
+
     .logo {
-      font-size: 24px; font-weight: 800;
-      background: var(--pink-grad); -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent; background-clip: text;
-      text-decoration: none; display: block; text-align: center; margin-bottom: 28px;
+      font-family: var(--font-serif); font-size: var(--fs-2xl); font-weight: var(--fw-bold);
+      color: var(--text); text-decoration: none; display: block;
+      text-align: center; margin-bottom: var(--sp-5); letter-spacing: -0.02em;
     }
-    .card {
-      background: var(--white); border: 1px solid var(--border-light);
-      border-radius: var(--r-card); padding: 36px 32px;
-      box-shadow: var(--shadow); width: 100%; max-width: 460px;
-    }
-    .card-title { font-size: 22px; font-weight: 800; color: var(--navy); letter-spacing: -0.5px; margin-bottom: 6px; }
-    .card-sub { font-size: 14px; color: var(--muted); margin-bottom: 28px; }
+    .logo .accent { color: var(--secondary); }
 
     /* TYPE TOGGLE */
     .type-toggle {
       display: grid; grid-template-columns: 1fr 1fr;
-      gap: 10px; margin-bottom: 28px;
+      gap: 10px; margin-bottom: var(--sp-5);
     }
     .type-btn {
-      padding: 14px 12px; border-radius: var(--r-sm);
-      border: 2px solid var(--border); background: var(--white);
+      padding: 14px 12px; border-radius: var(--radius-sm);
+      border: 2px solid var(--border); background: var(--surface);
       cursor: pointer; font-family: inherit; text-align: center;
       transition: border-color 0.15s, background 0.15s;
       -webkit-tap-highlight-color: transparent;
     }
-    .type-btn.active { border-color: var(--pink); background: var(--pink-tag); }
+    .type-btn.active { border-color: var(--primary); background: var(--primary-soft); }
     .type-btn-icon { font-size: 24px; margin-bottom: 6px; }
-    .type-btn-label { font-size: 14px; font-weight: 700; color: var(--navy); display: block; }
-    .type-btn-sub { font-size: 11px; color: var(--muted); display: block; margin-top: 2px; }
-    .type-btn.active .type-btn-label { color: var(--pink); }
+    .type-btn-label { font-size: var(--fs-sm); font-weight: var(--fw-bold); color: var(--text); display: block; }
+    .type-btn-sub { font-size: 11px; color: var(--text-muted); display: block; margin-top: 2px; }
+    .type-btn.active .type-btn-label { color: var(--primary); }
 
-    /* FORM */
-    .field { margin-bottom: 16px; }
-    label { display: block; font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 6px; }
+    .field { margin-bottom: var(--sp-4); }
+    label { display: block; font-size: var(--fs-sm); font-weight: var(--fw-semibold); color: var(--text); margin-bottom: var(--sp-2); }
     input, select {
-      width: 100%; background: var(--grey); border: 1px solid var(--border);
-      border-radius: var(--r-sm); color: var(--body); font-family: inherit;
-      font-size: 15px; padding: 13px 16px; outline: none;
+      width: 100%; background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); color: var(--text); font-family: inherit;
+      font-size: var(--fs-base); padding: 12px var(--sp-4); outline: none;
       transition: border-color 0.2s, box-shadow 0.2s; -webkit-appearance: none;
     }
-    input::placeholder { color: #AAAABC; }
+    input::placeholder { color: var(--text-subtle); }
     input:focus, select:focus {
-      border-color: var(--pink); box-shadow: 0 0 0 3px rgba(255,45,120,0.1);
-      background: var(--white);
+      border-color: var(--primary); box-shadow: var(--focus-ring); background: var(--surface);
     }
     .submit-btn {
-      width: 100%; margin-top: 8px; padding: 15px;
-      border-radius: var(--r-pill); border: none;
-      background: var(--pink-grad); color: var(--white);
-      font-size: 15px; font-weight: 700; cursor: pointer;
-      box-shadow: var(--pink-glow); font-family: inherit;
-      min-height: 52px; transition: opacity 0.2s;
+      width: 100%; margin-top: var(--sp-2); padding: 15px;
+      border-radius: var(--radius-pill); border: none;
+      background: var(--primary); color: var(--primary-on);
+      font-size: var(--fs-base); font-weight: var(--fw-bold); cursor: pointer;
+      font-family: inherit; min-height: 52px; transition: background 0.2s;
     }
-    .submit-btn:active { opacity: 0.85; }
-    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .submit-btn:hover:not(:disabled) { background: var(--primary-hover); }
+    .submit-btn:active { transform: translateY(1px); }
+    .submit-btn:disabled { opacity: 0.55; cursor: not-allowed; }
 
-    /* PLAN CARDS (asso only) */
-    .plan-section { display: none; margin-bottom: 16px; }
+    /* PLAN CARDS */
+    .plan-section { display: none; margin-bottom: var(--sp-4); }
     .plan-section.show { display: block; }
     .plan-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .plan-card {
-      padding: 16px; border-radius: var(--r-sm);
-      border: 2px solid var(--border); background: var(--white);
+      padding: 16px; border-radius: var(--radius-sm);
+      border: 2px solid var(--border); background: var(--surface);
       cursor: pointer; transition: border-color 0.15s;
       -webkit-tap-highlight-color: transparent;
     }
-    .plan-card.active { border-color: var(--pink); background: var(--pink-tag); }
-    .plan-card-name { font-size: 14px; font-weight: 800; color: var(--navy); }
-    .plan-card.active .plan-card-name { color: var(--pink); }
-    .plan-card-price { font-size: 20px; font-weight: 800; color: var(--navy); margin: 4px 0; }
-    .plan-card-price span { font-size: 12px; font-weight: 500; color: var(--muted); }
-    .plan-card-feat { font-size: 11px; color: var(--muted); }
+    .plan-card.active { border-color: var(--primary); background: var(--primary-soft); }
+    .plan-card-name { font-size: var(--fs-sm); font-weight: var(--fw-bold); color: var(--text); }
+    .plan-card.active .plan-card-name { color: var(--primary); }
+    .plan-card-price { font-size: 20px; font-weight: var(--fw-bold); color: var(--text); margin: 4px 0; }
+    .plan-card-price span { font-size: 12px; font-weight: 500; color: var(--text-muted); }
+    .plan-card-feat { font-size: 11px; color: var(--text-muted); }
 
-    /* FREE NOTICE (particulier) */
+    /* FREE NOTICE */
     .free-notice {
-      display: none; background: var(--grey); border: 1px solid var(--border);
-      border-radius: var(--r-sm); padding: 14px 16px;
-      font-size: 13px; color: var(--muted); line-height: 1.6;
-      margin-bottom: 16px;
+      display: none; background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 14px var(--sp-4);
+      font-size: var(--fs-sm); color: var(--text-muted); line-height: 1.6;
+      margin-bottom: var(--sp-4);
     }
     .free-notice.show { display: block; }
-    .free-notice strong { color: var(--navy); }
+    .free-notice strong { color: var(--text); }
 
-    /* ALERT */
+    /* ALERT (legacy class names) */
     .alert {
-      display: none; border-radius: var(--r-sm); padding: 12px 16px;
-      font-size: 13px; margin-bottom: 16px; line-height: 1.5;
+      display: none; border-radius: var(--radius-sm); padding: 12px var(--sp-4);
+      font-size: var(--fs-sm); margin-bottom: var(--sp-4); line-height: 1.5;
     }
-    .alert.error { display: block; background: #FFF5F8; border: 1px solid rgba(255,45,120,0.2); color: var(--pink); }
-    .alert.success { display: block; background: var(--green-bg); border: 1px solid var(--green-border); color: var(--green); }
+    .alert.error   { display: block; background: var(--danger-soft);  border: 1px solid var(--danger);  color: var(--danger); }
+    .alert.success { display: block; background: var(--success-soft); border: 1px solid var(--success); color: var(--success); }
 
-    .divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; color: var(--muted); font-size: 12px; }
-    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-    .switch-link { text-align: center; font-size: 14px; color: var(--muted); }
-    .switch-link a { color: var(--pink); font-weight: 600; text-decoration: none; }
-    .back-link { display: block; text-align: center; margin-top: 20px; font-size: 13px; color: var(--muted); text-decoration: none; }
+    .divider { display: flex; align-items: center; gap: var(--sp-3); margin: var(--sp-5) 0; color: var(--text-subtle); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.06em; }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--divider); }
+    .switch-link { text-align: center; font-size: var(--fs-sm); color: var(--text-muted); }
+    .switch-link a { color: var(--primary); font-weight: var(--fw-semibold); text-decoration: none; }
+    .switch-link a:hover { text-decoration: underline; }
+    .back-link { display: block; text-align: center; margin-top: var(--sp-5); font-size: var(--fs-sm); color: var(--text-muted); text-decoration: none; }
+    .back-link:hover { color: var(--text); }
     .asso-field { display: none; }
     .asso-field.show { display: block; }
 
     /* PROMO CODE */
-    .promo-toggle { font-size: 13px; color: var(--pink); cursor: pointer; text-align: center;
-      display: block; margin-bottom: 16px; font-weight: 600; background: none; border: none;
+    .promo-toggle { font-size: var(--fs-sm); color: var(--primary); cursor: pointer; text-align: center;
+      display: block; margin-bottom: var(--sp-4); font-weight: var(--fw-semibold); background: none; border: none;
       font-family: inherit; width: 100%; }
     .promo-field { display: none; }
     .promo-field.show { display: block; }
-    .promo-row { display: flex; gap: 8px; }
+    .promo-row { display: flex; gap: var(--sp-2); }
     .promo-row input { flex: 1; text-transform: uppercase; letter-spacing: 0.05em; }
-    .promo-apply-btn { padding: 13px 18px; border-radius: var(--r-sm); border: none;
-      background: var(--pink-grad); color: #fff; font-size: 14px; font-weight: 700;
+    .promo-apply-btn { padding: 13px 18px; border-radius: var(--radius-sm); border: none;
+      background: var(--primary); color: var(--primary-on); font-size: var(--fs-sm); font-weight: var(--fw-bold);
       cursor: pointer; font-family: inherit; white-space: nowrap; flex-shrink: 0; }
-    .promo-apply-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .promo-success { display: none; background: var(--green-bg); border: 1px solid var(--green-border);
-      border-radius: var(--r-sm); padding: 10px 14px; font-size: 13px; color: var(--green);
-      margin-top: 8px; }
+    .promo-apply-btn:hover:not(:disabled) { background: var(--primary-hover); }
+    .promo-apply-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+    .promo-success { display: none; background: var(--success-soft); border: 1px solid var(--success);
+      border-radius: var(--radius-sm); padding: 10px 14px; font-size: var(--fs-sm); color: var(--success);
+      margin-top: var(--sp-2); }
     .promo-success.show { display: block; }
-
-    @media (max-width: 480px) { .card { padding: 28px 20px; } }
   </style>
 </head>
-<body>
+<body class="auth-shell">
 
-<a href="/" class="logo">JustiXia</a>
+<div class="auth-top" id="themeSlot"></div>
 
-<div class="card">
-  <div class="card-title">Créer un compte</div>
-  <div class="card-sub">Choisissez votre profil pour démarrer</div>
+<div class="auth-card" style="max-width: 480px;">
+  <a href="/" class="logo">Justi<span class="accent">Xia</span></a>
 
-  <!-- Type selector -->
-  <div class="type-toggle">
-    <button class="type-btn active" data-type="particulier">
-      <div class="type-btn-icon">👤</div>
-      <span class="type-btn-label">Particulier</span>
-      <span class="type-btn-sub">Accès gratuit, lettre dès 5€</span>
-    </button>
-    <button class="type-btn" data-type="association">
-      <div class="type-btn-icon">🏢</div>
-      <span class="type-btn-label">Association</span>
-      <span class="type-btn-sub">Multi-utilisateurs, dossiers partagés</span>
-    </button>
-  </div>
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Créer un compte</div>
+      <div class="card-sub">Choisissez votre profil pour démarrer</div>
+    </div>
 
-  <div class="alert" id="alertBox"></div>
+    <div class="type-toggle">
+      <button class="type-btn active" data-type="particulier" type="button">
+        <div class="type-btn-icon">👤</div>
+        <span class="type-btn-label">Particulier</span>
+        <span class="type-btn-sub">Accès gratuit, lettre dès 5€</span>
+      </button>
+      <button class="type-btn" data-type="association" type="button">
+        <div class="type-btn-icon">🏢</div>
+        <span class="type-btn-label">Association</span>
+        <span class="type-btn-sub">Multi-utilisateurs, dossiers partagés</span>
+      </button>
+    </div>
 
-  <!-- Particulier notice -->
-  <div class="free-notice show" id="freeNotice">
-    <strong>Compte gratuit :</strong> analyse complète (irrégularités + droits) incluse.
-    La lettre de réponse est disponible à partir de 5€ par dossier ou avec un abonnement.
-  </div>
+    <div class="alert" id="alertBox" role="alert"></div>
 
-  <!-- Association plan picker -->
-  <div class="plan-section" id="planSection">
-    <label style="margin-bottom:10px;display:block">Choisissez votre plan</label>
-    <div class="plan-cards">
-      <div class="plan-card active" data-plan="starter">
-        <div class="plan-card-name">Starter</div>
-        <div class="plan-card-price">29€<span>/mois</span></div>
-        <div class="plan-card-feat">3 membres · Dossiers illimités · Lettre incluse</div>
+    <div class="free-notice show" id="freeNotice">
+      <strong>Compte gratuit :</strong> analyse complète (irrégularités + droits) incluse.
+      La lettre de réponse est disponible à partir de 5€ par dossier ou avec un abonnement.
+    </div>
+
+    <div class="plan-section" id="planSection">
+      <label style="margin-bottom:10px;display:block">Choisissez votre plan</label>
+      <div class="plan-cards">
+        <div class="plan-card active" data-plan="starter">
+          <div class="plan-card-name">Starter</div>
+          <div class="plan-card-price">29€<span>/mois</span></div>
+          <div class="plan-card-feat">3 membres · Dossiers illimités · Lettre incluse</div>
+        </div>
+        <div class="plan-card" data-plan="pro">
+          <div class="plan-card-name">Pro</div>
+          <div class="plan-card-price">99€<span>/mois</span></div>
+          <div class="plan-card-feat">10 membres · Statistiques · Priorité support</div>
+        </div>
       </div>
-      <div class="plan-card" data-plan="pro">
-        <div class="plan-card-name">Pro</div>
-        <div class="plan-card-price">99€<span>/mois</span></div>
-        <div class="plan-card-feat">10 membres · Statistiques · Priorité support</div>
+    </div>
+
+    <form id="registerForm" novalidate>
+      <div class="field asso-field" id="orgField">
+        <label for="org">Nom de l'organisation</label>
+        <input type="text" id="org" placeholder="La Cimade — Paris" />
+      </div>
+      <div class="field">
+        <label for="email">Adresse email</label>
+        <input type="email" id="email" placeholder="vous@exemple.fr" autocomplete="email" required />
+      </div>
+      <div class="field">
+        <label for="password">Mot de passe</label>
+        <input type="password" id="password" placeholder="8 caractères minimum" autocomplete="new-password" minlength="8" required />
+      </div>
+      <div class="field">
+        <label for="confirm">Confirmer le mot de passe</label>
+        <input type="password" id="confirm" placeholder="••••••••" autocomplete="new-password" required />
+      </div>
+      <button type="submit" class="submit-btn" id="submitBtn">Créer mon compte</button>
+    </form>
+
+    <div id="promoSection" style="margin-top:16px;">
+      <button class="promo-toggle" id="promoToggle" type="button">J'ai un code promo</button>
+      <div class="promo-field" id="promoField">
+        <label for="promoInput">Code promo</label>
+        <div class="promo-row">
+          <input type="text" id="promoInput" placeholder="EX: BETA2026" maxlength="32" autocomplete="off" />
+          <button type="button" class="promo-apply-btn" id="promoApplyBtn">Activer</button>
+        </div>
+        <div class="promo-success" id="promoSuccess"></div>
       </div>
     </div>
+
+    <div class="divider">déjà un compte ?</div>
+    <p class="switch-link"><a href="/dashboard/login.html">Se connecter</a></p>
   </div>
 
-  <form id="registerForm">
-    <!-- Association only fields -->
-    <div class="field asso-field" id="orgField">
-      <label for="org">Nom de l'organisation</label>
-      <input type="text" id="org" placeholder="La Cimade  Paris" />
-    </div>
-
-    <div class="field">
-      <label for="email">Adresse email</label>
-      <input type="email" id="email" placeholder="vous@exemple.fr" autocomplete="email" required />
-    </div>
-    <div class="field">
-      <label for="password">Mot de passe</label>
-      <input type="password" id="password" placeholder="8 caractères minimum" autocomplete="new-password" minlength="8" required />
-    </div>
-    <div class="field">
-      <label for="confirm">Confirmer le mot de passe</label>
-      <input type="password" id="confirm" placeholder="••••••••" autocomplete="new-password" required />
-    </div>
-
-    <button type="submit" class="submit-btn" id="submitBtn">Créer mon compte</button>
-  </form>
-
-  <!-- Promo code (shown after account creation OR pre-fill) -->
-  <div id="promoSection" style="margin-top:16px;">
-    <button class="promo-toggle" id="promoToggle" type="button">J'ai un code promo</button>
-    <div class="promo-field" id="promoField">
-      <label for="promoInput">Code promo</label>
-      <div class="promo-row">
-        <input type="text" id="promoInput" placeholder="EX: BETA2026" maxlength="32" autocomplete="off" />
-        <button type="button" class="promo-apply-btn" id="promoApplyBtn">Activer</button>
-      </div>
-      <div class="promo-success" id="promoSuccess"></div>
-    </div>
-  </div>
-
-  <div class="divider">déjà un compte ?</div>
-  <p class="switch-link"><a href="/dashboard/login.html">Se connecter</a></p>
+  <a href="/" class="back-link">Retour au site</a>
 </div>
 
-<a href="/" class="back-link">Retour au site</a>
-
 <script>
+  document.getElementById('themeSlot').innerHTML = window.JxTheme.buttonHTML();
+
   const stored = localStorage.getItem('jx_session');
   if (stored) window.location.href = '/dashboard/';
 
@@ -245,18 +227,16 @@
     document.getElementById('promoInput').value = urlRef.toUpperCase();
     document.getElementById('promoField').classList.add('show');
     document.getElementById('promoToggle').textContent = 'Masquer';
-    // Show a welcome note
     const box = document.getElementById('promoSuccess');
-    box.textContent = `Code de parrainage ${urlRef.toUpperCase()} detecté — il sera activé automatiquement après ton inscription.`;
-    box.style.color = '#16A34A';
+    box.textContent = `Code de parrainage ${urlRef.toUpperCase()} détecté — il sera activé automatiquement après ton inscription.`;
     box.className = 'promo-success show';
   }
 
   let accountType = 'particulier';
   let selectedPlan = 'starter';
   let supabaseClient = null;
+  let sessionToken = null;
 
-  // Type toggle
   document.querySelectorAll('.type-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
@@ -266,12 +246,10 @@
       document.getElementById('freeNotice').classList.toggle('show', !isAsso);
       document.getElementById('planSection').classList.toggle('show', isAsso);
       document.querySelectorAll('.asso-field').forEach(f => f.classList.toggle('show', isAsso));
-      if (isAsso) document.getElementById('org').required = true;
-      else document.getElementById('org').required = false;
+      document.getElementById('org').required = isAsso;
     });
   });
 
-  // Plan picker
   document.querySelectorAll('.plan-card').forEach(card => {
     card.addEventListener('click', () => {
       document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('active'));
@@ -280,22 +258,26 @@
     });
   });
 
-  async function getConfig() {
-    const resp = await fetch('/api/config');
-    return resp.json();
-  }
-
   async function initSupabase() {
     if (supabaseClient) return;
     const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
-    const config = await getConfig();
+    const resp = await fetch('/api/config');
+    if (!resp.ok) {
+      const body = await resp.json().catch(() => ({}));
+      const detail = body && body.detail ? body.detail : ('HTTP ' + resp.status);
+      throw new Error('Service indisponible : ' + detail);
+    }
+    const config = await resp.json();
+    if (!config.supabase_url || !config.supabase_anon_key) {
+      throw new Error('Configuration manquante côté serveur. Contacte un administrateur.');
+    }
     supabaseClient = createClient(config.supabase_url, config.supabase_anon_key);
   }
 
-  function showAlert(msg, type = 'error') {
+  function showAlert(msg, type) {
     const box = document.getElementById('alertBox');
     box.textContent = msg;
-    box.className = `alert ${type}`;
+    box.className = 'alert ' + (type === 'success' ? 'success' : 'error');
   }
 
   document.getElementById('registerForm').addEventListener('submit', async (e) => {
@@ -326,8 +308,6 @@
       if (error) throw error;
 
       if (accountType === 'association' && data.user) {
-        // Create org + profile update via a short wait (trigger creates profile)
-        // For now, show success and let admin activate the plan manually
         showAlert(
           `Compte créé ! Vérifiez votre email pour confirmer. Notre équipe activera votre plan ${selectedPlan} sous 24h.`,
           'success'
@@ -339,7 +319,6 @@
       if (data.session) {
         localStorage.setItem('jx_session', JSON.stringify(data.session));
         sessionToken = data.session.access_token;
-        // If a promo code was pre-filled, apply it now before redirecting
         const preCode = document.getElementById('promoInput').value.trim().toUpperCase();
         if (preCode) {
           await fetch('/api/redeem-code', {
@@ -352,8 +331,6 @@
       } else {
         showAlert('Compte créé ! Vérifiez votre boite email pour confirmer votre adresse, puis connectez-vous.', 'success');
         btn.textContent = 'Email envoyé';
-        // Allow promo code application even before email confirmation
-        if (data.user) sessionToken = null; // no token until email confirmed — user applies manually after login
       }
     } catch (err) {
       showAlert(err.message || 'Erreur lors de la création du compte.');
@@ -361,11 +338,6 @@
       btn.textContent = 'Créer mon compte';
     }
   });
-
-  initSupabase();
-
-  // ── Promo code toggle ──
-  let sessionToken = null; // set after registration
 
   document.getElementById('promoToggle').addEventListener('click', () => {
     const field = document.getElementById('promoField');
@@ -383,7 +355,6 @@
     btn.disabled = true;
     btn.textContent = '...';
 
-    // Need a valid session token — either just registered or already logged in
     let token = sessionToken;
     if (!token) {
       const stored = localStorage.getItem('jx_session');
@@ -393,9 +364,9 @@
     }
 
     if (!token) {
-      document.getElementById('promoSuccess').textContent = 'Créez votre compte d\'abord, puis activez le code.';
-      document.getElementById('promoSuccess').className = 'promo-success show';
-      document.getElementById('promoSuccess').style.color = 'var(--pink)';
+      const box = document.getElementById('promoSuccess');
+      box.textContent = "Créez votre compte d'abord, puis activez le code.";
+      box.className = 'promo-success show';
       btn.disabled = false;
       btn.textContent = 'Activer';
       return;
@@ -410,15 +381,13 @@
       const data = await resp.json();
       const box = document.getElementById('promoSuccess');
       if (resp.ok) {
-        const planLabels = { starter: 'Starter', pro: 'Pro', oneshot: 'Analyse complete' };
-        box.textContent = `✅ Code activé ! Plan ${planLabels[data.plan] || data.plan} débloqué.`;
-        box.style.color = '';
+        const planLabels = { starter: 'Starter', pro: 'Pro', oneshot: 'Analyse complète' };
+        box.textContent = `Code activé ! Plan ${planLabels[data.plan] || data.plan} débloqué.`;
         box.className = 'promo-success show';
-        document.getElementById('promoApplyBtn').textContent = '✓ Activé';
+        document.getElementById('promoApplyBtn').textContent = 'Activé';
         document.getElementById('promoInput').disabled = true;
       } else {
-        box.textContent = '❌ ' + (data.detail || 'Code invalide.');
-        box.style.color = 'var(--pink)';
+        box.textContent = (data.detail || 'Code invalide.');
         box.className = 'promo-success show';
         btn.disabled = false;
         btn.textContent = 'Activer';
@@ -428,9 +397,6 @@
       btn.textContent = 'Activer';
     }
   });
-
-  // After registration, store the token so promo can be applied immediately
-  const _origSubmit = document.getElementById('registerForm').onsubmit;
 </script>
 </body>
 </html>

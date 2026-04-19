@@ -34,35 +34,36 @@
   <link rel="preconnect" href="https://images.unsplash.com" />
 
   <!-- Google Fonts async (non-render-blocking) -->
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
-  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" /></noscript>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" /></noscript>
 
+  <!-- Design system (must load before render) -->
+  <link rel="stylesheet" href="/styles/tokens.css" />
+  <link rel="stylesheet" href="/styles/components.css" />
+  <script src="/styles/theme.js"></script>
+  <style>
+    /* Legacy aliases → design system tokens. No new colors here. */
     :root {
-      --pink: #FF2D78;
-      --pink-2: #FF5CA8;
-      --pink-grad: linear-gradient(135deg, #FF2D78, #FF5CA8);
-      --pink-glow: 0 4px 20px rgba(255,45,120,0.32);
-      --pink-glow-lg: 0 8px 32px rgba(255,45,120,0.4);
-      --pink-bg: #FFF0F5;
-      --pink-tag-bg: #FFE8EF;
-      --navy: #0F0F1A;
-      --navy-2: #1A1A2E;
-      --dark-cta: #0D0D1F;
-      --body: #333344;
-      --muted: #6B6B7B;
-      --white: #FFFFFF;
-      --grey-bg: #F8F8FB;
-      --border: #EBEBEB;
-      --border-light: #F0F0F8;
-      --purple-link: #7B5CF0;
-      --radius-pill: 9999px;
-      --radius-card: 16px;
-      --radius-sm: 12px;
-      --shadow-card: 0 2px 20px rgba(0,0,0,0.06);
-      --shadow-card-hover: 0 8px 32px rgba(0,0,0,0.12);
-      --max-w: 1200px;
+      --pink: var(--secondary);
+      --pink-2: var(--secondary-hover);
+      --pink-grad: var(--primary);              /* solid, no gradient */
+      --pink-glow: var(--shadow-md);            /* neutral shadow, not pink */
+      --pink-glow-lg: var(--shadow-lg);
+      --pink-bg: var(--secondary-soft);
+      --pink-tag-bg: var(--secondary-soft);
+      --navy: var(--text);
+      --navy-2: var(--text);
+      --dark-cta: var(--surface-inverted);
+      --body: var(--text);
+      --muted: var(--text-muted);
+      --white: var(--surface);
+      --grey-bg: var(--surface-2);
+      --border-light: var(--border);
+      --purple-link: var(--primary);
+      --radius-card: var(--radius-lg);
+      --shadow-card: var(--shadow-md);
+      --shadow-card-hover: var(--shadow-lg);
+      --max-w: var(--container-max);
     }
 
     html { scroll-behavior: smooth; }
@@ -165,7 +166,7 @@
 
     /* ── SECTION ASSOCIATIONS ── */
     .asso-section {
-      background: linear-gradient(135deg, #1A1A2E 0%, #0F0F1A 100%);
+      background: var(--surface-inverted);
       padding: 80px 32px;
     }
 
@@ -357,7 +358,7 @@
 
     /* ── HERO ── */
     .hero {
-      background: linear-gradient(180deg, #FFF5F8 0%, #FFFFFF 60%);
+      background: var(--bg);
       padding: 108px 32px 96px;
       text-align: center;
     }
@@ -1461,6 +1462,7 @@
       <li><a href="/afrique">Afrique de l'Ouest</a></li>
     </ul>
     <div class="nav-actions">
+      <span id="navThemeSlot"></span>
       <a href="/dashboard/login" class="nav-login">Connexion</a>
       <a href="/app" class="nav-cta">Analyser un document</a>
     </div>
@@ -1839,7 +1841,7 @@
     </div>
     <div class="asso-mockup reveal">
       <div class="asso-mockup-header">
-        <div class="asso-mockup-dot" style="background:#FF2D78"></div>
+        <div class="asso-mockup-dot" style="background: var(--secondary)"></div>
         <div class="asso-mockup-dot" style="background:#FFB800;margin-left:4px"></div>
         <div class="asso-mockup-dot" style="background:#16A34A;margin-left:4px"></div>
         <span style="font-size:12px;color:#6B6B9B;margin-left:8px">dashboard.justixia.fr</span>
@@ -2089,6 +2091,9 @@
   }, { threshold: 0.12, rootMargin: '0px 0px -32px 0px' });
 
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  /* Theme toggle in nav */
+  document.getElementById('navThemeSlot').innerHTML = window.JxTheme.buttonHTML();
 </script>
 
 <script>

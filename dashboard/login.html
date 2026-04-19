@@ -7,124 +7,87 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>JustiXia  Connexion</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles/tokens.css" />
+  <link rel="stylesheet" href="/styles/components.css" />
+  <script src="/styles/theme.js"></script>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --pink: #FF2D78;
-      --pink-grad: linear-gradient(135deg, #FF2D78, #FF5CA8);
-      --pink-glow: 0 4px 20px rgba(255,45,120,0.32);
-      --navy: #1A1A2E;
-      --body: #333344;
-      --muted: #6B6B7B;
-      --white: #FFFFFF;
-      --grey: #F8F8FB;
-      --border: #EBEBEB;
-      --border-light: #F0F0F8;
-      --shadow: 0 2px 20px rgba(0,0,0,0.06);
-      --r-pill: 9999px;
-      --r-card: 16px;
-      --r-sm: 12px;
-    }
-    html { height: 100%; }
-    body {
-      font-family: 'Inter', -apple-system, sans-serif;
-      background: var(--grey); color: var(--body);
-      min-height: 100%; display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      padding: 24px 16px; -webkit-font-smoothing: antialiased;
-    }
-    .logo {
-      font-size: 24px; font-weight: 800;
-      background: var(--pink-grad);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-      text-decoration: none; display: block; text-align: center; margin-bottom: 4px;
-    }
-    .logo-sub { font-size: 13px; color: var(--muted); text-align: center; margin-bottom: 32px; }
-    .card {
-      background: var(--white); border: 1px solid var(--border-light);
-      border-radius: var(--r-card); padding: 36px 32px;
-      box-shadow: var(--shadow); width: 100%; max-width: 420px;
-    }
-    .card h1 { font-size: 22px; font-weight: 800; color: var(--navy); letter-spacing: -0.5px; margin-bottom: 4px; }
-    .card p { font-size: 14px; color: var(--muted); margin-bottom: 28px; }
-    .field { margin-bottom: 16px; }
-    label { display: block; font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 6px; }
-    input {
-      width: 100%; background: var(--grey); border: 1px solid var(--border);
-      border-radius: var(--r-sm); color: var(--body);
-      font-family: inherit; font-size: 15px; padding: 13px 16px;
-      outline: none; transition: border-color 0.2s, box-shadow 0.2s; -webkit-appearance: none;
-    }
-    input::placeholder { color: #AAAABC; }
-    input:focus { border-color: var(--pink); box-shadow: 0 0 0 3px rgba(255,45,120,0.1); background: var(--white); }
-    .submit-btn {
-      width: 100%; margin-top: 8px; padding: 15px;
-      border-radius: var(--r-pill); border: none;
-      background: var(--pink-grad); color: var(--white);
-      font-size: 15px; font-weight: 700; cursor: pointer;
-      box-shadow: var(--pink-glow); font-family: inherit;
-      min-height: 52px; transition: opacity 0.2s;
-    }
-    .submit-btn:active { opacity: 0.85; }
-    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .alert {
-      display: none; background: #FFF5F8;
-      border: 1px solid rgba(255,45,120,0.2);
-      border-radius: var(--r-sm); padding: 12px 16px;
-      font-size: 13px; color: var(--pink); margin-bottom: 16px;
-    }
-    .alert.show { display: block; }
-    .divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; color: var(--muted); font-size: 12px; }
-    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-    .switch-link { text-align: center; font-size: 14px; color: var(--muted); }
-    .switch-link a { color: var(--pink); font-weight: 600; text-decoration: none; }
+    .auth-top { position: absolute; top: var(--sp-4); right: var(--sp-4); }
+    .switch-link { text-align: center; font-size: var(--fs-sm); color: var(--text-muted); margin-top: var(--sp-4); }
+    .switch-link a { color: var(--primary); font-weight: var(--fw-semibold); }
     .switch-link a:hover { text-decoration: underline; }
-    .back-link { display: block; text-align: center; margin-top: 20px; font-size: 13px; color: var(--muted); text-decoration: none; }
-    .back-link:hover { color: var(--body); }
-    @media (max-width: 480px) { .card { padding: 28px 20px; } }
+    .divider { display: flex; align-items: center; gap: var(--sp-3); margin: var(--sp-5) 0 var(--sp-3); color: var(--text-subtle); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.06em; }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--divider); }
+    .back-link { display: block; text-align: center; margin-top: var(--sp-5); font-size: var(--fs-sm); color: var(--text-muted); }
+    .back-link:hover { color: var(--text); }
   </style>
 </head>
-<body>
+<body class="auth-shell">
 
-  <a href="/" class="logo">JustiXia</a>
-  <p class="logo-sub">Espace associations et partenaires</p>
+  <div class="auth-top" id="themeSlot"></div>
 
-  <div class="card">
-    <h1>Connexion</h1>
-    <p>Accède à ton espace de gestion des dossiers.</p>
+  <div class="auth-card">
+    <div class="auth-brand">
+      <a href="/" class="nav-logo">Justi<span class="accent">Xia</span></a>
+      <p>Espace associations et partenaires</p>
+    </div>
 
-    <div class="alert" id="alertBox"></div>
-
-    <form id="loginForm">
-      <div class="field">
-        <label for="email">Adresse email</label>
-        <input type="email" id="email" placeholder="contact@association.fr" autocomplete="email" required />
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Connexion</div>
+        <div class="card-sub">Accède à ton espace de gestion des dossiers.</div>
       </div>
-      <div class="field">
-        <label for="password">Mot de passe</label>
-        <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" required />
-      </div>
-      <button type="submit" class="submit-btn" id="submitBtn">Se connecter</button>
-    </form>
 
-    <div class="divider">pas encore de compte ?</div>
-    <p class="switch-link"><a href="/dashboard/register.html">Créer un compte gratuit</a></p>
+      <div class="alert alert-danger" id="alertBox" role="alert"></div>
+
+      <form id="loginForm" novalidate>
+        <div class="field">
+          <label class="field-label" for="email">Adresse email</label>
+          <input class="input" type="email" id="email" placeholder="contact@association.fr" autocomplete="email" required />
+        </div>
+        <div class="field">
+          <label class="field-label" for="password">Mot de passe</label>
+          <input class="input" type="password" id="password" placeholder="••••••••" autocomplete="current-password" required />
+        </div>
+        <button type="submit" class="btn btn-primary btn-block btn-lg" id="submitBtn">Se connecter</button>
+      </form>
+
+      <div class="divider">pas encore de compte ?</div>
+      <p class="switch-link"><a href="/dashboard/register.html">Créer un compte gratuit</a></p>
+    </div>
+
+    <a href="/" class="back-link">Retour au site</a>
   </div>
 
-  <a href="/" class="back-link">Retour au site</a>
-
   <script>
+    document.getElementById('themeSlot').innerHTML = window.JxTheme.buttonHTML();
+
     const stored = localStorage.getItem('jx_session');
     if (stored) window.location.href = '/dashboard/';
 
     let supabaseClient = null;
+    let configError = null;
 
     async function initSupabase() {
       const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
       const resp = await fetch('/api/config');
+      if (!resp.ok) {
+        const body = await resp.json().catch(() => ({}));
+        const detail = body && body.detail ? body.detail : ('HTTP ' + resp.status);
+        throw new Error('Service indisponible : ' + detail);
+      }
       const config = await resp.json();
+      if (!config.supabase_url || !config.supabase_anon_key) {
+        throw new Error('Configuration manquante côté serveur. Contacte un administrateur.');
+      }
       supabaseClient = createClient(config.supabase_url, config.supabase_anon_key);
+    }
+
+    function showError(msg) {
+      const alertBox = document.getElementById('alertBox');
+      alertBox.textContent = msg;
+      alertBox.classList.add('show');
     }
 
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
@@ -147,16 +110,17 @@
         localStorage.setItem('jx_session', JSON.stringify(data.session));
         window.location.href = '/dashboard/';
       } catch (err) {
-        alertBox.textContent = err.message === 'Invalid login credentials'
+        showError(err.message === 'Invalid login credentials'
           ? 'Email ou mot de passe incorrect.'
-          : (err.message || 'Erreur de connexion.');
-        alertBox.classList.add('show');
+          : (err.message || 'Erreur de connexion.'));
         btn.disabled = false;
         btn.textContent = 'Se connecter';
       }
     });
 
-    initSupabase();
+    initSupabase().catch(err => {
+      showError(err.message || 'Impossible de joindre le service.');
+    });
   </script>
 </body>
 </html>

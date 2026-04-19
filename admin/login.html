@@ -5,118 +5,64 @@
   <link rel="icon" type="image/png" href="/justixia-logo-dark.png" />
   <link rel="apple-touch-icon" href="/justixia-logo-dark.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>JustiXia  Administration</title>
+  <title>JustiXia — Administration</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles/tokens.css" />
+  <link rel="stylesheet" href="/styles/components.css" />
+  <script src="/styles/theme.js"></script>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --pink: #FF2D78;
-      --pink-grad: linear-gradient(135deg, #FF2D78, #FF5CA8);
-      --pink-glow: 0 4px 20px rgba(255,45,120,0.32);
-      --navy: #1A1A2E;
-      --body: #333344;
-      --muted: #6B6B7B;
-      --white: #FFFFFF;
-      --grey: #F8F8FB;
-      --border: #EBEBEB;
-      --border-light: #F0F0F8;
-      --shadow: 0 2px 20px rgba(0,0,0,0.06);
-      --r-pill: 9999px;
-      --r-card: 16px;
-      --r-sm: 12px;
-    }
-    html { height: 100%; }
-    body {
-      font-family: 'Inter', -apple-system, sans-serif;
-      background: var(--grey); color: var(--body);
-      min-height: 100%; display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      padding: 24px 16px; -webkit-font-smoothing: antialiased;
-    }
-    .logo {
-      font-size: 24px; font-weight: 800;
-      background: var(--pink-grad);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-      text-decoration: none; display: block; text-align: center; margin-bottom: 4px;
-    }
-    .logo-sub { font-size: 13px; color: var(--muted); text-align: center; margin-bottom: 32px; }
-    .admin-badge {
-      display: inline-block;
-      background: #FFF5F8; border: 1px solid rgba(255,45,120,0.2);
-      color: var(--pink); font-size: 11px; font-weight: 700;
-      padding: 3px 12px; border-radius: var(--r-pill);
-      letter-spacing: 0.08em; text-transform: uppercase;
-      margin-bottom: 32px;
-    }
-    .card {
-      background: var(--white); border: 1px solid var(--border-light);
-      border-radius: var(--r-card); padding: 36px 32px;
-      box-shadow: var(--shadow); width: 100%; max-width: 400px;
-    }
-    .card h1 { font-size: 22px; font-weight: 800; color: var(--navy); letter-spacing: -0.5px; margin-bottom: 4px; }
-    .card p { font-size: 14px; color: var(--muted); margin-bottom: 28px; }
-    .field { margin-bottom: 16px; }
-    label { display: block; font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 6px; }
-    input {
-      width: 100%; background: var(--grey); border: 1px solid var(--border);
-      border-radius: var(--r-sm); color: var(--body);
-      font-family: inherit; font-size: 15px; padding: 13px 16px;
-      outline: none; transition: border-color 0.2s, box-shadow 0.2s; -webkit-appearance: none;
-    }
-    input::placeholder { color: #AAAABC; }
-    input:focus { border-color: var(--pink); box-shadow: 0 0 0 3px rgba(255,45,120,0.1); background: var(--white); }
-    .submit-btn {
-      width: 100%; margin-top: 8px; padding: 15px;
-      border-radius: var(--r-pill); border: none;
-      background: var(--pink-grad); color: var(--white);
-      font-size: 15px; font-weight: 700; cursor: pointer;
-      box-shadow: var(--pink-glow); font-family: inherit;
-      min-height: 52px; transition: opacity 0.2s;
-    }
-    .submit-btn:active { opacity: 0.85; }
-    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .alert {
-      display: none; background: #FFF5F8;
-      border: 1px solid rgba(255,45,120,0.2);
-      border-radius: var(--r-sm); padding: 12px 16px;
-      font-size: 13px; color: var(--pink); margin-bottom: 16px;
-    }
-    .alert.show { display: block; }
-    .back-link { display: block; text-align: center; margin-top: 20px; font-size: 13px; color: var(--muted); text-decoration: none; }
-    .back-link:hover { color: var(--body); }
-    @media (max-width: 480px) { .card { padding: 28px 20px; } }
+    .auth-top { position: absolute; top: var(--sp-4); right: var(--sp-4); }
+    .back-link { display: block; text-align: center; margin-top: var(--sp-5); font-size: var(--fs-sm); color: var(--text-muted); }
+    .back-link:hover { color: var(--text); }
   </style>
 </head>
-<body>
+<body class="auth-shell">
 
-  <a href="/" class="logo">JustiXia</a>
-  <p class="logo-sub">Accès réservé</p>
-  <div style="text-align:center"><span class="admin-badge">Administration</span></div>
+  <div class="auth-top" id="themeSlot"></div>
 
-  <div class="card">
-    <h1>Connexion admin</h1>
-    <p>Espace de pilotage et de statistiques.</p>
+  <div class="auth-card">
+    <div class="auth-brand">
+      <a href="/" class="nav-logo">Justi<span class="accent">Xia</span></a>
+      <p>Accès réservé</p>
+      <div style="margin-top: var(--sp-3);"><span class="badge badge-secondary">Administration</span></div>
+    </div>
 
-    <div class="alert" id="alertBox"></div>
-
-    <form id="loginForm">
-      <div class="field">
-        <label for="email">Adresse email</label>
-        <input type="email" id="email" placeholder="admin@justixia.com" autocomplete="email" required />
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Connexion admin</div>
+        <div class="card-sub">Espace de pilotage et de statistiques.</div>
       </div>
-      <div class="field">
-        <label for="password">Mot de passe</label>
-        <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" required />
-      </div>
-      <button type="submit" class="submit-btn" id="submitBtn">Se connecter</button>
-    </form>
+
+      <div class="alert alert-danger" id="alertBox" role="alert"></div>
+
+      <form id="loginForm" novalidate>
+        <div class="field">
+          <label class="field-label" for="email">Adresse email</label>
+          <input class="input" type="email" id="email" placeholder="admin@justixia.com" autocomplete="email" required />
+        </div>
+        <div class="field">
+          <label class="field-label" for="password">Mot de passe</label>
+          <input class="input" type="password" id="password" placeholder="••••••••" autocomplete="current-password" required />
+        </div>
+        <button type="submit" class="btn btn-primary btn-block btn-lg" id="submitBtn">Se connecter</button>
+      </form>
+    </div>
+
+    <a href="/" class="back-link">Retour au site</a>
   </div>
-
-  <a href="/" class="back-link">Retour au site</a>
 
   <script type="module">
     import { getSupabase } from '/dashboard/_auth.js';
+
+    document.getElementById('themeSlot').innerHTML = window.JxTheme.buttonHTML();
+
+    function showError(msg) {
+      const alertBox = document.getElementById('alertBox');
+      alertBox.textContent = msg;
+      alertBox.classList.add('show');
+    }
 
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -134,7 +80,6 @@
         const { data, error } = await sb.auth.signInWithPassword({ email, password });
         if (error) throw error;
 
-        // Verify admin access before redirecting
         const resp = await fetch('/api/admin/stats', {
           headers: { 'Authorization': `Bearer ${data.session.access_token}` }
         });
@@ -150,10 +95,9 @@
 
         window.location.href = '/admin/';
       } catch (err) {
-        alertBox.textContent = err.message === 'Invalid login credentials'
+        showError(err.message === 'Invalid login credentials'
           ? 'Email ou mot de passe incorrect.'
-          : (err.message || 'Erreur de connexion.');
-        alertBox.classList.add('show');
+          : (err.message || 'Erreur de connexion.'));
         btn.disabled = false;
         btn.textContent = 'Se connecter';
       }
