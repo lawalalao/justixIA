@@ -1260,12 +1260,18 @@
     .pourquoi-desc { font-size: 16px; color: var(--body); line-height: 1.8; margin-top: 32px; max-width: 700px; }
 
     /* ── FAQ ── */
-    .faq-section { padding: 80px 0; background: var(--white); }
-    .faq-list { margin-top: 32px; }
-    .faq-item { border-bottom: 1px solid var(--border); padding: 24px 0; }
-    .faq-item:last-child { border-bottom: none; }
-    .faq-item h3 { font-size: 17px; font-weight: 700; color: var(--navy); margin-bottom: 10px; }
-    .faq-item p { font-size: 15px; color: var(--muted); margin: 0; line-height: 1.7; }
+    .faq-section { padding: 80px 0; background: var(--grey-bg); }
+    .faq-wrap { max-width: 720px; margin: 40px auto 0; }
+    .faq-item { background: var(--white); border: 1px solid var(--border); border-radius: 14px; margin-bottom: 10px; overflow: hidden; }
+    .faq-trigger { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 22px 24px; background: none; border: none; cursor: pointer; text-align: left; }
+    .faq-trigger h3 { font-size: 16px; font-weight: 700; color: var(--navy); margin: 0; line-height: 1.4; }
+    .faq-icon { flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%; background: var(--grey-bg); display: flex; align-items: center; justify-content: center; transition: background 0.2s, transform 0.3s; }
+    .faq-icon svg { width: 14px; height: 14px; stroke: var(--pink); stroke-width: 2.5; fill: none; transition: transform 0.3s; }
+    .faq-item.open .faq-icon { background: #FFE8EF; }
+    .faq-item.open .faq-icon svg { transform: rotate(45deg); }
+    .faq-body { max-height: 0; overflow: hidden; transition: max-height 0.35s ease, padding 0.2s; }
+    .faq-item.open .faq-body { max-height: 300px; }
+    .faq-body p { font-size: 15px; color: var(--muted); line-height: 1.75; margin: 0; padding: 0 24px 22px; }
 
     /* ── FOOTER ── */
     footer {
@@ -1941,44 +1947,60 @@
 <!-- FAQ SEO -->
 <section class="faq-section" id="faq" aria-label="Questions fréquentes">
   <div class="container">
-    <div class="reveal">
+    <div class="reveal" style="text-align:center">
       <span class="section-tag">FAQ</span>
       <h2>Questions fréquentes</h2>
+      <p class="section-sub">Tout ce qu'il faut savoir avant de commencer.</p>
     </div>
-    <div class="faq-list reveal" itemscope itemtype="https://schema.org/FAQPage">
+    <div class="faq-wrap reveal" itemscope itemtype="https://schema.org/FAQPage">
 
       <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
-        <h3 itemprop="name">Comment contester une OQTF ?</h3>
-        <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-          <p itemprop="text">Pour contester une OQTF (Obligation de Quitter le Territoire Français), vous disposez généralement de 30 jours pour déposer un recours devant le tribunal administratif. Avec JustiXia, analysez votre OQTF en quelques secondes et recevez un modèle de recours personnalisé, basé sur votre situation et les textes de loi en vigueur.</p>
+        <button class="faq-trigger" aria-expanded="false">
+          <h3 itemprop="name">Comment contester une OQTF ?</h3>
+          <span class="faq-icon"><svg viewBox="0 0 14 14"><line x1="7" y1="1" x2="7" y2="13"/><line x1="1" y1="7" x2="13" y2="7"/></svg></span>
+        </button>
+        <div class="faq-body" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+          <p itemprop="text">Pour contester une OQTF, vous disposez généralement de <strong>30 jours</strong> pour déposer un recours devant le tribunal administratif. JustiXia analyse votre OQTF en quelques secondes, identifie les irrégularités et génère un modèle de recours personnalisé basé sur votre situation et les textes de loi en vigueur.</p>
         </div>
       </div>
 
       <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
-        <h3 itemprop="name">Que faire face à un avis d'expulsion ?</h3>
-        <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-          <p itemprop="text">Un avis d'expulsion ne signifie pas que vous devez partir immédiatement. Vous avez des droits : délais légaux, protection hivernale du 1er novembre au 31 mars, recours possible. JustiXia analyse votre document et génère une lettre de contestation ou de demande de délai, prête à envoyer.</p>
+        <button class="faq-trigger" aria-expanded="false">
+          <h3 itemprop="name">Que faire face à un avis d'expulsion ?</h3>
+          <span class="faq-icon"><svg viewBox="0 0 14 14"><line x1="7" y1="1" x2="7" y2="13"/><line x1="1" y1="7" x2="13" y2="7"/></svg></span>
+        </button>
+        <div class="faq-body" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+          <p itemprop="text">Un avis d'expulsion ne signifie pas que vous devez partir immédiatement. Vous avez des droits : délais légaux, <strong>protection hivernale du 1er novembre au 31 mars</strong>, recours possible. JustiXia analyse votre document et génère une lettre de contestation ou de demande de délai, prête à envoyer.</p>
         </div>
       </div>
 
       <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
-        <h3 itemprop="name">Existe-t-il une aide juridique gratuite en ligne en France ?</h3>
-        <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-          <p itemprop="text">Oui. JustiXia propose une analyse juridique gratuite de votre document avec inscription. La lettre de réponse complète est disponible dès 5€, soit moins que 2 minutes chez un avocat. Accessible depuis Telegram, sans ordinateur, en 7 langues.</p>
+        <button class="faq-trigger" aria-expanded="false">
+          <h3 itemprop="name">Existe-t-il une aide juridique gratuite en ligne en France ?</h3>
+          <span class="faq-icon"><svg viewBox="0 0 14 14"><line x1="7" y1="1" x2="7" y2="13"/><line x1="1" y1="7" x2="13" y2="7"/></svg></span>
+        </button>
+        <div class="faq-body" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+          <p itemprop="text">Oui. JustiXia propose une analyse juridique gratuite avec inscription. La lettre de réponse complète est disponible dès <strong>5€</strong>, soit moins que 2 minutes chez un avocat. Accessible depuis Telegram, sans ordinateur, en 7 langues, 24h/24.</p>
         </div>
       </div>
 
       <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
-        <h3 itemprop="name">Comment répondre à une lettre de préfecture ?</h3>
-        <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-          <p itemprop="text">Une lettre de préfecture peut concerner un refus de titre de séjour, une convocation ou une demande de documents. La réponse doit être précise, envoyée dans les délais et s'appuyer sur les bons textes de loi. JustiXia analyse le courrier et rédige votre réponse en moins de 30 secondes, en français ou dans votre langue.</p>
+        <button class="faq-trigger" aria-expanded="false">
+          <h3 itemprop="name">Comment répondre à une lettre de préfecture ?</h3>
+          <span class="faq-icon"><svg viewBox="0 0 14 14"><line x1="7" y1="1" x2="7" y2="13"/><line x1="1" y1="7" x2="13" y2="7"/></svg></span>
+        </button>
+        <div class="faq-body" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+          <p itemprop="text">Une lettre de préfecture peut concerner un refus de titre de séjour, une convocation ou une demande de documents. La réponse doit être précise, dans les délais, et s'appuyer sur les bons textes de loi. JustiXia analyse le courrier et rédige votre réponse en moins de 30 secondes, en français ou dans votre langue.</p>
         </div>
       </div>
 
       <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
-        <h3 itemprop="name">JustiXia fonctionne-t-il sans compte ni inscription ?</h3>
-        <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-          <p itemprop="text">Oui. Vous pouvez envoyer votre document directement sur Telegram sans créer de compte. L'analyse (résumé, irrégularités, droits) est accessible gratuitement. La lettre de réponse complète est disponible pour 5€ en paiement unique, sans abonnement.</p>
+        <button class="faq-trigger" aria-expanded="false">
+          <h3 itemprop="name">JustiXia fonctionne-t-il sans compte ni inscription ?</h3>
+          <span class="faq-icon"><svg viewBox="0 0 14 14"><line x1="7" y1="1" x2="7" y2="13"/><line x1="1" y1="7" x2="13" y2="7"/></svg></span>
+        </button>
+        <div class="faq-body" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+          <p itemprop="text">Oui. Vous pouvez envoyer votre document directement sur Telegram sans créer de compte. L'analyse complète (résumé, irrégularités, droits, délais) est accessible gratuitement. La lettre de réponse est disponible pour <strong>5€</strong> en paiement unique, sans abonnement.</p>
         </div>
       </div>
 
@@ -2063,6 +2085,26 @@
   }, { threshold: 0.12, rootMargin: '0px 0px -32px 0px' });
 
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+
+<script>
+  // FAQ accordion
+  document.querySelectorAll('.faq-trigger').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item');
+      const isOpen = item.classList.contains('open');
+      // close all
+      document.querySelectorAll('.faq-item.open').forEach(el => {
+        el.classList.remove('open');
+        el.querySelector('.faq-trigger').setAttribute('aria-expanded', 'false');
+      });
+      // open clicked (if it was closed)
+      if (!isOpen) {
+        item.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
 </script>
 
 <script>
