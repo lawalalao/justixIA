@@ -38,6 +38,8 @@
     { "source": "/blog/clause-abusive-bail",        "destination": "/blog/clause-abusive-bail.html" },
     { "source": "/blog/contester-oqtf-2026",        "destination": "/blog/contester-oqtf-2026.html" },
     { "source": "/blog/avis-expulsion-locataire-droits", "destination": "/blog/avis-expulsion-locataire-droits.html" },
-    { "source": "/blog/refus-titre-sejour-recours", "destination": "/blog/refus-titre-sejour-recours.html" }
+    { "source": "/blog/refus-titre-sejour-recours", "destination": "/blog/refus-titre-sejour-recours.html" },
+    { "source": "/afrique",  "destination": "/afrique/index.html" },
+    { "source": "/afrique/", "destination": "/afrique/index.html" }
   ]
 }
