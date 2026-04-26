@@ -116,79 +116,43 @@ Sitemap: {BASE_URL}/sitemap.xml
 
 @app.get("/sitemap.xml")
 async def sitemap_xml():
-    content = f"""<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>{BASE_URL}/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>{BASE_URL}/app</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>{BASE_URL}/mentions-legales</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
-    <loc>{BASE_URL}/confidentialite</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
-    <loc>{BASE_URL}/cgu</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
-    <loc>{BASE_URL}/blog</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>{BASE_URL}/blog/expulsion-locative</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>{BASE_URL}/blog/mise-en-demeure</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>{BASE_URL}/blog/oqtf-droits</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>{BASE_URL}/blog/licenciement-abusif</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>{BASE_URL}/blog/clause-abusive-bail</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>{BASE_URL}/blog/contester-oqtf-2026</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>{BASE_URL}/blog/avis-expulsion-locataire-droits</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>{BASE_URL}/blog/refus-titre-sejour-recours</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-</urlset>"""
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    pages = [
+        # (loc, lastmod, changefreq, priority)
+        ("/",                                          today,         "weekly",  "1.0"),
+        ("/app",                                       today,         "monthly", "0.9"),
+        ("/afrique",                                   "2026-04-19",  "monthly", "0.8"),
+        ("/mentions-legales",                          today,         "yearly",  "0.3"),
+        ("/confidentialite",                           today,         "yearly",  "0.3"),
+        ("/cgu",                                       today,         "yearly",  "0.3"),
+        ("/blog",                                      today,         "weekly",  "0.8"),
+        ("/blog/expulsion-locative",                   "2025-11-15",  "monthly", "0.7"),
+        ("/blog/mise-en-demeure",                      "2025-12-08",  "monthly", "0.7"),
+        ("/blog/oqtf-droits",                          "2026-01-03",  "monthly", "0.7"),
+        ("/blog/licenciement-abusif",                  "2026-02-12",  "monthly", "0.7"),
+        ("/blog/clause-abusive-bail",                  "2026-03-07",  "monthly", "0.7"),
+        ("/blog/contester-oqtf-2026",                  "2026-04-19",  "monthly", "0.8"),
+        ("/blog/avis-expulsion-locataire-droits",      "2026-04-19",  "monthly", "0.8"),
+        ("/blog/refus-titre-sejour-recours",           "2026-04-19",  "monthly", "0.8"),
+        ("/blog/mise-en-demeure-ohada",                "2026-04-19",  "monthly", "0.7"),
+        ("/blog/licenciement-afrique-ouest-droits",    "2026-04-19",  "monthly", "0.7"),
+        ("/blog/contrat-bail-ohada-clauses-abusives",  "2026-04-19",  "monthly", "0.7"),
+    ]
+    urls = "\n".join(
+        f"  <url>\n"
+        f"    <loc>{BASE_URL}{path}</loc>\n"
+        f"    <lastmod>{lastmod}</lastmod>\n"
+        f"    <changefreq>{changefreq}</changefreq>\n"
+        f"    <priority>{priority}</priority>\n"
+        f"  </url>"
+        for path, lastmod, changefreq, priority in pages
+    )
+    content = (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        f"{urls}\n"
+        '</urlset>'
+    )
     return Response(content=content, media_type="application/xml")
 
 
