@@ -4,4 +4,4 @@ Disallow: /dashboard/
 Disallow: /api/
 Disallow: /admin/
 
-Sitemap: https://justix-ia.vercel.app/sitemap.xml
+Sitemap: https://justixia.xyz/sitemap.xml
