@@ -99,7 +99,7 @@ def detect_mime_from_bytes(data: bytes) -> Optional[str]:
     return None
 
 
-BASE_URL = "https://justix-ia.vercel.app"
+BASE_URL = "https://justixia.xyz"
 
 @app.get("/robots.txt")
 async def robots_txt():
@@ -1258,7 +1258,7 @@ async def get_referral_code(user: dict = Depends(require_auth)):
         "code": code,
         "referral_credits": referral_credits,
         "total_uses": total_uses,
-        "share_url": f"https://justix-ia.vercel.app/dashboard/register.html?ref={code}",
+        "share_url": f"https://justixia.xyz/dashboard/register.html?ref={code}",
     }
 
 
@@ -1443,7 +1443,7 @@ async def _tg_send_result(chat_id: int, result: dict, has_letter_access: bool):
         await _tg_send_doc(chat_id, lettre.encode("utf-8"), "lettre_contestation.txt",
                            "📎 Lettre prête à envoyer")
         await _tg_send(chat_id,
-                       "✨ Analyse terminée. App web : justix-ia.vercel.app",
+                       "✨ Analyse terminée. App web : justixia.xyz",
                        reply_markup=_tg_restart_keyboard())
     else:
         # Paywall
