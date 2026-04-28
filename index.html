@@ -17,7 +17,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://justixia.xyz/" />
   <meta property="og:title" content="JustiXia — Le droit, dans ta langue, en 30 secondes" />
-  <meta property="og:description" content="Analyse tes documents juridiques avec l'IA. Droit français, européen et OHADA. 12 langues. Semi-analyse gratuite avec inscription. Résultat en 30 secondes." />
+  <meta property="og:description" content="Analyse tes documents juridiques avec l'IA. Droit français, européen et OHADA. 12 langues. Analyse partielle gratuite avec inscription, lettre complète à 5€ par analyse, sans abonnement. Résultat en 30 secondes." />
   <meta property="og:image" content="https://justixia.xyz/justixia-logo-dark.png" />
   <meta property="og:locale" content="fr_FR" />
   <meta property="og:site_name" content="JustiXia" />
@@ -1484,7 +1484,7 @@
         <a href="/app" class="btn-primary">Analyser mon document</a>
         <a href="https://t.me/JustiXiaBot" class="btn-ghost">Essayer sur Telegram</a>
       </div>
-      <p class="hero-trust">Semi-analyse gratuite avec inscription · Lettre complète dès 5€ · Résultat en 30 secondes</p>
+      <p class="hero-trust">Analyse partielle gratuite avec inscription · Lettre complète à 5€ par analyse, sans abonnement · Résultat en 30 secondes</p>
     </div>
     <div class="hero-photo-col">
       <div class="hero-photo-wrap">
@@ -1699,9 +1699,9 @@
     <div class="reveal" style="text-align:center;margin-bottom:0">
       <span class="section-tag">Tarifs</span>
       <h2>Simple. Transparent.</h2>
-      <p class="section-sub" style="margin:12px auto 0;text-align:center">Pas d'abonnement caché. Tu paies ce que tu utilises.</p>
+      <p class="section-sub" style="margin:12px auto 0;text-align:center">Pas d'abonnement. Tu paies à l'analyse, uniquement quand tu en as besoin.</p>
     </div>
-    <div class="pricing-grid">
+    <div class="pricing-grid" style="grid-template-columns:repeat(2,1fr);max-width:760px;margin-left:auto;margin-right:auto">
 
       <!-- GRATUIT -->
       <div class="plan-card reveal">
@@ -1718,59 +1718,29 @@
         <a href="/dashboard/register.html" class="plan-btn plan-btn-outline">Créer un compte</a>
       </div>
 
-      <!-- ONE-SHOT -->
-      <div class="plan-card reveal">
-        <div class="plan-name">One-shot</div>
-        <div class="plan-price">5<sup>€</sup></div>
-        <div class="plan-period">1 dossier · sans compte</div>
-        <ul class="plan-features">
-          <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>1 analyse complète</li>
-          <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>12 langues disponibles</li>
-          <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Lettres prêtes à envoyer</li>
-          <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Téléchargement PDF</li>
-        </ul>
-        <a href="/app" id="planOneShotBtn" class="plan-btn plan-btn-outline">Payer 5€ et analyser</a>
-      </div>
-
-      <!-- STARTER ASSO -->
+      <!-- ONE-SHOT (analyse complète) -->
       <div class="plan-card featured reveal">
         <div class="plan-featured-badge">Recommandé</div>
-        <div class="plan-name">Starter asso</div>
-        <div class="plan-price">29<sup>€</sup></div>
-        <div class="plan-period">par mois · 3 jours d'essai gratuit</div>
+        <div class="plan-name">Analyse complète</div>
+        <div class="plan-price">5<sup>€</sup></div>
+        <div class="plan-period">par analyse · sans abonnement</div>
         <ul class="plan-features">
-          <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Jusqu'à 50 dossiers/mois</li>
-          <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Dashboard de gestion</li>
-          <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Suivi des statuts</li>
-          <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Notes internes par dossier</li>
-          <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>12 langues disponibles</li>
+          <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Tout ce qui est inclus dans le gratuit</li>
+          <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Lettre de réponse prête à envoyer</li>
+          <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Articles de loi cités</li>
+          <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Téléchargement PDF</li>
+          <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Aucun engagement, paiement unique</li>
         </ul>
-        <a href="/dashboard/register.html" id="planStarterBtn" class="plan-btn plan-btn-primary">Essai gratuit 3 jours</a>
-      </div>
-
-      <!-- PRO ASSO -->
-      <div class="plan-card reveal">
-        <div class="plan-name">Pro asso</div>
-        <div class="plan-price">99<sup>€</sup></div>
-        <div class="plan-period">par mois · 7 jours d'essai gratuit</div>
-        <ul class="plan-features">
-          <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Dossiers illimités</li>
-          <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Dashboard + statistiques avancées</li>
-          <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Multi-utilisateurs</li>
-          <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Export des données</li>
-          <li><span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Accompagnement dédié</li>
-        </ul>
-        <a href="/dashboard/register.html" id="planProBtn" class="plan-btn plan-btn-ghost">Essai gratuit 7 jours</a>
+        <a href="/app" id="planOneShotBtn" class="plan-btn plan-btn-primary">Payer 5€ et analyser</a>
       </div>
 
     </div>
 
-    <!-- Comparaison rapide -->
+    <!-- Note associations -->
     <div class="reveal" style="margin-top:40px;padding:20px 24px;background:var(--grey-bg);border-radius:var(--radius-card);border:1px solid var(--border-light);text-align:center">
       <p style="font-size:14px;color:var(--muted);line-height:1.7">
-        Petite structure ou permanence juridique locale ?
-        <strong style="color:var(--navy)">Le plan Starter à 29€ est fait pour vous.</strong><br/>
-        Pour tester avant de s'engager : le one-shot à 5€ suffit pour une première analyse.
+        Vous êtes une association ou une permanence juridique ?
+        <strong style="color:var(--navy)">Créez un compte gratuit</strong> pour gérer vos dossiers depuis un dashboard partagé. Le paiement reste à l'analyse, sans abonnement.
       </p>
     </div>
   </div>
@@ -2147,9 +2117,8 @@
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     fetch('/api/config').then(r => r.json()).then(cfg => {
-      if (cfg.stripe_link) document.getElementById('planOneShotBtn').href = cfg.stripe_link;
-      if (cfg.stripe_starter) document.getElementById('planStarterBtn').href = cfg.stripe_starter;
-      if (cfg.stripe_pro) document.getElementById('planProBtn').href = cfg.stripe_pro;
+      const btn = document.getElementById('planOneShotBtn');
+      if (cfg.stripe_link && btn) btn.href = cfg.stripe_link;
     }).catch(() => {});
   });
 </script>
@@ -2170,28 +2139,14 @@
       "name": "Gratuit",
       "price": "0.00",
       "priceCurrency": "EUR",
-      "description": "Semi-analyse : irrégularités + droits, inscription requise"
+      "description": "Analyse partielle : irrégularités + droits + délais. Inscription requise, sans abonnement."
     },
     {
       "@type": "Offer",
-      "name": "One-shot",
+      "name": "Analyse complète",
       "price": "5.00",
       "priceCurrency": "EUR",
-      "description": "1 analyse complète avec lettre de réponse, sans abonnement"
-    },
-    {
-      "@type": "Offer",
-      "name": "Starter asso",
-      "price": "29.00",
-      "priceCurrency": "EUR",
-      "description": "Jusqu'à 50 dossiers/mois, dashboard, 3 jours d'essai gratuit"
-    },
-    {
-      "@type": "Offer",
-      "name": "Pro asso",
-      "price": "99.00",
-      "priceCurrency": "EUR",
-      "description": "Dossiers illimités, stats avancées, multi-utilisateurs, 7 jours d'essai"
+      "description": "1 analyse complète avec lettre de réponse prête à envoyer. Paiement unique, sans abonnement."
     }
   ],
   "provider": {
