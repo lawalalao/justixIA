@@ -144,7 +144,7 @@
       <button class="type-btn active" data-type="particulier" type="button">
         <div class="type-btn-icon">👤</div>
         <span class="type-btn-label">Particulier</span>
-        <span class="type-btn-sub">Accès gratuit, lettre dès 5€</span>
+        <span class="type-btn-sub">Accès gratuit, lettre 5€/analyse</span>
       </button>
       <button class="type-btn" data-type="association" type="button">
         <div class="type-btn-icon">🏢</div>
@@ -156,24 +156,8 @@
     <div class="alert" id="alertBox" role="alert"></div>
 
     <div class="free-notice show" id="freeNotice">
-      <strong>Compte gratuit :</strong> analyse complète (irrégularités + droits) incluse.
-      La lettre de réponse est disponible à partir de 5€ par dossier ou avec un abonnement.
-    </div>
-
-    <div class="plan-section" id="planSection">
-      <label style="margin-bottom:10px;display:block">Choisissez votre plan</label>
-      <div class="plan-cards">
-        <div class="plan-card active" data-plan="starter">
-          <div class="plan-card-name">Starter</div>
-          <div class="plan-card-price">29€<span>/mois</span></div>
-          <div class="plan-card-feat">3 membres · Dossiers illimités · Lettre incluse</div>
-        </div>
-        <div class="plan-card" data-plan="pro">
-          <div class="plan-card-name">Pro</div>
-          <div class="plan-card-price">99€<span>/mois</span></div>
-          <div class="plan-card-feat">10 membres · Statistiques · Priorité support</div>
-        </div>
-      </div>
+      <strong>Compte gratuit :</strong> analyse partielle (irrégularités + droits + délais) incluse.
+      La lettre de réponse complète est à 5€ par analyse, paiement unique, sans abonnement.
     </div>
 
     <form id="registerForm" novalidate>
@@ -233,7 +217,6 @@
   }
 
   let accountType = 'particulier';
-  let selectedPlan = 'starter';
   let supabaseClient = null;
   let sessionToken = null;
 
@@ -243,18 +226,8 @@
       btn.classList.add('active');
       accountType = btn.dataset.type;
       const isAsso = accountType === 'association';
-      document.getElementById('freeNotice').classList.toggle('show', !isAsso);
-      document.getElementById('planSection').classList.toggle('show', isAsso);
       document.querySelectorAll('.asso-field').forEach(f => f.classList.toggle('show', isAsso));
       document.getElementById('org').required = isAsso;
-    });
-  });
-
-  document.querySelectorAll('.plan-card').forEach(card => {
-    card.addEventListener('click', () => {
-      document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('active'));
-      card.classList.add('active');
-      selectedPlan = card.dataset.plan;
     });
   });
 
@@ -309,7 +282,7 @@
 
       if (accountType === 'association' && data.user) {
         showAlert(
-          `Compte créé ! Vérifiez votre email pour confirmer. Notre équipe activera votre plan ${selectedPlan} sous 24h.`,
+          "Compte créé ! Vérifiez votre email pour confirmer, puis connectez-vous pour accéder au dashboard. Le paiement reste à l'analyse, sans abonnement.",
           'success'
         );
         btn.textContent = 'Compte créé';
@@ -381,8 +354,8 @@
       const data = await resp.json();
       const box = document.getElementById('promoSuccess');
       if (resp.ok) {
-        const planLabels = { starter: 'Starter', pro: 'Pro', oneshot: 'Analyse complète' };
-        box.textContent = `Code activé ! Plan ${planLabels[data.plan] || data.plan} débloqué.`;
+        const planLabels = { oneshot: 'Analyse complète', starter: 'Analyse complète', pro: 'Analyse complète' };
+        box.textContent = `Code activé ! ${planLabels[data.plan] || 'Crédit'} débloqué.`;
         box.className = 'promo-success show';
         document.getElementById('promoApplyBtn').textContent = 'Activé';
         document.getElementById('promoInput').disabled = true;
