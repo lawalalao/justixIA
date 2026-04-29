@@ -16,15 +16,15 @@ Deux modes :
 | Style | Tailwind CSS — design system aligné JustiXia |
 | Auth | Clerk |
 | DB | Supabase (Postgres + RLS) |
-| LLM | OpenAI GPT-4o |
-| STT / TTS | Whisper / ElevenLabs |
+| LLM | Anthropic Claude Opus 4.7 (chat persona + feedback grader) |
+| Voice | Browser-native (Web Speech API) — optionnel |
 | Paiement | Stripe |
 | Déploiement | Vercel |
 
 ## Prérequis
 
 - Node.js ≥ 20
-- Comptes : Clerk, Supabase, OpenAI, ElevenLabs, Stripe (clés API requises — voir `.env.example`)
+- Comptes : Clerk, Supabase, Anthropic, Stripe (clés API requises — voir `.env.example`)
 
 ## Démarrage local
 
@@ -56,10 +56,15 @@ npm run dev
    `customer.subscription.updated`, `customer.subscription.deleted`.
 4. Copie le secret webhook dans `STRIPE_WEBHOOK_SECRET`.
 
-### ElevenLabs
+### Voix (optionnel pour le V0)
 
-Récupère l'API key + les voice IDs (clients, juge, avocat adverse, associé senior).
-Mets-les dans `lib/elevenlabs.ts` à la place des placeholders.
+Cette V0 ne dépend ni d'ElevenLabs ni de Whisper. Pour activer la voix
+in-session, brancher l'API Web Speech native du navigateur :
+- `SpeechRecognition` pour la transcription (entrée micro → texte)
+- `SpeechSynthesis` pour la lecture (texte du persona → voix)
+
+Composant `<VoiceBar />` à créer côté client. Les routes serveur ne sont
+pas nécessaires (tout reste dans le navigateur).
 
 ## Structure
 
@@ -77,10 +82,8 @@ app/
   dashboard/page.tsx             Historique + scores
   pricing/page.tsx               Plans + Stripe checkout
   api/
-    chat/route.ts                GPT-4o stream (client / juge / adversaire)
-    feedback/route.ts            Rapport JSON Associé Senior
-    tts/route.ts                 ElevenLabs
-    stt/route.ts                 Whisper
+    chat/route.ts                Claude Opus 4.7 stream (client / juge / adversaire)
+    feedback/route.ts            Rapport JSON Associé Senior (Claude Opus 4.7 + thinking adaptatif)
     stripe/checkout/route.ts     Crée la Checkout Session
     stripe/webhook/route.ts      Sync profil ↔ abonnement
 components/
@@ -90,7 +93,7 @@ lib/
   cases/seed.ts                  Source unique de vérité côté front
   prompts/                       Senior grader, personas wrapper
   env.ts                         Validation env
-  supabase.ts / openai.ts / elevenlabs.ts / stripe.ts
+  supabase.ts / anthropic.ts / stripe.ts
 supabase/
   migrations/                    SQL versionné
 ```
@@ -104,8 +107,10 @@ démo publique, dashboard, pricing page + Stripe checkout, sitemap + robots + JS
 ⚠️ **À finir** par le dev :
 - **Mode Tribunal** : orchestration tour-par-tour juge ↔ avocat utilisateur ↔ adversaire
   (V0 utilise simplement le speaker 'judge'; ajouter UI pour passer la parole à 'opposing').
-- **Voix end-to-end** : composant `<VoiceBar />` qui combine `/api/stt` + `/api/tts`
-  dans la session live. Routes API prêtes.
+- **Voix end-to-end** : composant `<VoiceBar />` côté client utilisant l'API Web
+  Speech native (SpeechRecognition + SpeechSynthesis). Pas de route serveur
+  nécessaire — tout reste dans le navigateur. Si tu veux des voix de meilleure
+  qualité plus tard, on pourra brancher ElevenLabs ou Cartesia en option.
 - **Mode Examen CRFPA** : timer + grille officielle.
 - **Intégration Légifrance** : enrichir les `references` du rapport avec des liens
   Légifrance auto-résolus depuis l'article cité.

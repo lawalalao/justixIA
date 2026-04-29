@@ -12,8 +12,7 @@ export const env = {
   supabaseAnon: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '',
   // Server-only (lazy, throws on access if missing)
   get supabaseService() { return required('SUPABASE_SERVICE_ROLE_KEY'); },
-  get openaiKey() { return required('OPENAI_API_KEY'); },
-  get elevenlabsKey() { return required('ELEVENLABS_API_KEY'); },
+  get anthropicKey() { return required('ANTHROPIC_API_KEY'); },
   get stripeSecret() { return required('STRIPE_SECRET_KEY'); },
   get stripeWebhookSecret() { return required('STRIPE_WEBHOOK_SECRET'); },
   // Stripe price IDs

@@ -25,13 +25,11 @@ export function Hero() {
             </Link>
           </div>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs uppercase tracking-wider text-ink-subtle">
-            <span>GPT-4o</span>
-            <span aria-hidden>·</span>
-            <span>ElevenLabs</span>
-            <span aria-hidden>·</span>
-            <span>Whisper</span>
+            <span>Claude Opus 4.7</span>
             <span aria-hidden>·</span>
             <span>Légifrance</span>
+            <span aria-hidden>·</span>
+            <span>Voix navigateur</span>
           </div>
         </div>
       </div>
