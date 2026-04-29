@@ -1345,14 +1345,16 @@
 
     .footer-bottom-links { display: flex; gap: 20px; }
 
-    /* ── SCROLL REVEAL ── */
-    .reveal {
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.55s ease, transform 0.55s ease;
+    /* ── SCROLL REVEAL ──
+       Le contenu est visible par défaut. Une classe `js-reveal` ajoutée par JS
+       active l'effet d'apparition. Sans JS / si IO échoue / si l'utilisateur
+       préfère reduce-motion, le contenu reste lisible. */
+    .reveal { opacity: 1; transform: none; transition: opacity 0.55s ease, transform 0.55s ease; }
+    .js-reveal .reveal { opacity: 0; transform: translateY(20px); }
+    .js-reveal .reveal.visible { opacity: 1; transform: translateY(0); }
+    @media (prefers-reduced-motion: reduce) {
+      .js-reveal .reveal { opacity: 1; transform: none; }
     }
-
-    .reveal.visible { opacity: 1; transform: translateY(0); }
 
     /* ── RESPONSIVE ── */
     /* ── TÉMOIGNAGES ── */
@@ -2079,19 +2081,39 @@
 </footer>
 
 <script>
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach((e, i) => {
-      if (e.isIntersecting) {
-        setTimeout(() => e.target.classList.add('visible'), i * 70);
-        io.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.12, rootMargin: '0px 0px -32px 0px' });
+  (function () {
+    var reveals = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window) || reveals.length === 0) {
+      // Pas d'IO -> le CSS par défaut (opacity:1) garde le contenu lisible.
+      return;
+    }
+    document.documentElement.classList.add('js-reveal');
 
-  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e, i) {
+        if (e.isIntersecting) {
+          setTimeout(function () { e.target.classList.add('visible'); }, i * 70);
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -32px 0px' });
 
-  /* Theme toggle in nav */
-  document.getElementById('navThemeSlot').innerHTML = window.JxTheme.buttonHTML();
+    reveals.forEach(function (el) { io.observe(el); });
+
+    // Safety net : si pour une raison quelconque IO ne déclenche pas
+    // (extension, viewport bizarre, focus mode), on rend tout visible après 2s.
+    setTimeout(function () {
+      reveals.forEach(function (el) { el.classList.add('visible'); });
+    }, 2000);
+  })();
+
+  /* Theme toggle in nav (best-effort, ne casse pas la page si JxTheme absent) */
+  try {
+    var slot = document.getElementById('navThemeSlot');
+    if (slot && window.JxTheme && typeof window.JxTheme.buttonHTML === 'function') {
+      slot.innerHTML = window.JxTheme.buttonHTML();
+    }
+  } catch (_) {}
 </script>
 
 <script>
