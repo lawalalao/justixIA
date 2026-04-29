@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light dark;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-surface-bg text-ink antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  h1, h2, h3, h4 {
+    font-family: 'Fraunces', Georgia, serif;
+    @apply font-semibold tracking-tight text-ink;
+  }
+  h1 { @apply text-4xl md:text-5xl; }
+  h2 { @apply text-3xl md:text-4xl; }
+  h3 { @apply text-xl md:text-2xl; }
+  ::selection { @apply bg-primary-soft text-ink; }
+}
+
+@layer components {
+  .container-x { @apply mx-auto w-full max-w-container px-6; }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-pill px-6 py-3 text-sm font-semibold transition;
+  }
+  .btn-primary { @apply btn bg-primary text-primary-on hover:bg-primary-hover shadow-md; }
+  .btn-secondary { @apply btn bg-secondary text-secondary-on hover:bg-secondary-hover shadow-md; }
+  .btn-outline { @apply btn border border-line text-ink hover:bg-surface-alt; }
+  .btn-ghost { @apply btn text-ink hover:bg-surface-alt; }
+  .card { @apply rounded-lg border border-line bg-surface shadow-md; }
+  .tag { @apply inline-flex items-center rounded-pill bg-primary-soft px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary; }
+  .tag-secondary { @apply inline-flex items-center rounded-pill bg-secondary-soft px-3 py-1 text-xs font-semibold uppercase tracking-wider text-secondary; }
+}
