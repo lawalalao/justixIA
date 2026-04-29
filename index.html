@@ -1180,6 +1180,129 @@
       box-shadow: var(--shadow-card);
     }
 
+    /* ── SIMULATOR (cross-promo Justixia avocats) ── */
+    .simulator-section {
+      padding: 80px 24px;
+      background: var(--surface-2);
+      border-top: 1px solid var(--border-light);
+    }
+    .simulator-inner {
+      max-width: 980px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 48px;
+      align-items: center;
+    }
+    @media (max-width: 880px) { .simulator-inner { grid-template-columns: 1fr; gap: 32px; } }
+    .simulator-tag {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 5px 12px; border-radius: var(--radius-pill);
+      background: rgba(14,124,102,0.10); color: var(--primary);
+      font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    }
+    .simulator-tag::before {
+      content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--primary);
+    }
+    .simulator-text h2 {
+      margin-top: 14px;
+      font-size: clamp(26px, 3vw, 34px);
+      font-family: 'Fraunces', Georgia, serif;
+      font-weight: 600;
+      line-height: 1.2;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+    .simulator-text h2 em { font-style: normal; color: var(--primary); }
+    .simulator-text p {
+      margin-top: 16px;
+      font-size: 16px;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+    .simulator-modes {
+      margin-top: 22px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .simulator-mode {
+      display: flex; gap: 12px; align-items: flex-start;
+      font-size: 14px; color: var(--text);
+    }
+    .simulator-mode-icon {
+      flex-shrink: 0;
+      width: 28px; height: 28px;
+      border-radius: 8px;
+      background: rgba(14,124,102,0.10);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+    }
+    .simulator-mode strong { color: var(--text); font-weight: 700; }
+    .simulator-actions {
+      margin-top: 28px;
+      display: flex; gap: 12px; flex-wrap: wrap;
+    }
+    .simulator-cta {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 26px;
+      border-radius: var(--radius-pill);
+      background: var(--primary); color: var(--primary-on);
+      font-size: 15px; font-weight: 700; text-decoration: none;
+      transition: background .2s, transform .2s;
+    }
+    .simulator-cta:hover { background: var(--primary-hover); transform: translateY(-1px); }
+    .simulator-cta-secondary {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 26px;
+      border-radius: var(--radius-pill);
+      background: transparent; color: var(--text);
+      border: 1px solid var(--border-strong);
+      font-size: 15px; font-weight: 600; text-decoration: none;
+      transition: border-color .2s, color .2s;
+    }
+    .simulator-cta-secondary:hover { border-color: var(--primary); color: var(--primary); }
+    .simulator-visual {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-md);
+    }
+    .simulator-screen-bar {
+      display: flex; align-items: center; gap: 6px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 16px;
+    }
+    .simulator-screen-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border-strong); }
+    .simulator-screen-label { margin-left: 8px; font-size: 12px; color: var(--text-muted); }
+    .simulator-bubble {
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-size: 13px;
+      line-height: 1.5;
+      max-width: 86%;
+      margin-bottom: 10px;
+    }
+    .simulator-bubble.user {
+      background: var(--primary); color: var(--primary-on);
+      margin-left: auto; border-bottom-right-radius: 4px;
+    }
+    .simulator-bubble.client {
+      background: var(--surface-2); color: var(--text);
+      border-bottom-left-radius: 4px;
+    }
+    .simulator-bubble-label {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .simulator-score {
+      margin-top: 14px; padding: 12px;
+      background: var(--success-soft); border-radius: 10px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .simulator-score-label { font-size: 12px; color: var(--success); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+    .simulator-score-value { font-family: 'Fraunces', Georgia, serif; font-size: 22px; color: var(--success); font-weight: 600; }
+
     /* ── CTA DARK ── */
     .cta-dark {
       background: var(--dark-cta);
@@ -1462,6 +1585,7 @@
     <ul class="nav-links">
       <li><a href="/blog">Blog</a></li>
       <li><a href="/afrique">Afrique de l'Ouest</a></li>
+      <li><a href="/justixia-app">Avocats</a></li>
     </ul>
     <div class="nav-actions">
       <span id="navThemeSlot"></span>
@@ -2009,6 +2133,66 @@
         </div>
       </div>
 
+    </div>
+  </div>
+</section>
+
+<!-- SIMULATOR (cross-promo Justixia avocats) -->
+<section class="simulator-section" id="avocats" aria-label="Justixia simulateur pour avocats">
+  <div class="simulator-inner">
+    <div class="simulator-text reveal">
+      <span class="simulator-tag">Nouveau · Pour les avocats</span>
+      <h2>Tu es avocat ou étudiant en droit ?<br /><em>Entraîne-toi sans risque.</em></h2>
+      <p>
+        Justixia est notre nouveau produit dédié aux professionnels du droit.
+        Une clinique juridique IA pour simuler des consultations clients et des audiences,
+        avec un retour ancré dans le Code et la jurisprudence.
+      </p>
+
+      <div class="simulator-modes">
+        <div class="simulator-mode">
+          <span class="simulator-mode-icon">🗂️</span>
+          <span><strong>Mode Consultation</strong> — un client IA décrit sa situation, tu qualifies, tu conseilles.</span>
+        </div>
+        <div class="simulator-mode">
+          <span class="simulator-mode-icon">⚖️</span>
+          <span><strong>Mode Tribunal</strong> — tu plaides face à un juge IA, l'avocat adverse plaide en réponse.</span>
+        </div>
+        <div class="simulator-mode">
+          <span class="simulator-mode-icon">📊</span>
+          <span><strong>Feedback Associé Senior IA</strong> — qualification, stratégie, communication. Articles à réviser sur Légifrance.</span>
+        </div>
+      </div>
+
+      <div class="simulator-actions">
+        <a href="/justixia-app" class="simulator-cta">Découvrir Justixia →</a>
+        <a href="/justixia-app#waitlist" class="simulator-cta-secondary">S'inscrire à la beta</a>
+      </div>
+    </div>
+
+    <div class="simulator-visual reveal" aria-hidden="true">
+      <div class="simulator-screen-bar">
+        <span class="simulator-screen-dot"></span>
+        <span class="simulator-screen-dot"></span>
+        <span class="simulator-screen-dot"></span>
+        <span class="simulator-screen-label">Consultation · Sophie · Licenciement</span>
+      </div>
+      <div class="simulator-bubble client">
+        <div class="simulator-bubble-label" style="color:var(--text-muted)">Client</div>
+        Bonjour. On m'a licenciée hier, ils ont parlé de "faute grave"… j'ai 7 ans dans la boîte.
+      </div>
+      <div class="simulator-bubble user">
+        <div class="simulator-bubble-label" style="color:rgba(255,255,255,0.7)">Vous (avocat)</div>
+        Avez-vous reçu une convocation à un entretien préalable, par lettre recommandée ?
+      </div>
+      <div class="simulator-bubble client">
+        <div class="simulator-bubble-label" style="color:var(--text-muted)">Client</div>
+        Non, juste un appel. Pas de courrier.
+      </div>
+      <div class="simulator-score">
+        <span class="simulator-score-label">Score Associé Senior</span>
+        <span class="simulator-score-value">8.2 / 10</span>
+      </div>
     </div>
   </div>
 </section>
