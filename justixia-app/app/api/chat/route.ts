@@ -1,11 +1,13 @@
 // POST /api/chat
-// Streaming GPT-4o pour le client/juge IA. Le caller fournit le caseId et l'historique.
-// Pour la démo (non-authentifié), on accepte casId=cons-licenciement-demo seulement.
+// Streaming Claude (Opus 4.7) for the client/judge/opposing-counsel personas.
+// The caller provides caseId + speaker + history. The demo case is open;
+// every other case requires Clerk auth.
 
 import { NextRequest } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { z } from 'zod';
-import { openai, MODEL_CHAT } from '@/lib/openai';
+import Anthropic from '@anthropic-ai/sdk';
+import { anthropic, MODEL_CHAT } from '@/lib/anthropic';
 import { getCaseById } from '@/lib/cases/seed';
 import { buildClientSystem, buildJudgeSystem, buildOpposingCounselSystem } from '@/lib/prompts/personas';
 
@@ -32,21 +34,17 @@ export async function POST(req: NextRequest) {
   const { userId } = auth();
   if (!caseDef.is_demo && !userId) return new Response('Unauthorized', { status: 401 });
 
-  // Build system prompt depending on speaker.
+  // Build system prompt depending on the speaker the user wants to interact with.
   let system: string;
   if (speaker === 'client') {
-    if (!caseDef.client_persona_prompt) {
-      // Fallback: build a minimal persona from the case summary.
-      system = buildClientSystem(
+    system = buildClientSystem(
+      caseDef.client_persona_prompt ??
         `Tu joues le client décrit ci-après. Tu ne donnes pas toi-même de conseil juridique. Tu réponds en 2-3 phrases.\n\nCas: ${caseDef.summary}`,
-      );
-    } else {
-      system = buildClientSystem(caseDef.client_persona_prompt);
-    }
+    );
   } else if (speaker === 'judge') {
     system = buildJudgeSystem(
       caseDef.judge_persona_prompt ??
-        'Tu présides l\'audience. Tu es neutre, concis, autoritaire.',
+        "Tu présides l'audience. Tu es neutre, concis, autoritaire.",
       caseDef.title,
     );
   } else {
@@ -57,28 +55,34 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const stream = await openai().chat.completions.create({
+  // Anthropic Messages API streaming. Personas are conversational — no thinking
+  // needed (faster, cheaper, less monologue). Adaptive thinking is off by
+  // default on Opus 4.7 when the `thinking` field is absent.
+  const stream = anthropic().messages.stream({
     model: MODEL_CHAT,
-    stream: true,
-    temperature: 0.8,
-    max_tokens: 350,
-    messages: [{ role: 'system', content: system }, ...messages],
+    max_tokens: 600,
+    system,
+    messages: messages as Anthropic.Messages.MessageParam[],
   });
 
-  // Re-stream as plain text chunks (Server-Sent style).
+  // Bridge the SDK's text iterator into a Web ReadableStream that Next.js
+  // can return raw to the client.
   const encoder = new TextEncoder();
   const readable = new ReadableStream({
     async start(controller) {
       try {
-        for await (const chunk of stream) {
-          const delta = chunk.choices[0]?.delta?.content;
-          if (delta) controller.enqueue(encoder.encode(delta));
+        for await (const text of stream.textStream) {
+          controller.enqueue(encoder.encode(text));
         }
-      } catch (e) {
-        controller.error(e);
-      } finally {
-        controller.close();
+      } catch (err) {
+        controller.error(err);
+        return;
       }
+      controller.close();
+    },
+    cancel() {
+      // Client disconnected — abort the upstream Anthropic request.
+      stream.controller.abort();
     },
   });
 
