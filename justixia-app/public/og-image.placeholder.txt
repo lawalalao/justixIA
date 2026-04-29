@@ -1,0 +1,16 @@
+PLACEHOLDER
+
+Replace this file with `og-image.png` (1200x628 PNG/JPG) before going public.
+
+Suggested content for the OG card:
+  - Background: #14201E (surface-inverted)
+  - Title (Fraunces, white):
+      "Plaide comme si c'était réel.
+       Entraîne-toi comme si c'était sûr."
+  - Subtitle (Inter, #B7C2C0): "Clinique juridique IA · Justixia"
+  - Logo top-left, accent #FF2D78 dot
+
+Recommended tools:
+  - Figma template: https://www.figma.com/templates/og-image/
+  - Vercel OG: https://vercel.com/docs/functions/og-image-generation (auto-generate
+    from JSX — would replace this file with /opengraph-image.tsx in the app folder)
