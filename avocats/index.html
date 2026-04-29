@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" href="/justixia-logo-dark.png" />
+  <link rel="apple-touch-icon" href="/justixia-logo-dark.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0E7C66" />
+  <title>Justixia Simulator — Plaide comme si c'était réel</title>
+  <meta name="description" content="Justixia : clinique juridique IA pour avocats et étudiants en droit. Simule des consultations et des audiences avec des clients et juges IA. Feedback ancré dans le Code et la jurisprudence." />
+  <link rel="canonical" href="https://justixia.xyz/justixia-app" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://justixia.xyz/justixia-app" />
+  <meta property="og:title" content="Justixia Simulator — Plaide comme si c'était réel" />
+  <meta property="og:description" content="Clinique juridique IA pour avocats. Simulations de consultations et d'audiences. Feedback ancré dans le Code et la jurisprudence." />
+  <meta property="og:image" content="https://justixia.xyz/justixia-logo-dark.png" />
+  <meta property="og:locale" content="fr_FR" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" /></noscript>
+
+  <link rel="stylesheet" href="/styles/tokens.css" />
+  <script src="/styles/theme.js"></script>
+
+  <style>
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    h1, h2, h3 { font-family: 'Fraunces', Georgia, serif; font-weight: 600; line-height: 1.15; letter-spacing: -0.01em; }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 10;
+      background: var(--surface-inverted);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .nav-inner {
+      max-width: 1100px; margin: 0 auto; padding: 16px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { display: inline-flex; text-decoration: none; }
+    .nav-logo img { height: 36px; width: auto; }
+    .nav-back {
+      color: rgba(255,255,255,0.7); text-decoration: none; font-size: 14px; font-weight: 500;
+      transition: color .2s;
+    }
+    .nav-back:hover { color: #fff; }
+
+    /* HERO */
+    .hero {
+      flex: 1;
+      display: flex; align-items: center; justify-content: center;
+      padding: 64px 24px;
+      background: linear-gradient(180deg, var(--bg) 0%, var(--surface-2) 100%);
+    }
+    .hero-inner { max-width: 760px; text-align: center; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px; border-radius: 9999px;
+      background: var(--primary-soft); color: var(--primary);
+      font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    }
+    .badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--primary); }
+    h1 {
+      margin-top: 24px;
+      font-size: clamp(36px, 5vw, 56px);
+      color: var(--text);
+    }
+    h1 em { font-style: normal; color: var(--primary); }
+    .hero-sub {
+      margin-top: 20px;
+      font-size: 18px;
+      color: var(--text-muted);
+      max-width: 600px; margin-left: auto; margin-right: auto;
+    }
+
+    .modes {
+      margin-top: 48px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      text-align: left;
+    }
+    @media (max-width: 640px) { .modes { grid-template-columns: 1fr; } }
+    .mode-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+    }
+    .mode-emoji { font-size: 28px; }
+    .mode-title { margin-top: 12px; font-size: 18px; font-weight: 700; color: var(--text); }
+    .mode-desc { margin-top: 8px; font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+
+    /* WAITLIST */
+    .waitlist {
+      margin-top: 48px;
+      padding: 28px 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+    }
+    .waitlist-label {
+      font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .waitlist h2 {
+      margin-top: 6px; font-size: 22px; color: var(--text);
+    }
+    .waitlist p {
+      margin-top: 8px; font-size: 14px; color: var(--text-muted);
+    }
+    .waitlist-form {
+      margin-top: 20px;
+      display: flex; gap: 8px; flex-wrap: wrap;
+    }
+    .waitlist-form input {
+      flex: 1; min-width: 220px;
+      padding: 12px 16px;
+      border: 1px solid var(--border-strong);
+      border-radius: 9999px;
+      background: var(--surface);
+      color: var(--text);
+      font-size: 15px;
+      font-family: inherit;
+    }
+    .waitlist-form input:focus { outline: none; border-color: var(--primary); box-shadow: var(--focus-ring); }
+    .waitlist-form button {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 9999px;
+      background: var(--primary); color: var(--primary-on);
+      font-size: 15px; font-weight: 700; font-family: inherit;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .waitlist-form button:hover { background: var(--primary-hover); }
+    .waitlist-success { margin-top: 14px; font-size: 14px; color: var(--success); display: none; }
+    .waitlist-success.show { display: block; }
+
+    .legal { margin-top: 24px; font-size: 12px; color: var(--text-subtle); }
+
+    /* FOOTER */
+    footer {
+      padding: 24px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--primary); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-logo"><img src="/justixia-logo-transparent.png" alt="JustiXia" /></a>
+    <a href="/" class="nav-back">← JustiXia (particuliers)</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-inner">
+    <span class="badge">Bientôt disponible · Beta privée</span>
+    <h1>Plaide comme si c'était réel.<br /><em>Entraîne-toi comme si c'était sûr.</em></h1>
+    <p class="hero-sub">
+      Justixia est la clinique juridique IA pour les avocats, juniors et étudiants en droit.
+      Simule des consultations avec un client IA, plaide à l'audience face à un juge IA.
+      Feedback instantané ancré dans le Code et la jurisprudence.
+    </p>
+
+    <div class="modes">
+      <article class="mode-card">
+        <div class="mode-emoji">🗂️</div>
+        <h3 class="mode-title">Mode Consultation</h3>
+        <p class="mode-desc">
+          Un client IA décrit sa situation de façon floue et incomplète.
+          À toi de qualifier, poser les bonnes questions, conseiller, rédiger ta note.
+        </p>
+      </article>
+      <article class="mode-card">
+        <div class="mode-emoji">⚖️</div>
+        <h3 class="mode-title">Mode Tribunal</h3>
+        <p class="mode-desc">
+          Tu plaides à l'audience. Le juge IA peut t'interrompre,
+          l'avocat adverse plaide en réponse. Verdict simulé + rapport sur 3 axes.
+        </p>
+      </article>
+    </div>
+
+    <div class="waitlist">
+      <span class="waitlist-label">Beta privée</span>
+      <h2>Reçois un accès en avant-première</h2>
+      <p>Étudiants CRFPA, avocats juniors, écoles d'avocats : on prévient les premiers inscrits.</p>
+      <form class="waitlist-form" id="wlForm" novalidate>
+        <input type="email" id="wlEmail" placeholder="ton@email.fr" autocomplete="email" required />
+        <button type="submit">Être prévenu</button>
+      </form>
+      <p class="waitlist-success" id="wlSuccess">Merci ! On te recontacte dès l'ouverture de la beta.</p>
+      <p class="legal">Justixia est un produit en cours de développement par l'équipe JustiXia. Pas de spam.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Justixia est édité par l'équipe <a href="/">JustiXia</a> ·
+  <a href="/mentions-legales">Mentions légales</a> ·
+  <a href="/confidentialite">Confidentialité</a>
+</footer>
+
+<script>
+  // Stockage local en attendant le branchement Supabase / form provider.
+  document.getElementById('wlForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var email = document.getElementById('wlEmail').value.trim();
+    if (!email || email.indexOf('@') === -1) return;
+    try {
+      var list = JSON.parse(localStorage.getItem('jx_simulator_waitlist') || '[]');
+      if (list.indexOf(email) === -1) list.push(email);
+      localStorage.setItem('jx_simulator_waitlist', JSON.stringify(list));
+    } catch (_) {}
+    document.getElementById('wlSuccess').classList.add('show');
+    document.getElementById('wlEmail').value = '';
+    // TODO: brancher /api/simulator-waitlist côté FastAPI -> Supabase.
+  });
+</script>
+
+</body>
+</html>

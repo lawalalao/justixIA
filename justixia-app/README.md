@@ -120,7 +120,35 @@ démo publique, dashboard, pricing page + Stripe checkout, sitemap + robots + JS
   `lib/cases/seed.ts` (les deux doivent rester synchros).
 - Tout prompt de persona doit inclure les `COMMON_GUARDRAILS` via `buildClientSystem` etc.
 
+## Déploiement en sous-chemin de justixia.xyz
+
+Le produit est conçu pour être servi sous `https://justixia.xyz/justixia-app`.
+- `next.config.js` configure `basePath: '/justixia-app'` (overridable via la
+  variable d'env `BASE_PATH`).
+- En attendant le déploiement réel, `vercel.json` du repo principal redirige
+  `/justixia-app` vers la page teaser statique `/avocats/index.html`.
+
+Pour passer en prod sous le sous-chemin :
+
+1. Déployer ce dossier comme un projet Vercel séparé
+   (ex: `justixia-simulator.vercel.app`).
+2. Dans le `vercel.json` du repo principal `lawalalao/justixia`, remplacer
+   les rewrites `/justixia-app(/?)` qui pointent vers le teaser par un
+   proxy vers le déploiement Next.js :
+   ```json
+   { "source": "/justixia-app",            "destination": "https://justixia-simulator.vercel.app" }
+   { "source": "/justixia-app/:path*",     "destination": "https://justixia-simulator.vercel.app/:path*" }
+   ```
+3. Vérifier que `NEXT_PUBLIC_APP_URL` côté Next.js vaut bien
+   `https://justixia.xyz/justixia-app` pour que les redirects Stripe et
+   les canonicals soient corrects.
+
+Si tu préfères passer en sous-domaine plus tard (ex: `justixia.app`,
+`app.justixia.xyz`), exporte `BASE_PATH=` (vide) et retire les rewrites
+côté repo principal.
+
 ## Lien produit
 
 - Site frère B2C : https://justixia.xyz (analyse de documents juridiques pour particuliers)
+- Page teaser publique : https://justixia.xyz/justixia-app
 - Inspiration : https://medkit-app.vercel.app/
