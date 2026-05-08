@@ -17,7 +17,9 @@
   ],
   "redirects": [
     { "source": "/afrique-de-louest",  "destination": "/afrique", "permanent": true },
-    { "source": "/afrique-de-louest/", "destination": "/afrique", "permanent": true }
+    { "source": "/afrique-de-louest/", "destination": "/afrique", "permanent": true },
+    { "source": "/justixia-app",       "destination": "https://justixia-app.vercel.app", "permanent": false },
+    { "source": "/justixia-app/",      "destination": "https://justixia-app.vercel.app", "permanent": false }
   ],
   "rewrites": [
     { "source": "/robots.txt",            "destination": "/api/index.py" },
@@ -51,8 +53,6 @@
     { "source": "/afrique/", "destination": "/afrique/index.html" },
     { "source": "/avocats",        "destination": "/avocats/index.html" },
     { "source": "/avocats/",       "destination": "/avocats/index.html" },
-    { "source": "/justixia-app",   "destination": "/avocats/index.html" },
-    { "source": "/justixia-app/",  "destination": "/avocats/index.html" },
     { "source": "/blog/mise-en-demeure-ohada",              "destination": "/blog/mise-en-demeure-ohada.html" },
     { "source": "/blog/licenciement-afrique-ouest-droits",  "destination": "/blog/licenciement-afrique-ouest-droits.html" },
     { "source": "/blog/contrat-bail-ohada-clauses-abusives","destination": "/blog/contrat-bail-ohada-clauses-abusives.html" }
