@@ -18,8 +18,8 @@
   "redirects": [
     { "source": "/afrique-de-louest",  "destination": "/afrique", "permanent": true },
     { "source": "/afrique-de-louest/", "destination": "/afrique", "permanent": true },
-    { "source": "/justixia-app",       "destination": "https://justixia-app.vercel.app", "permanent": false },
-    { "source": "/justixia-app/",      "destination": "https://justixia-app.vercel.app", "permanent": false }
+    { "source": "/justixia-app",       "destination": "https://app.justixia.xyz/", "permanent": false },
+    { "source": "/justixia-app/",      "destination": "https://app.justixia.xyz/", "permanent": false }
   ],
   "rewrites": [
     { "source": "/robots.txt",            "destination": "/api/index.py" },
