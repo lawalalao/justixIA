@@ -92,7 +92,6 @@ export async function POST(req: NextRequest) {
     )
     .replace('{transcript}', transcriptText);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const completion = await (anthropic().messages.create as any)({
     model: MODEL_GRADER,
     max_tokens: 4096,
