@@ -1,11 +1,10 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
+// Note: /api/chat and /api/feedback are NOT listed here because they
+// support a demo case (no auth) and do their own auth check internally.
 const isProtectedRoute = createRouteMatcher([
   '/dashboard(.*)',
-  '/consultation(.*)',
   '/tribunal(.*)',
-  '/api/chat(.*)',
-  '/api/feedback(.*)',
   '/api/stripe/checkout(.*)',
 ]);
 
