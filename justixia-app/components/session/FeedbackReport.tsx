@@ -68,7 +68,7 @@ export function FeedbackReportView({ report, caseId }: { report: FeedbackReport;
           {report.next_cases.map((id) => (
             <li key={id}>
               <Link
-                href={`/consultation/${id}`}
+                href={`/${id.startsWith('trib-') ? 'tribunal' : 'consultation'}/${id}`}
                 className="font-mono text-primary hover:underline"
               >
                 {id} →
