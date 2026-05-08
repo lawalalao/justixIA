@@ -92,7 +92,8 @@ export async function POST(req: NextRequest) {
     )
     .replace('{transcript}', transcriptText);
 
-  const completion = await anthropic().messages.create({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const completion = await (anthropic().messages.create as any)({
     model: MODEL_GRADER,
     max_tokens: 4096,
     thinking: { type: 'adaptive' },
@@ -105,7 +106,7 @@ export async function POST(req: NextRequest) {
     },
     system: SENIOR_GRADER_SYSTEM,
     messages: [{ role: 'user', content: userPrompt }],
-  } as Parameters<ReturnType<typeof anthropic>['messages']['create']>[0]) as Message;
+  }) as Message;
 
   // Structured outputs guarantee a text block containing valid JSON.
   const textBlock = completion.content.find((b) => b.type === 'text');
