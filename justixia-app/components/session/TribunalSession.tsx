@@ -8,17 +8,19 @@ type ActiveActor = 'judge' | 'opposing' | 'user' | null;
 
 interface Msg {
   role: 'user' | 'assistant';
-  speaker?: Speaker;
+  speaker?: string;
   content: string;
 }
 
 export function TribunalSession({
   caseDef,
   greeting,
+  prepTranscript = [],
   onComplete,
 }: {
   caseDef: CaseDef;
   greeting: string;
+  prepTranscript?: Msg[];
   onComplete: (transcript: Msg[]) => void;
 }) {
   const [messages, setMessages] = useState<Msg[]>([
@@ -36,7 +38,9 @@ export function TribunalSession({
     ? target
     : last?.role === 'user'
       ? 'user'
-      : last?.speaker ?? null;
+      : last?.speaker === 'judge' || last?.speaker === 'opposing'
+        ? last.speaker
+        : null;
 
   async function send() {
     const text = input.trim();
@@ -102,7 +106,16 @@ export function TribunalSession({
   function complete() {
     if (submitting || messages.length < 3) return;
     setSubmitting(true);
-    onComplete(messages);
+    // Combine la phase préparation (entretien client) + l'audience pour le grader.
+    const prepTagged: Msg[] = prepTranscript.map((m) => ({
+      ...m,
+      speaker: m.role === 'assistant' ? 'client (préparation)' : (m as Msg).speaker,
+    }));
+    const audienceTagged: Msg[] = messages.map((m) => ({
+      ...m,
+      speaker: m.role === 'assistant' ? `${m.speaker ?? 'judge'} (audience)` : (m as Msg).speaker,
+    }));
+    onComplete([...prepTagged, ...audienceTagged]);
   }
 
   const currentLine =

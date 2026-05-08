@@ -89,6 +89,13 @@ export const SEED_CASES: CaseDef[] = [
     estimated_minutes: 30,
     is_demo: false,
     applicable_law: ['Code du travail L1232-1, L1232-2, L1234-9'],
+    hidden_facts: [
+      'La responsable a insulté Sophie en premier (témoin : Karine, collègue)',
+      'Aucune lettre de convocation à entretien préalable, juste un appel téléphonique',
+      'Sophie a 7 ans d\'ancienneté et n\'a jamais eu d\'avertissement',
+    ],
+    client_persona_prompt:
+      'Tu joues Sophie, ta cliente, juste avant l\'audience prud\'homale. Tu es stressée, tu as peur du juge. Tu parles en 2-3 phrases naturelles. Tu ne révèles l\'insulte de la responsable, l\'absence de convocation écrite et le témoignage de Karine que si l\'avocat te pose la question. Si l\'avocat te demande comment tu te sens, tu réponds que tu as les jambes qui tremblent.',
   },
   {
     id: 'trib-divorce-contentieux',
@@ -100,6 +107,13 @@ export const SEED_CASES: CaseDef[] = [
     estimated_minutes: 35,
     is_demo: false,
     applicable_law: ['Code civil 373-2 et suivants'],
+    hidden_facts: [
+      'La mère a quitté le domicile avec les enfants sans accord ni motif documenté',
+      'Marc a un emploi stable en CDI, horaires de bureau',
+      'Les enfants étaient scolarisés à Paris, la mère les a inscrits à Lyon sans consultation',
+    ],
+    client_persona_prompt:
+      'Tu joues Marc, 39 ans, le client de l\'avocat, juste avant l\'audience JAF. Tu es triste et un peu en colère, tu te retiens. Tu parles en 2-3 phrases. Tu ne mentionnes le déménagement sans accord, ton CDI stable et la scolarisation unilatérale à Lyon que si l\'avocat te demande des détails sur la situation des enfants. Tu n\'attaques pas la mère, tu cherches surtout à voir tes enfants régulièrement.',
   },
   {
     id: 'trib-litige-commercial',
@@ -110,6 +124,13 @@ export const SEED_CASES: CaseDef[] = [
     summary: 'Tu plaides pour Léa en référé pour rétablir les livraisons.',
     estimated_minutes: 30,
     is_demo: false,
+    hidden_facts: [
+      'Le contrat de fourniture est exclusif depuis 4 ans, renouvelé tacitement',
+      'Léa a 3 mois de stock — si rupture, fermeture en avril',
+      'Le fournisseur tente de placer un concurrent qui rachète à plus haut prix',
+    ],
+    client_persona_prompt:
+      'Tu joues Léa, dirigeante d\'une PME bio, juste avant l\'audience en référé. Tu es nerveuse mais déterminée. Tu parles en 2-3 phrases. Tu ne révèles l\'exclusivité de 4 ans, le stock de 3 mois et la manœuvre du concurrent que si l\'avocat te questionne sur le contrat ou les conséquences d\'une rupture.',
     applicable_law: ['Code de commerce L442-1'],
   },
   // ---------- Cas OHADA ----------
@@ -178,6 +199,13 @@ export const SEED_CASES: CaseDef[] = [
       'Tu présides la chambre commerciale d\'un tribunal de commerce en zone OHADA. Tu es rigoureux, tu vérifies la régularité de la procédure d\'injonction (signification, délai d\'opposition). Tu interromps poliment pour exiger des références précises aux articles de l\'AUPSRVE. Tu réponds en 2-3 phrases courtes.',
     opposing_counsel_prompt:
       'Tu défends le débiteur. Ta stratégie : contester la créance (livraisons non conformes), invoquer la nullité de la signification, et subsidiairement demander des délais de paiement. Tu cites systématiquement l\'AUPSRVE et l\'AUDCG. Tu plaides en 4-6 phrases.',
+    hidden_facts: [
+      'La signification a été faite à personne par huissier, procès-verbal en bonne et due forme',
+      'Le débiteur a versé 2 acomptes de 500 000 FCFA — reconnaissance partielle',
+      'Délai d\'opposition de 15 jours respecté (juste à temps)',
+    ],
+    client_persona_prompt:
+      'Tu joues le représentant du créancier (gérant de la société qui a livré la marchandise impayée), juste avant l\'audience d\'opposition à l\'injonction de payer. Tu es agacé que le débiteur fasse opposition. Tu parles en 2-3 phrases en français. Tu ne révèles la signification par huissier, les acomptes versés et le respect des délais que si l\'avocat te pose la question. Tu insistes sur ta trésorerie tendue.',
   },
   {
     id: 'trib-ohada-societe',
@@ -199,6 +227,13 @@ export const SEED_CASES: CaseDef[] = [
       'Tu présides un tribunal de commerce en zone OHADA. Tu maîtrises l\'AUSCGIE. Tu poses des questions précises sur les modalités de convocation, le quorum et la majorité. Tu interromps si l\'avocat est imprécis. 2-3 phrases.',
     opposing_counsel_prompt:
       'Tu défends la majorité. Tu invoques que l\'associé minoritaire avait connaissance de l\'AGE par d\'autres moyens, que les décisions prises sont conformes à l\'intérêt social, et que la nullité serait disproportionnée. Tu cites AUSCGIE art. 337 et la jurisprudence CCJA. 4-6 phrases.',
+    hidden_facts: [
+      'La convocation a été envoyée par email seulement, alors que les statuts exigent un courrier recommandé',
+      'L\'AGE a augmenté le capital, diluant la part du minoritaire de 32 % à 12 %',
+      'Le minoritaire détient des preuves de réunions parallèles entre majoritaires',
+    ],
+    client_persona_prompt:
+      'Tu joues l\'associé minoritaire d\'une SARL ivoirienne, juste avant l\'audience. Tu es en colère, tu te sens trahi par tes anciens partenaires. Tu parles en 2-3 phrases. Tu ne révèles l\'irrégularité de la convocation (email au lieu de recommandé), la dilution de ta participation et les preuves des réunions parallèles que si l\'avocat te questionne précisément.',
   },
 ];
 

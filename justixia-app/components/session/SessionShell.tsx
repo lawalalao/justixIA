@@ -5,6 +5,7 @@ import Link from 'next/link';
 import type { CaseDef, FeedbackReport } from '@/lib/types';
 import { ChatSession } from './ChatSession';
 import { TribunalSession } from './TribunalSession';
+import { PrepPhase } from './PrepPhase';
 import { FeedbackReportView } from './FeedbackReport';
 import { UserOpinion } from './UserOpinion';
 
@@ -24,6 +25,11 @@ export function SessionShell({
   const [report, setReport] = useState<FeedbackReport | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Tribunal-only : phase = 'prep' (entretien client) → 'audience'
+  const [phase, setPhase] = useState<'prep' | 'audience'>(
+    caseDef.mode === 'tribunal' ? 'prep' : 'audience',
+  );
+  const [prepTranscript, setPrepTranscript] = useState<Msg[]>([]);
 
   async function handleComplete(transcript: Msg[]) {
     setLoading(true);
@@ -63,11 +69,22 @@ export function SessionShell({
 
       {!report && !loading && (
         caseDef.mode === 'tribunal' ? (
-          <TribunalSession
-            caseDef={caseDef}
-            greeting={greeting}
-            onComplete={handleComplete}
-          />
+          phase === 'prep' ? (
+            <PrepPhase
+              caseDef={caseDef}
+              onPrepDone={(t) => {
+                setPrepTranscript(t);
+                setPhase('audience');
+              }}
+            />
+          ) : (
+            <TribunalSession
+              caseDef={caseDef}
+              greeting={greeting}
+              prepTranscript={prepTranscript}
+              onComplete={handleComplete}
+            />
+          )
         ) : (
           <ChatSession
             caseDef={caseDef}
