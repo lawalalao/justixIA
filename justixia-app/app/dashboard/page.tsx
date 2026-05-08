@@ -34,11 +34,11 @@ async function loadDashboard(userId: string) {
 
   const { data: profile } = await sb
     .from('profiles')
-    .select('id, plan')
+    .select('id')
     .eq('clerk_user_id', userId)
     .single();
 
-  if (!profile) return { plan: 'free' as const, sessions: [] as SessionRow[] };
+  if (!profile) return { sessions: [] as SessionRow[] };
 
   const { data: sessions } = await sb
     .from('sessions')
@@ -47,14 +47,14 @@ async function loadDashboard(userId: string) {
     .order('started_at', { ascending: false })
     .limit(20);
 
-  return { plan: profile.plan as 'free' | 'pro' | 'studio' | 'team', sessions: (sessions ?? []) as SessionRow[] };
+  return { sessions: (sessions ?? []) as SessionRow[] };
 }
 
 export default async function DashboardPage() {
   const { userId } = await auth();
   if (!userId) redirect('/sign-in');
 
-  const { plan, sessions } = await loadDashboard(userId);
+  const { sessions } = await loadDashboard(userId);
 
   const completed = sessions.filter((s) => s.status === 'completed');
   const avg =
@@ -66,12 +66,7 @@ export default async function DashboardPage() {
     <>
       <Nav />
       <main className="container-x py-12">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <h1 className="font-serif">Mon espace</h1>
-          <span className="rounded-pill bg-primary-soft px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary">
-            Plan {plan}
-          </span>
-        </div>
+        <h1 className="font-serif">Mon espace</h1>
 
         <div className="mt-8 grid gap-4 md:grid-cols-3">
           <Stat label="Sessions terminées" value={String(completed.length)} />
@@ -82,9 +77,6 @@ export default async function DashboardPage() {
         <div className="mt-10 flex flex-wrap gap-3">
           <Link href="/consultation" className="btn-primary">Nouvelle consultation</Link>
           <Link href="/tribunal" className="btn-secondary">Nouvelle audience</Link>
-          {plan === 'free' && (
-            <Link href="/pricing" className="btn-outline">Passer Pro</Link>
-          )}
         </div>
 
         <h2 className="mt-12 font-serif text-2xl">Historique</h2>

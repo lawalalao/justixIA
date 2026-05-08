@@ -13,10 +13,4 @@ export const env = {
   // Server-only (lazy, throws on access if missing)
   get supabaseService() { return required('SUPABASE_SERVICE_ROLE_KEY'); },
   get anthropicKey() { return required('ANTHROPIC_API_KEY'); },
-  get stripeSecret() { return required('STRIPE_SECRET_KEY'); },
-  get stripeWebhookSecret() { return required('STRIPE_WEBHOOK_SECRET'); },
-  // Stripe price IDs
-  pricePro: process.env.STRIPE_PRICE_PRO ?? '',
-  priceStudio: process.env.STRIPE_PRICE_STUDIO ?? '',
-  priceTeam: process.env.STRIPE_PRICE_TEAM ?? '',
 };

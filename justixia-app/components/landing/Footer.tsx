@@ -16,7 +16,6 @@ export function Footer() {
           <FooterCol title="Produit">
             <a href="/#modes">Les 2 modes</a>
             <a href="/#how">Comment ça marche</a>
-            <a href="/pricing">Tarifs</a>
             <a href="/demo">Démo</a>
           </FooterCol>
           <FooterCol title="Ressources">

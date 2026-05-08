@@ -3,7 +3,6 @@ import { Hero } from '@/components/landing/Hero';
 import { Modes } from '@/components/landing/Modes';
 import { HowItWorks } from '@/components/landing/HowItWorks';
 import { Feedback } from '@/components/landing/Feedback';
-import { Pricing } from '@/components/landing/Pricing';
 import { FAQ, FAQ_JSON_LD_ITEMS } from '@/components/landing/FAQ';
 import { Footer } from '@/components/landing/Footer';
 
@@ -16,7 +15,6 @@ export default function HomePage() {
         <Modes />
         <HowItWorks />
         <Feedback />
-        <Pricing />
         <FAQ />
       </main>
       <Footer />
@@ -34,12 +32,8 @@ export default function HomePage() {
             applicationCategory: 'EducationalApplication',
             operatingSystem: 'Web',
             url: 'https://justixia.app/',
-            inLanguage: ['fr-FR', 'fr-BE', 'fr-CH'],
-            offers: [
-              { '@type': 'Offer', name: 'Gratuit', price: '0', priceCurrency: 'EUR' },
-              { '@type': 'Offer', name: 'Pro', price: '29', priceCurrency: 'EUR' },
-              { '@type': 'Offer', name: 'Studio', price: '79', priceCurrency: 'EUR' },
-            ],
+            inLanguage: ['fr-FR', 'fr-BE', 'fr-CH', 'fr-CI', 'fr-SN'],
+            offers: [{ '@type': 'Offer', name: 'Gratuit', price: '0', priceCurrency: 'EUR' }],
           }),
         }}
       />

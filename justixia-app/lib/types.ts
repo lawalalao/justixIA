@@ -8,7 +8,10 @@ export type Domaine =
   | 'commercial'
   | 'penal'
   | 'immobilier'
-  | 'consommation';
+  | 'consommation'
+  | 'ohada'
+  | 'ohada-travail'
+  | 'ohada-commercial';
 
 export interface CaseDef {
   id: string;

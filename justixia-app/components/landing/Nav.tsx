@@ -11,7 +11,6 @@ export function Nav() {
         <nav className="hidden items-center gap-6 text-sm text-ink-muted md:flex">
           <a href="/#modes" className="hover:text-ink">Les 2 modes</a>
           <a href="/#how" className="hover:text-ink">Comment ça marche</a>
-          <a href="/pricing" className="hover:text-ink">Tarifs</a>
           <a href="/demo" className="hover:text-ink">Démo</a>
         </nav>
         <div className="flex items-center gap-3">

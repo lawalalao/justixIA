@@ -5,6 +5,7 @@ import Link from 'next/link';
 import type { CaseDef, FeedbackReport } from '@/lib/types';
 import { ChatSession } from './ChatSession';
 import { FeedbackReportView } from './FeedbackReport';
+import { UserOpinion } from './UserOpinion';
 
 interface Msg { role: 'user' | 'assistant'; speaker?: string; content: string }
 
@@ -82,7 +83,12 @@ export function SessionShell({
         </div>
       )}
 
-      {report && <FeedbackReportView report={report} caseId={caseDef.id} />}
+      {report && (
+        <>
+          <FeedbackReportView report={report} caseId={caseDef.id} />
+          <UserOpinion caseId={caseDef.id} />
+        </>
+      )}
     </div>
   );
 }

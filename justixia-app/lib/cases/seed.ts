@@ -112,6 +112,94 @@ export const SEED_CASES: CaseDef[] = [
     is_demo: false,
     applicable_law: ['Code de commerce L442-1'],
   },
+  // ---------- Cas OHADA ----------
+  {
+    id: 'cons-ohada-recouvrement',
+    mode: 'consultation',
+    domaine: 'ohada-commercial',
+    difficulty: 'intermediaire',
+    title: 'Recouvrement de créance commerciale (OHADA)',
+    summary:
+      'Aïssatou, gérante d\'une société de distribution à Dakar, n\'arrive pas à se faire payer 12 millions de FCFA par un client béninois depuis 8 mois. Elle vient se renseigner sur les voies de recours.',
+    estimated_minutes: 20,
+    is_demo: false,
+    applicable_law: [
+      'AUPSRVE — Acte uniforme sur les procédures simplifiées de recouvrement et voies d\'exécution',
+      'AUPSRVE art. 1 — injonction de payer',
+      'AUPSRVE art. 14 et s. — saisie conservatoire',
+      'Traité OHADA art. 10 — supranationalité du droit uniforme',
+    ],
+    hidden_facts: [
+      'Le client a reconnu la dette par email et un bon de livraison signé existe',
+      'Aïssatou n\'a jamais envoyé de mise en demeure formelle',
+    ],
+    client_persona_prompt:
+      'Tu joues Aïssatou, 41 ans, gérante d\'une SARL de distribution à Dakar. Tu es pragmatique, un peu inquiète. Tu réponds en 2-3 phrases, en français, avec quelques expressions ouest-africaines naturelles. Tu ne donnes pas tous les détails d\'un coup — tu attends qu\'on te demande pour parler de l\'email de reconnaissance ou du bon de livraison.',
+  },
+  {
+    id: 'cons-ohada-licenciement',
+    mode: 'consultation',
+    domaine: 'ohada-travail',
+    difficulty: 'intermediaire',
+    title: 'Licenciement abusif en zone OHADA',
+    summary:
+      'Mamadou, comptable à Abidjan dans une PME ivoirienne, vient d\'être licencié verbalement après 6 ans d\'ancienneté. Aucune notification écrite, aucun préavis. Il veut savoir ses droits.',
+    estimated_minutes: 20,
+    is_demo: false,
+    applicable_law: [
+      'Code du travail ivoirien (loi n°2015-532) art. 16.4 et s. — licenciement',
+      'AUDCG — Acte uniforme relatif au droit commercial général',
+      'CCJA, arrêt n°043/2017 — qualification du licenciement abusif',
+    ],
+    hidden_facts: [
+      'Mamadou avait refusé de falsifier des écritures comptables 2 mois avant',
+      'Aucun avertissement disciplinaire n\'a jamais été notifié',
+    ],
+    client_persona_prompt:
+      'Tu joues Mamadou, 38 ans, comptable à Abidjan. Tu es calme mais blessé, tu cherches à comprendre. Tu réponds en 2-3 phrases en français standard. Tu ne mentionnes le refus de falsifier les écritures que si l\'avocat te demande pourquoi tu as été licencié.',
+  },
+  {
+    id: 'trib-ohada-injonction',
+    mode: 'tribunal',
+    domaine: 'ohada-commercial',
+    difficulty: 'avance',
+    title: 'Audience d\'injonction de payer (OHADA)',
+    summary:
+      'Tu plaides pour le créancier devant le tribunal de commerce. Le débiteur a formé opposition à l\'ordonnance d\'injonction de payer. Montant : 8 M FCFA, facture impayée.',
+    estimated_minutes: 25,
+    is_demo: false,
+    applicable_law: [
+      'AUPSRVE art. 1 à 18 — procédure d\'injonction de payer',
+      'AUPSRVE art. 9 — opposition à l\'ordonnance',
+      'AUPSRVE art. 14 — effets de l\'opposition',
+      'CCJA, arrêt n°005/2014 — recevabilité de l\'opposition tardive',
+    ],
+    judge_persona_prompt:
+      'Tu présides la chambre commerciale d\'un tribunal de commerce en zone OHADA. Tu es rigoureux, tu vérifies la régularité de la procédure d\'injonction (signification, délai d\'opposition). Tu interromps poliment pour exiger des références précises aux articles de l\'AUPSRVE. Tu réponds en 2-3 phrases courtes.',
+    opposing_counsel_prompt:
+      'Tu défends le débiteur. Ta stratégie : contester la créance (livraisons non conformes), invoquer la nullité de la signification, et subsidiairement demander des délais de paiement. Tu cites systématiquement l\'AUPSRVE et l\'AUDCG. Tu plaides en 4-6 phrases.',
+  },
+  {
+    id: 'trib-ohada-societe',
+    mode: 'tribunal',
+    domaine: 'ohada-commercial',
+    difficulty: 'avance',
+    title: 'Litige entre associés (AUSCGIE)',
+    summary:
+      'Tu plaides pour un associé minoritaire qui demande la nullité d\'une délibération d\'AGE adoptée sans convocation régulière. SARL en Côte d\'Ivoire, capital 50 M FCFA.',
+    estimated_minutes: 30,
+    is_demo: false,
+    applicable_law: [
+      'AUSCGIE — Acte uniforme sur le droit des sociétés commerciales et du GIE',
+      'AUSCGIE art. 337 — convocation des associés de SARL',
+      'AUSCGIE art. 244 — nullité des délibérations',
+      'CCJA, arrêt n°021/2010 — abus de majorité',
+    ],
+    judge_persona_prompt:
+      'Tu présides un tribunal de commerce en zone OHADA. Tu maîtrises l\'AUSCGIE. Tu poses des questions précises sur les modalités de convocation, le quorum et la majorité. Tu interromps si l\'avocat est imprécis. 2-3 phrases.',
+    opposing_counsel_prompt:
+      'Tu défends la majorité. Tu invoques que l\'associé minoritaire avait connaissance de l\'AGE par d\'autres moyens, que les décisions prises sont conformes à l\'intérêt social, et que la nullité serait disproportionnée. Tu cites AUSCGIE art. 337 et la jurisprudence CCJA. 4-6 phrases.',
+  },
 ];
 
 export function getCaseById(id: string): CaseDef | undefined {

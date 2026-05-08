@@ -21,7 +21,7 @@ const FAQ_ITEMS = [
   },
   {
     q: 'Comment fonctionnent les licences pour les écoles d\'avocats ?',
-    a: 'Licence institutionnelle annuelle, comptes étudiants en bulk, dashboard formateur (suivi de cohorte), cas personnalisés. Voir la page Tarifs ou contactez-nous directement.',
+    a: 'Licence institutionnelle, comptes étudiants en bulk, dashboard formateur (suivi de cohorte), cas personnalisés. Contactez-nous à contact@justixia.app.',
   },
 ];
 
