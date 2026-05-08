@@ -6,6 +6,7 @@
 import { NextRequest } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { z } from 'zod';
+import type Anthropic from '@anthropic-ai/sdk';
 import { anthropic, MODEL_CHAT } from '@/lib/anthropic';
 import { getCaseById } from '@/lib/cases/seed';
 import { buildClientSystem, buildJudgeSystem, buildOpposingCounselSystem } from '@/lib/prompts/personas';
