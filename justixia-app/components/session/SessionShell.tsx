@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import type { CaseDef, FeedbackReport } from '@/lib/types';
 import { ChatSession } from './ChatSession';
+import { TribunalSession } from './TribunalSession';
 import { FeedbackReportView } from './FeedbackReport';
 import { UserOpinion } from './UserOpinion';
 
@@ -61,13 +62,21 @@ export function SessionShell({
       </div>
 
       {!report && !loading && (
-        <ChatSession
-          caseDef={caseDef}
-          speaker={speaker}
-          greeting={greeting}
-          allowDemo={allowDemo}
-          onComplete={handleComplete}
-        />
+        caseDef.mode === 'tribunal' ? (
+          <TribunalSession
+            caseDef={caseDef}
+            greeting={greeting}
+            onComplete={handleComplete}
+          />
+        ) : (
+          <ChatSession
+            caseDef={caseDef}
+            speaker={speaker}
+            greeting={greeting}
+            allowDemo={allowDemo}
+            onComplete={handleComplete}
+          />
+        )
       )}
 
       {loading && (
