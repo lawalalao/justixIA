@@ -5,7 +5,7 @@
 //   - assetPrefix: même chose pour les assets statiques.
 //   - Si tu veux passer en sous-domaine (ex: justixia.app, app.justixia.xyz),
 //     mets BASE_PATH='' (variable d'env vide) ou supprime ces lignes.
-const BASE_PATH = process.env.BASE_PATH ?? '/justixia-app';
+const BASE_PATH = process.env.BASE_PATH ?? '';
 
 const securityHeaders = [
   { key: 'X-Content-Type-Options', value: 'nosniff' },
