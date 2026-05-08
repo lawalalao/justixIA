@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
   if (!caseDef) return new Response('Unknown case', { status: 404 });
 
   // Demo case: open access. Anything else: require auth.
-  const { userId } = auth();
+  const { userId } = await auth();
   if (!caseDef.is_demo && !userId) return new Response('Unauthorized', { status: 401 });
 
   // Build system prompt depending on the speaker the user wants to interact with.

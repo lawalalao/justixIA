@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
   const caseDef = getCaseById(caseId);
   if (!caseDef) return NextResponse.json({ error: 'Unknown case' }, { status: 404 });
 
-  const { userId } = auth();
+  const { userId } = await auth();
   if (!caseDef.is_demo && !userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const transcriptText = transcript

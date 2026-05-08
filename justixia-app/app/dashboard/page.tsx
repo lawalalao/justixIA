@@ -51,7 +51,7 @@ async function loadDashboard(userId: string) {
 }
 
 export default async function DashboardPage() {
-  const { userId } = auth();
+  const { userId } = await auth();
   if (!userId) redirect('/sign-in');
 
   const { plan, sessions } = await loadDashboard(userId);
