@@ -26,6 +26,7 @@ The CLI picks up every file in `supabase/migrations/` that hasn't been applied y
 | File | Purpose |
 | --- | --- |
 | `20260420000000_enable_rls.sql` | Enables RLS on `cases`, `avis`, `promo_codes`, `referral_codes`, `referral_uses` and adds defensive per-owner policies. |
+| `20260718000000_rebuild_legacy_schema.sql` | Full rebuild of the static-site schema (all tables + signup trigger + RLS), reconstructed from `api/index.py` after the original Supabase project was deleted. Run this alone on a fresh project; it supersedes the RLS migration. |
 
 ## Why RLS matters for this project
 

@@ -1295,7 +1295,34 @@
     });
   });
 
-  function handleFile(file) {
+  // Vercel bloque les corps de requete au-dela de 4,5 Mo (limite plateforme,
+  // avant meme d'atteindre le backend) — on garde une marge a 4 Mo.
+  const MAX_UPLOAD = 4 * 1024 * 1024;
+
+  async function compressImage(file) {
+    try {
+      const bmp = await createImageBitmap(file);
+      const scale = Math.min(1, 2000 / Math.max(bmp.width, bmp.height));
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(bmp.width * scale);
+      canvas.height = Math.round(bmp.height * scale);
+      canvas.getContext('2d').drawImage(bmp, 0, 0, canvas.width, canvas.height);
+      const blob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', 0.8));
+      if (blob && blob.size < file.size) {
+        return new File([blob], file.name.replace(/\.\w+$/, '') + '.jpg', { type: 'image/jpeg' });
+      }
+    } catch (_) { /* format non decodable (ex: HEIC hors Safari) */ }
+    return file;
+  }
+
+  async function handleFile(file) {
+    if (file.size > MAX_UPLOAD && file.type.startsWith('image/')) {
+      file = await compressImage(file);
+    }
+    if (file.size > MAX_UPLOAD) {
+      showToast('Fichier trop volumineux (max 4 Mo). Reduis-le, scanne moins de pages ou copie le texte du document.');
+      return;
+    }
     selectedFile = file;
     document.getElementById('fileName').textContent = file.name;
     document.getElementById('fileSize').textContent = formatSize(file.size);
@@ -1362,6 +1389,8 @@
         throw new Error(
           resp.status === 429
             ? 'Trop de requetes. Attends quelques secondes.'
+            : resp.status === 413
+            ? 'Fichier trop volumineux (max 4 Mo). Reduis-le ou copie le texte du document.'
             : (err.detail || 'Erreur serveur ' + resp.status)
         );
       }
