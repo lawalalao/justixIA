@@ -1188,6 +1188,7 @@
   let authToken = null;
   let currentCaseId = null;
   let supabaseUserId = null;
+  let sbClient = null;
 
   // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -1245,6 +1246,7 @@
       const sb = createClient(config.supabase_url, config.supabase_anon_key, {
         auth: { storageKey: 'jx_session' },
       });
+      sbClient = sb;
       const { data: { session } } = await sb.auth.getSession();
       isLoggedIn = !!session;
       if (session) {
@@ -1296,8 +1298,10 @@
   });
 
   // Vercel bloque les corps de requete au-dela de 4,5 Mo (limite plateforme,
-  // avant meme d'atteindre le backend) — on garde une marge a 4 Mo.
+  // avant meme d'atteindre le backend) : on garde une marge a 4 Mo. Au-dela,
+  // les utilisateurs connectes passent par Supabase Storage (jusqu'a 10 Mo).
   const MAX_UPLOAD = 4 * 1024 * 1024;
+  const MAX_FILE = 10 * 1024 * 1024;
 
   async function compressImage(file) {
     try {
@@ -1319,8 +1323,12 @@
     if (file.size > MAX_UPLOAD && file.type.startsWith('image/')) {
       file = await compressImage(file);
     }
-    if (file.size > MAX_UPLOAD) {
-      showToast('Fichier trop volumineux (max 4 Mo). Reduis-le, scanne moins de pages ou copie le texte du document.');
+    if (file.size > MAX_FILE) {
+      showToast('Fichier trop volumineux (max 10 Mo). Reduis-le, scanne moins de pages ou copie le texte du document.');
+      return;
+    }
+    if (file.size > MAX_UPLOAD && !isLoggedIn) {
+      showToast('Connecte-toi pour analyser un fichier de plus de 4 Mo.');
       return;
     }
     selectedFile = file;
@@ -1377,12 +1385,23 @@
     });
 
     const form = new FormData();
-    if (selectedFile) form.append('file', selectedFile);
     if (text) form.append('text', text);
     form.append('langue', selectedLang);
 
     try {
       const headers = authToken ? { 'Authorization': `Bearer ${authToken}` } : {};
+
+      if (selectedFile && selectedFile.size > MAX_UPLOAD && sbClient && supabaseUserId) {
+        // Trop gros pour passer par Vercel : upload direct vers Supabase
+        // Storage, le backend le telecharge puis le supprime aussitot.
+        const path = `${supabaseUserId}/${Date.now()}_${selectedFile.name.replace(/[^\w.\-]/g, '_')}`;
+        const { error: upErr } = await sbClient.storage.from('uploads').upload(path, selectedFile);
+        if (upErr) throw new Error("Echec de l'envoi du fichier. Reessaie.");
+        form.append('storage_path', path);
+      } else if (selectedFile) {
+        form.append('file', selectedFile);
+      }
+
       const resp = await fetch(`${API}/analyze`, { method: 'POST', body: form, headers });
       if (!resp.ok) {
         const err = await resp.json().catch(() => ({}));
@@ -1390,7 +1409,7 @@
           resp.status === 429
             ? 'Trop de requetes. Attends quelques secondes.'
             : resp.status === 413
-            ? 'Fichier trop volumineux (max 4 Mo). Reduis-le ou copie le texte du document.'
+            ? 'Fichier trop volumineux (max 10 Mo). Reduis-le ou copie le texte du document.'
             : (err.detail || 'Erreur serveur ' + resp.status)
         );
       }

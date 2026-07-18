@@ -476,9 +476,10 @@ async def analyze_document(
     langue: str = Form("français"),
     save: Optional[str] = Form(None),
     reference: Optional[str] = Form(None),
+    storage_path: Optional[str] = Form(None),
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
 ):
-    if not file and not text:
+    if not file and not text and not storage_path:
         raise HTTPException(400, "Fournir un fichier ou du texte.")
 
     langue_clean = langue.strip().lower()
@@ -499,6 +500,35 @@ async def analyze_document(
     file_bytes = None
     if file:
         file_bytes = await file.read()
+        if len(file_bytes) > MAX_FILE_SIZE:
+            raise HTTPException(413, "Fichier trop volumineux (max 10 Mo).")
+
+    # Gros fichiers (> 4 Mo) : uploadés directement vers Supabase Storage par
+    # le navigateur pour contourner la limite Vercel de 4,5 Mo par requête.
+    # Réservé aux utilisateurs connectés (policy RLS : dossier = user_id).
+    if storage_path and file_bytes is None:
+        if not credentials or not SUPABASE_URL or not SUPABASE_SERVICE_KEY:
+            raise HTTPException(401, "Connexion requise pour analyser un fichier volumineux.")
+        try:
+            from supabase import create_client
+            sb_storage = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
+            storage_user = sb_storage.auth.get_user(credentials.credentials)
+        except Exception:
+            raise HTTPException(401, "Session invalide.")
+        if not storage_user or not storage_user.user:
+            raise HTTPException(401, "Session invalide.")
+        if not storage_path.startswith(f"{storage_user.user.id}/"):
+            raise HTTPException(403, "Chemin de fichier non autorisé.")
+        try:
+            file_bytes = sb_storage.storage.from_("uploads").download(storage_path)
+        except Exception:
+            raise HTTPException(404, "Fichier introuvable. Réessaie l'envoi.")
+        finally:
+            # Les documents ne sont jamais conservés : suppression immédiate.
+            try:
+                sb_storage.storage.from_("uploads").remove([storage_path])
+            except Exception:
+                pass
         if len(file_bytes) > MAX_FILE_SIZE:
             raise HTTPException(413, "Fichier trop volumineux (max 10 Mo).")
 
